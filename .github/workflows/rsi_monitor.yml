@@ -42,3 +42,4 @@ jobs:
         name: monitor-logs
         path: rsi_double_dca_backtest/*.log
         retention-days: 30
+        if-no-files-found: ignore
