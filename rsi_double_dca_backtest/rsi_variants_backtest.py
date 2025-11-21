@@ -315,7 +315,116 @@ for rank, r in enumerate(filtered_results[:5], 1):
     print(f"Exported: {filename}")
 
 # =============================================================================
-# VISUALIZATION - Top 5 Variants
+# VISUALIZATION 1 - SPY Price with Rainy Periods
+# =============================================================================
+print("\nGenerating SPY price chart with rainy periods...")
+
+# Identify rainy periods (RSI < 45) with consecutive period lengths
+rainy_45 = prices[prices['RSI'] < 45].copy()
+rainy_periods = []
+if not rainy_45.empty:
+    period_start = None
+    period_end = None
+    
+    for i, dt in enumerate(rainy_45.index):
+        if period_start is None:
+            period_start = dt
+            period_end = dt
+        else:
+            # Check if consecutive (within 5 trading days to account for weekends)
+            if (dt - period_end).days <= 5:
+                period_end = dt
+            else:
+                # Save previous period
+                period_length = len(rainy_45[(rainy_45.index >= period_start) & (rainy_45.index <= period_end)])
+                rainy_periods.append({
+                    'start': period_start,
+                    'end': period_end,
+                    'length': period_length
+                })
+                period_start = dt
+                period_end = dt
+    
+    # Don't forget the last period
+    if period_start is not None:
+        period_length = len(rainy_45[(rainy_45.index >= period_start) & (rainy_45.index <= period_end)])
+        rainy_periods.append({
+            'start': period_start,
+            'end': period_end,
+            'length': period_length
+        })
+
+# Create SPY drawdown
+spy_peak = prices[INDEX_TICKER].cummax()
+spy_drawdown = ((prices[INDEX_TICKER] / spy_peak) - 1) * 100
+
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(18, 10), sharex=True, 
+                                gridspec_kw={'height_ratios': [3, 1]})
+
+# Top panel: SPY Price with rainy periods
+ax1.plot(prices.index, prices[INDEX_TICKER], color='#1f77b4', linewidth=1.5, label='SPY Price (USD)')
+ax1.fill_between(prices.index, 0, prices[INDEX_TICKER], alpha=0.1, color='#1f77b4')
+
+# Highlight rainy periods
+for period in rainy_periods:
+    ax1.axvspan(period['start'], period['end'], alpha=0.2, color='red', 
+                label='Rainy Period (RSI < 45)' if period == rainy_periods[0] else '')
+
+ax1.set_ylabel('SPY Price (USD)', fontsize=12, fontweight='bold')
+ax1.set_title('SPY Price History with Rainy Periods (RSI < 45)', fontsize=14, fontweight='bold', pad=15)
+ax1.grid(alpha=0.3, linestyle='--')
+ax1.legend(loc='upper left', fontsize=10)
+ax1.set_yscale('log')
+
+# Bottom panel: Drawdown
+ax2.fill_between(prices.index, spy_drawdown, 0, where=(spy_drawdown < 0), 
+                 color='#d62728', alpha=0.4, label='Drawdown')
+ax2.plot(prices.index, spy_drawdown, color='#d62728', linewidth=1, alpha=0.8)
+ax2.axhline(y=0, color='black', linestyle='-', linewidth=0.5)
+ax2.set_ylabel('Drawdown (%)', fontsize=12, fontweight='bold')
+ax2.set_xlabel('Date', fontsize=12, fontweight='bold')
+ax2.grid(alpha=0.3, linestyle='--')
+ax2.legend(loc='lower left', fontsize=10)
+ax2.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
+
+plt.tight_layout()
+plt.savefig(out_dir / "spy_price_rainy_periods_drawdown.png", dpi=150, bbox_inches='tight')
+plt.close()
+print("Exported: spy_price_rainy_periods_drawdown.png")
+
+# =============================================================================
+# VISUALIZATION 2 - RSI Chart with Threshold Lines
+# =============================================================================
+print("\nGenerating RSI chart...")
+
+fig, ax = plt.subplots(figsize=(18, 6))
+ax.plot(prices.index, prices['RSI'], color='#2ca02c', linewidth=1, alpha=0.8, label='RSI(14)')
+
+# Threshold lines
+ax.axhline(y=50, color='orange', linestyle='--', linewidth=1.5, alpha=0.7, label='RSI < 50')
+ax.axhline(y=45, color='red', linestyle='--', linewidth=2, alpha=0.7, label='RSI < 45 (Your Threshold)')
+ax.axhline(y=40, color='darkred', linestyle='--', linewidth=1.5, alpha=0.7, label='RSI < 40')
+ax.axhline(y=35, color='purple', linestyle='--', linewidth=1.5, alpha=0.7, label='RSI < 35')
+ax.axhline(y=30, color='black', linestyle=':', linewidth=1, alpha=0.5, label='Oversold (30)')
+
+# Fill rainy zones
+ax.fill_between(prices.index, 0, 45, alpha=0.1, color='red', label='Rainy Zone (< 45)')
+
+ax.set_ylabel('RSI(14)', fontsize=12, fontweight='bold')
+ax.set_xlabel('Date', fontsize=12, fontweight='bold')
+ax.set_title('RSI(14) History with Threshold Levels', fontsize=14, fontweight='bold', pad=15)
+ax.set_ylim(0, 100)
+ax.grid(alpha=0.3, linestyle='--')
+ax.legend(loc='upper right', fontsize=9, ncol=2)
+ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
+
+plt.tight_layout()
+plt.savefig(out_dir / "rsi_history_thresholds.png", dpi=150, bbox_inches='tight')
+plt.close()
+print("Exported: rsi_history_thresholds.png")
+
+# =============================================================================
+# VISUALIZATION 3 - Top 5 Variants
 # =============================================================================
 print("\nGenerating comparison chart...")
 fig, ax = plt.subplots(figsize=(16, 8))
@@ -424,5 +533,18 @@ print(f"  Hit rate: {best['hit_rate']*100:.1f}%")
 print(f"  Final equity: ${best['end_equity']:,.0f}")
 print(f"  Total contributions: ${best['contributions']:,.0f}")
 print(f"  Rainy buys: {best['rainy_hits']} / {best['rainy_total']}")
+
+print(f"\nRAINY PERIOD ANALYSIS (RSI < 45):")
+print(f"  Total rainy periods: {len(rainy_periods)}")
+if rainy_periods:
+    period_lengths = [p['length'] for p in rainy_periods]
+    monday_periods = [p['length'] // 5 for p in rainy_periods]  # Approximate weeks
+    print(f"  Shortest period: {min(period_lengths)} trading days (~{min(monday_periods)} Mondays)")
+    print(f"  Longest period: {max(period_lengths)} trading days (~{max(monday_periods)} Mondays)")
+    print(f"  Average period: {np.mean(period_lengths):.1f} trading days (~{np.mean(monday_periods):.1f} Mondays)")
+
+print(f"\nSPY DRAWDOWN ANALYSIS:")
+print(f"  Maximum drawdown: {spy_drawdown.min():.2f}%")
+print(f"  Date of max DD: {spy_drawdown.idxmin().date()}")
 
 print("\n" + "=" * 80)
