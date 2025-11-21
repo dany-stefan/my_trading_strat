@@ -247,7 +247,7 @@ YOUR DECISION TODAY:
    {'🔥 RECOMMENDATION: Buy extra $150 from cash pool' if rsi < RSI_THRESHOLD and cash_pool >= RAINY_AMOUNT else '💰 RECOMMENDATION: Save your cash for next rainy day' if rsi >= RSI_THRESHOLD else '⚠️  Rainy day but insufficient cash (need $' + str(RAINY_AMOUNT) + ', have $' + str(cash_pool) + ')'}
    
    {'   Total investment today: $300 ($150 base + $150 rainy)' if rsi < RSI_THRESHOLD and cash_pool >= RAINY_AMOUNT else '   Total investment today: $150 (base only)'}
-   {'   Cash pool after: $' + str(cash_pool - RAINY_AMOUNT + CASH_ACCUMULATION) if rsi < RSI_THRESHOLD and cash_pool >= RAINY_AMOUNT else ''}
+   {'   After rainy buy: $' + str(cash_pool - RAINY_AMOUNT) + '\n   Add savings: +$' + str(CASH_ACCUMULATION) + '\n   Final pool: $' + str(cash_pool - RAINY_AMOUNT + CASH_ACCUMULATION) if rsi < RSI_THRESHOLD and cash_pool >= RAINY_AMOUNT else ''}
 
 Next payday: {'1st' if today.day >= PAYDAY_DAY_OF_MONTH_2 else '15th'} of {'next month' if today.day >= PAYDAY_DAY_OF_MONTH_2 else 'this month'}
 
@@ -376,7 +376,9 @@ Total investment today:
 - TOTAL: $300.00 CAD
 
 After this buy:
-- Remaining cash pool: ${cash_pool - RAINY_AMOUNT + CASH_ACCUMULATION:.2f} (deployed ${RAINY_AMOUNT:.0f}, saved ${CASH_ACCUMULATION:.0f})
+- Cash pool after rainy buy: ${cash_pool - RAINY_AMOUNT:.2f}
+- Add today's savings: +${CASH_ACCUMULATION:.0f}
+- Final cash pool: ${cash_pool - RAINY_AMOUNT + CASH_ACCUMULATION:.2f}
 
 ═══════════════════════════════════════════════════════════════════
 
