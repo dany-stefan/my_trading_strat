@@ -57,18 +57,21 @@ bash local_email_send_test.sh
 
 ---
 
-### Option 4: Scheduled GitHub Actions (Official Payday Email)
-**Schedule:** Automatically runs on 1st and 15th of each month at 1:00 PM EST
+### Option 4: Scheduled GitHub Actions (Official Execution Day Email)
+**Schedule:** Automatically runs on 3rd and 17th of each month at 1:00 PM EST (or next TSX trading day)
+
+**Important:** Payday is the 1st and 15th, but email alerts and buy order execution occur on the 3rd and 17th (2 days later) to align with Wealthsimple's recurring purchase schedule.
 
 **What it does:**
-- Sends **official payday email** to your Gmail inbox
+- Sends **official execution day email** to your Gmail inbox
 - Updates tracking.json with cash pool and rainy buys
 - Records rainy day purchases
 
 **Email received:**
-- Subject: `📅 PAYDAY: Investment Metrics - [Date]`
-- Header: "🎯 RSI STRATEGY MONITOR - PAYDAY"
+- Subject: `📅 EXECUTION DAY: Investment Metrics - [Date]`
+- Header: "🎯 RSI STRATEGY MONITOR - EXECUTION DAY"
 - **No test markers** - this is the real thing!
+- Note: Execution occurs on 3rd/17th (2 days after payday on 1st/15th)
 
 ## 📊 Strategy Analysis & Reports
 
@@ -102,10 +105,11 @@ For comprehensive strategy analysis, see:
    - Top 3 Variants Comparison
 
 4. **Strategy Framework**
-   - Payday schedule (1st & 15th)
-   - Cash accumulation rules ($30 per payday)
+   - Execution schedule (3rd & 17th, which is 2 days after payday on 1st & 15th)
+   - Cash accumulation rules ($30 per execution day)
    - Rainy day deployment rules (RSI SMA(7) < 45)
    - Why RSI SMA(7) was chosen over raw RSI(14)
+   - Wealthsimple recurring buy alignment
 
 5. **Current Status**
    - Cash pool balance
@@ -122,7 +126,8 @@ For comprehensive strategy analysis, see:
 ## 🔧 Data Flow Diagram
 
 ```
-monitor_strategy.py (scheduled: 1st & 15th via GitHub Actions)
+monitor_strategy.py (scheduled: 3rd & 17th via GitHub Actions)
+Note: Payday is 1st & 15th, execution is 2 days later (3rd & 17th)
     ↓
 Fetches live market data from Yahoo Finance
     - SPY price

@@ -43,10 +43,10 @@ rsi_double_dca_backtest/
 ### monitor_strategy.py (Production Sender)
 - **Purpose**: Production email sender for GitHub Actions workflow
 - **Behavior**: Actually SENDS real emails via SMTP
-- **Schedule**: Runs on 1st and 15th of each month (or next business day)
+- **Schedule**: Executes on 3rd and 17th of each month (or next TSX trading day). Note: Payday is 1st and 15th, but execution occurs 2 days later to align with Wealthsimple recurring buys.
 - **Environment Variables**:
-  - `FORCE_EMAIL=true`: Sends email even if not payday (for testing)
-  - `FORCE_EMAIL=false` or unset: Only sends on actual paydays
+  - `FORCE_EMAIL=true`: Sends email even if not execution day (for testing)
+  - `FORCE_EMAIL=false` or unset: Only sends on actual execution days (3rd and 17th)
 
 **⚠️ IMPORTANT**: 
 - This script SENDS REAL EMAILS when run with `FORCE_EMAIL=true`
@@ -76,10 +76,11 @@ FORCE_EMAIL=true python monitor_strategy.py
 ```
 
 ### GitHub Actions (Automated)
-The workflow runs `monitor_strategy.py` on 1st and 15th:
+The workflow runs `monitor_strategy.py` on 3rd and 17th (execution days, 2 days after payday on 1st and 15th):
 - No `FORCE_EMAIL` needed
-- Script detects it's payday and sends automatically
+- Script detects it's execution day and sends automatically
 - Updates tracking.json with cash pool and rainy buys
+- Aligns with Wealthsimple recurring buy schedule
 
 ## local_email_send_test.sh Clarification
 
@@ -110,11 +111,11 @@ Both scripts use the same credentials (from `monitor_strategy.py`):
 ## Strategy Parameters
 
 Configured in `email_generator.py`:
-- **Base DCA**: $150 CAD every payday
+- **Base DCA**: $150 CAD every execution day (3rd and 17th)
 - **Rainy Amount**: $150 CAD extra (when RSI SMA(7) < 45)
-- **Cash Accumulation**: $30 CAD per payday
+- **Cash Accumulation**: $30 CAD per execution day
 - **RSI Threshold**: 45.0
-- **Schedule**: 1st and 15th of each month
+- **Payday Schedule**: Payday on 1st and 15th, execution on 3rd and 17th (2 days later to sync with Wealthsimple recurring buys)
 
 ## Mobile Optimization
 
@@ -143,6 +144,6 @@ All emails are optimized for Gmail iOS app:
 - Open `simulated_email_preview.html` on desktop to verify mobile @media queries
 
 ### "Email not sending from GitHub Actions"
-- Check workflow schedule (1st and 15th only)
+- Check workflow schedule (3rd and 17th only, 2 days after payday on 1st and 15th)
 - Verify `SENDER_PASSWORD` secret is set correctly
 - Review workflow logs for SMTP errors

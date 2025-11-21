@@ -3,6 +3,8 @@ Simulate Payday Email - Preview Email Content With HTML Formatting
 
 This script shows exactly what your payday email will look like,
 including HTML table formatting, without actually sending it.
+
+Uses the same modular components as monitor_strategy.py for consistency.
 """
 
 import os
@@ -14,9 +16,10 @@ from email.mime.image import MIMEImage
 from pathlib import Path
 from email_formatter import convert_to_html
 from email_generator import generate_email_content
+from payday_scheduler import get_scheduler
 
 # =============================================================================
-# CONFIGURATION
+# CONFIGURATION (should match monitor_strategy.py)
 # =============================================================================
 TRACKING_FILE = "strategy_tracking.json"
 INITIAL_CASH_POOL = 330.0
@@ -27,6 +30,18 @@ CASH_ACCUMULATION = 30.0
 RAINY_AMOUNT = 150.0
 RSI_THRESHOLD = 45
 RSI_PERIOD = 14
+
+# Payday configuration - uses same modular scheduler as production
+PAYDAY_DAYS = [3, 17]  # 3rd and 17th of each month
+TRADING_EXCHANGE = 'TSX'  # Toronto Stock Exchange
+SCHEDULER_TYPE = 'BIWEEKLY_TSX'  # Biweekly with TSX calendar validation
+
+# Initialize payday scheduler (polymorphic - matches production configuration)
+payday_scheduler = get_scheduler(
+    scheduler_type=SCHEDULER_TYPE,
+    days=PAYDAY_DAYS,
+    exchange=TRADING_EXCHANGE
+)
 
 # =============================================================================
 # HELPER FUNCTIONS

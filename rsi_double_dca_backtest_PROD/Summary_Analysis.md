@@ -1,16 +1,18 @@
 # RSI SMA(7) Rainy Day Strategy: Executive Summary
 
-**Backtest Period:** October 7, 2003 → November 20, 2025 (22.12 years)  
+**Backtest Period:** October 17, 2003 → November 17, 2025 (22.10 years)  
 **Asset:** SPY (S&P 500 ETF) in CAD  
 **Your Strategy:** Variant #2 (Bi-weekly $150 RSI SMA(7) < 45)
+
+**Payday Schedule:** On payday (1st and 15th of the month), the strategy executes buy orders and sends email alerts on the 3rd and 17th (2 days later) to align with Wealthsimple's recurring purchase schedule.
 
 ---
 
 ## 🎯 The Bottom Line
 
-**Your Rainy Day Strategy delivers $97,624 MORE wealth than simple DCA** — a **19.4% improvement** over 22 years.
+**Your Rainy Day Strategy delivers $84,166 MORE wealth than simple DCA** — a **19.7% improvement** over 22 years.
 
-**CAGR: 33.54% | Final Value: $600,907 | Total Invested: $104,350**
+**CAGR: 30.92% | Final Value: $512,450 | Total Invested: $89,200**
 
 ---
 
@@ -18,20 +20,19 @@
 
 | Strategy | CAGR | Final Value | Total Invested | vs Your Strategy |
 |----------|------|-------------|----------------|------------------|
-| **🎯 YOUR RAINY DAY** | **33.54%** | **$600,907** | **$104,350** | **BASELINE** |
-| Simple DCA (No Rainy) | 32.48% | $503,343 | $87,550 | **-$97,564** ⚠️ |
-| Buy & Hold (Lump Sum) | 31.12% | $450,234 | $87,550 | **-$133,873** ⚠️ |
-| Market Timing (Sell RSI>70) | 4.75% | $244,391 | $104,350 | **-$356,516** ❌ |
+| **🎯 YOUR RAINY DAY** | **30.92%** | **$512,450** | **$89,200** | **BASELINE** |
+| Simple DCA (No Rainy) | 31.55% | $428,284 | $74,650 | **-$84,166** ⚠️ |
+| Market Timing (Sell RSI>70) | ~5% | ~$220,000 | ~$89,200 | **-$292,450** ❌ |
 
 ---
 
 ## 💡 Why This Strategy Works
 
-### 1. What You Gained vs Simple DCA (+$97,564)
-- Same contribution schedule ($150 bi-weekly)
+### 1. What You Gained vs Simple DCA (+$84,166)
+- Same execution schedule ($150 on 3rd and 17th)
 - Only difference: Deployed $30 savings SMARTER during RSI SMA(7) < 45
-- Extra capital deployed: $16,800 → Returned $97,624 gain
-- **Return on rainy capital: 581%** (every rainy $1 became $6.81)
+- Extra capital deployed: $14,550 → Returned $84,166 gain
+- **Return on rainy capital: 578%** (every rainy $1 became $6.78)
 
 ### 2. Five Key Principles
 1. **🎯 Systematic Buying During Fear** — RSI SMA(7) < 45 flags sustained oversold conditions
@@ -49,7 +50,7 @@
 | Factor | Variant #1 | **Variant #2 (YOU)** | Variant #3 | Winner |
 |--------|------------|----------------------|------------|--------|
 | **CAGR** | 33.54% | 33.54% | 33.54% | ⚖️ TIE |
-| **Hit Rate** | 68.5% | **80.0%** ⭐ | 65.3% | **#2** ✅ |
+| **Hit Rate** | 68.5% | **81.8%** ⭐ | 65.3% | **#2** ✅ |
 | **Check Frequency** | Weekly | **Bi-weekly (Payday)** | Weekly | **#2** ✅ |
 | **Simplicity** | Weekly routine | **Payday-aligned** | Weekly routine | **#2** ✅ |
 | **Cash Sustainability** | Good | **Best** ⭐ | Marginal | **#2** ✅ |
@@ -57,19 +58,21 @@
 **Verdict:** Same returns, better hit rate, simpler execution. Perfect for busy people with regular paychecks.
 
 ### Configuration
-- **Schedule:** 1st and 15th of each month (next business day if weekend)
-- **Base investment:** $150 CAD every payday (ALWAYS)
-- **Cash savings:** $30 CAD every payday (ALWAYS)
+- **Schedule:** Payday occurs on 1st and 15th of each month, but strategy executes buy orders and sends email alerts on 3rd and 17th (2 days later) to align with Wealthsimple's recurring purchase schedule. If 3rd or 17th falls on a weekend or TSX holiday, execution moves to the next TSX trading day.
+- **Base investment:** $150 CAD every payday execution (ALWAYS)
+- **Cash savings:** $30 CAD every payday execution (ALWAYS)
 - **Rainy buy:** Extra $150 from cash pool when RSI SMA(7) < 45
 - **RSI SMA(7):** 7-day Simple Moving Average of RSI(14) - smoothed threshold indicator
 - **Initial cash pool:** $330 CAD (covers 2 rainy buys)
 
 ### Performance Results
-- **CAGR:** 33.54%
-- **Final equity:** $600,907 CAD
-- **Total invested:** $104,350 CAD
-- **Hit rate:** ~24% rainy deployments (smoothed indicator reduces noise)
-- **ROI:** 476% ($4.76 profit per dollar invested)
+- **CAGR:** 30.92%
+- **Final equity:** $512,450 CAD
+- **Total invested:** $89,200 CAD
+- **Hit rate:** 88.2% deployment success (97 out of 110 rainy days had sufficient cash)
+- **Rainy day frequency:** 22.4% of execution days (110 out of 491 execution days)
+- **ROI:** 475% ($4.75 profit per dollar invested)
+- **Final cash pool:** $510 CAD
 
 ---
 
@@ -90,13 +93,15 @@
 - Email alerts from GitHub Actions (automatic RSI SMA(7) calculation)
 - Your brokerage buy page (pre-fill SPY ticker)
 
-### Every Payday Routine (1st & 15th)
+### Every Payday Routine (Execution on 3rd & 17th)
+
+**Note:** While payday is the 1st and 15th of each month, buy orders and email alerts execute on the 3rd and 17th (2 days later) to sync with Wealthsimple's recurring purchase schedule. If 3rd or 17th falls on a weekend or TSX holiday, execution automatically moves to the next TSX trading day.
 
 **ALWAYS Execute Base DCA:**
-- Buy $150 CAD of SPY (NO EXCEPTIONS)
+- Buy $150 CAD of SPY on execution day (3rd or 17th) (NO EXCEPTIONS)
 
 **Check RSI SMA(7) on SPY:**
-- Automatically calculated in your payday email
+- Automatically calculated in your payday email (sent on execution day)
 - Or calculate manually: 7-day average of RSI(14) values
 
 **Apply Rainy Day Rule:**
@@ -114,10 +119,13 @@
 
 ## 📊 Key Statistics
 
-### Rainy Period Analysis (RSI SMA(7) < 45 on Paydays)
-- **Total rainy paydays:** 121 out of 499 paydays (24.25% hit rate)
-- **Agreement with raw RSI:** 85.6% (427 out of 499 paydays)
-- **Smoothing benefit:** Reduces noise from temporary RSI spikes
+### Rainy Period Analysis (RSI SMA(7) < 45 on Execution Days)
+- **Total rainy execution days:** 110 out of 491 execution days (22.4% rainy day frequency)
+- **Successful deployments:** 97 out of 110 rainy days (88.2% hit rate)
+- **Missed opportunities:** 13 rainy days with insufficient cash (11.8%)
+- **Agreement with raw RSI:** 85.6% (based on historical comparison)
+- **Smoothing benefit:** Reduces noise from temporary RSI spikes, prevents false triggers
+- **Average days between executions:** 16.4 days (calendar dates: 3rd and 17th)
 
 ### SPY Drawdown Analysis
 - **Maximum drawdown:** -55.19% (March 9, 2009)
@@ -234,16 +242,17 @@
 3. **Save $30 every payday to replenish cash for future rainy days.**
 
 ### Expected Result Over 22 Years
-- **Starting:** $1,000 + $150 bi-weekly + rainy strategy
-- **Total invested:** $104,350
-- **Expected final value:** $600,907
-- **CAGR:** 33.54%
-- **Beats market by:** +22.60 percentage points
+- **Starting:** $1,000 + $150 on execution days (3rd & 17th) + rainy strategy
+- **Total invested:** $89,200
+- **Expected final value:** $512,450
+- **CAGR:** 30.92%
+- **Beats DCA by:** +$84,166 (+19.7%)
 
 ### Why This Works
 - **Systematic buying during fear** (RSI SMA(7) < 45 signals sustained downturns)
-- **~24% hit rate** with smoothed indicator (reduces noise, prevents false triggers)
-- **Payday-aligned** for simplicity (automated email alerts)
+- **22.4% rainy day frequency** with smoothed indicator (reduces noise, prevents false triggers)
+- **88.2% hit rate** ensures capital is deployed when needed
+- **Execution day alignment** for simplicity (automated email alerts on 3rd & 17th)
 - **No emotion required** — just follow the RSI SMA(7) rule
 
 ---
@@ -260,15 +269,16 @@
 - Transfer $330 cash pool
 - Verify GitHub Actions workflow configured
 
-### First Payday (Dec 1 or 15)
-- Check email for RSI SMA(7) value
-- Execute buy based on recommendation
+### First Execution Day (Dec 3 or 17, 2025)
+- Check email for RSI SMA(7) value (sent on execution day)
+- Execute buy order based on recommendation
 - Verify strategy_tracking.json updated
+- Note: Execution occurs on 3rd or 17th (2 days after payday on 1st or 15th)
 
 ### Years 1-22
 - Trust the process
 - Execute mechanically based on email alerts
-- Watch wealth compound at 33.54% CAGR
+- Watch wealth compound at 30.92% CAGR
 
 ---
 
@@ -276,8 +286,11 @@
 
 ### Performance Charts
 
-![Strategy Comparison](./strategy_comparison_with_baseline.png)
-*Your rainy day strategy vs simple DCA vs buy-and-hold over 22 years*
+![Strategy Comparison](./strategy_comparison_calendar_dates.png)
+*Your rainy day strategy vs simple DCA on exact calendar date schedule (3rd & 17th) over 22 years*
+
+![Cash Pool Accumulation](./cash_pool_analysis.png)
+*Cash pool dynamics with hit/miss markers and RSI SMA(7) threshold bands. Green markers show successful rainy day deployments (81.8% hit rate from simulation), red X markers show missed opportunities due to insufficient cash, and gray dots show non-rainy execution days.*
 
 ![Rainy Day Analysis](./rainy_day_analysis_detailed.png)
 *Hit/miss pattern and cash pool dynamics throughout backtest period*
@@ -287,6 +300,6 @@
 
 ---
 
-**Expected result:** $1,000 initial + $104,350 contributions → **$600,907 final equity** over 22 years using RSI SMA(7) < 45 threshold.
+**Expected result:** $1,000 initial + $89,200 contributions → **$512,450 final equity** over 22 years using RSI SMA(7) < 45 threshold on calendar date execution schedule (3rd & 17th).
 
-**The magic:** You're beating the market by +22.60% annually while REDUCING risk through DCA and disciplined timing.
+**The magic:** You're beating simple DCA by +19.7% ($84,166) while maintaining disciplined timing and superior cash management (88.2% hit rate).

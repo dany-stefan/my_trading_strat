@@ -2,10 +2,9 @@ name: RSI SMA Strategy Monitor
 
 on:
   schedule:
-    # Runs at 10:00 AM EST (15:00 UTC) every day
-    - cron: '0 15 * * *'
-    # Also runs at 1:00 PM EST (18:00 UTC) on 1st and 15th (paydays)
-    - cron: '0 18 1,15 * *'
+    # Runs at 1:00 PM EST (18:00 UTC) on 3rd and 17th (execution days)
+    # Note: Payday is 1st and 15th, but execution occurs 2 days later to sync with Wealthsimple recurring buys
+    - cron: '0 18 3,17 * *'
   workflow_dispatch:  # Allows manual trigger from GitHub UI (sends TEST email)
 
 jobs:

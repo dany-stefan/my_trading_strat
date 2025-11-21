@@ -18,11 +18,15 @@
 
 ## Your Schedule
 
-### Bi-weekly Paydays
-- **1st of each month** (or next business day if weekend)
-- **15th of each month** (or next business day if weekend)
+### Bi-weekly Paydays with 2-Day Delay
 
-### Actions on Payday
+**Important:** Payday occurs on the 1st and 15th of each month, but buy order execution and email alerts are sent on the 3rd and 17th (2 days later) to align with Wealthsimple's recurring purchase schedule.
+
+- **Payday dates:** 1st and 15th of each month
+- **Execution dates:** 3rd and 17th of each month (or next TSX trading day if weekend/holiday)
+- **Reason for 2-day delay:** Synchronizes with Wealthsimple's recurring buy order processing
+
+### Actions on Execution Day (3rd & 17th)
 
 1. **ALWAYS invest $150 CAD base amount** (no matter what)
 2. **ALWAYS save $30 CAD to your cash pool** (mental accounting or separate account)
@@ -39,11 +43,12 @@
 ## Email Alert Setup
 
 I've created `monitor_strategy.py` which will:
-- ✅ Calculate RSI SMA(7) automatically from RSI(14) values on your payday (1st and 15th)
+- ✅ Calculate RSI SMA(7) automatically from RSI(14) values on your execution day (3rd and 17th)
 - ✅ Track your cash pool automatically
 - ✅ Send email with current metrics and recommendation
 - ✅ Tell you whether to buy extra $150 or skip (based on RSI SMA(7) < 45)
 - ✅ Track all investments in `strategy_tracking.json`
+- ✅ Note: Emails sent on 3rd and 17th (2 days after payday on 1st and 15th)
 
 ### Configure Email Notifications
 
@@ -134,10 +139,10 @@ Now the script runs every day at 10 AM and logs to `monitor.log`.
 
 ## Email Alert Examples
 
-### Payday Metrics Email
-**Subject:** 📅 PAYDAY: Investment Metrics - 2025-12-01
+### Execution Day Metrics Email
+**Subject:** 📅 EXECUTION DAY: Investment Metrics - 2025-12-03
 
-**Body:**
+**Body:****
 ```
 RSI SMA(7) Cash Variant #2 - Payday Investment Metrics
 
@@ -164,7 +169,7 @@ YOUR DECISION TODAY:
    Total investment today: $300 ($150 base + $150 rainy)
    Cash pool after: $0.00
 
-Next payday: 15th of this month
+Next execution day: 17th of this month (2 days after payday on 15th)
 ```
 
 ---
@@ -203,8 +208,10 @@ The script maintains `strategy_tracking.json` with:
 
 | Event | Date | Base Investment | Cash Savings | Rainy Check | Rainy Buy? |
 |-------|------|-----------------|--------------|-------------|------------|
-| Payday 1 | 1st of month* | $150 | +$30 | If RSI SMA(7) < 45 | If cash ≥ $150 |
-| Payday 2 | 15th of month* | $150 | +$30 | If RSI SMA(7) < 45 | If cash ≥ $150 |
+| Payday | Execution Day | Base Investment | Cash Savings | Rainy Buy Condition | Rainy Buy Action |
+|--------|---------------|-----------------|--------------|---------------------|------------------|
+| 1st of month | 3rd of month (or next TSX trading day) | $150 | +$30 | If RSI SMA(7) < 45 | If cash ≥ $150 |
+| 15th of month | 17th of month (or next TSX trading day) | $150 | +$30 | If RSI SMA(7) < 45 | If cash ≥ $150 |
 
 *Or next business day if weekend
 

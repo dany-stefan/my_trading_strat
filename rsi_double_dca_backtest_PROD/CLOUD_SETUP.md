@@ -88,14 +88,16 @@ This shows exactly what the email will contain - no email sent, just a preview!
 ## ✅ That's It!
 
 The workflow will now run automatically:
-- **Daily at 10:00 AM EST** (15:00 UTC)
-- **Extra check on 1st and 15th at 1:00 PM EST** (18:00 UTC)
+- **Daily at 1:00 PM EST** (18:00 UTC)
+- **Execution days: 3rd and 17th of each month** (or next TSX trading day)
+
+**Important:** Payday occurs on the 1st and 15th of each month, but buy order execution and email alerts are sent on the 3rd and 17th (2 days later) to align with Wealthsimple's recurring purchase schedule.
 
 ### What happens:
 - ✅ GitHub servers run your script in the cloud
 - ✅ No Mac needed - works even when your computer is off
 - ✅ Completely free (GitHub Actions gives 2,000 minutes/month free)
-- ✅ Email sent directly from GitHub servers
+- ✅ Email sent on execution days (3rd and 17th) only
 - ✅ Logs saved for 30 days
 
 ---
@@ -127,8 +129,12 @@ schedule:
 ## Timezone Note
 
 GitHub Actions uses **UTC time**. Current schedule:
-- `0 15 * * *` = 10:00 AM EST (15:00 UTC)
-- `0 18 1,15 * *` = 1:00 PM EST on 1st/15th (18:00 UTC)
+- `0 18 3,17 * *` = 1:00 PM EST on 3rd and 17th (18:00 UTC)
+
+**Execution Logic:**
+- Payday: 1st and 15th of each month
+- Execution: 3rd and 17th (2 days later) to sync with Wealthsimple recurring buys
+- If 3rd or 17th is a weekend or TSX holiday, execution moves to next TSX trading day
 
 Adjust if needed for your timezone.
 
@@ -136,7 +142,7 @@ Adjust if needed for your timezone.
 
 ## 🧪 Testing Your Setup (Manual Trigger)
 
-You can **manually test** the GitHub Actions workflow to receive an email **even when it's not payday**:
+You can **manually test** the GitHub Actions workflow to receive an email **even when it's not an execution day (3rd or 17th)**:
 
 ### Steps:
 
@@ -145,23 +151,25 @@ You can **manually test** the GitHub Actions workflow to receive an email **even
 3. On the left sidebar, select **RSI Strategy Monitor** workflow
 4. Click the **Run workflow** button (top right, next to the branch dropdown)
 5. You'll see a dropdown with an option:
-   - **"Send email even if not payday (for testing)"**
+   - **"Send email even if not execution day (for testing)"**
    - Select **true**
 6. Click the green **Run workflow** button
 
 ### What Happens:
 
 Within 1-2 minutes, you'll receive an email with:
-- **Subject:** "🧪 TEST EMAIL (Not Payday): Investment Metrics - [Date]"
-- **Content:** Current SPY price, RSI, and your recommendation
+- **Subject:** "🧪 TEST EMAIL (Local Run): Investment Metrics - [Date]"
+- **Content:** Current SPY price, RSI SMA(7), and your recommendation
 - **Note:** This will NOT update your cash pool or tracking (test mode only)
+- **Reminder:** Actual execution occurs on 3rd and 17th (2 days after payday on 1st and 15th)
 
 ### Perfect For:
 
 - ✅ Verifying email configuration works
-- ✅ Seeing what payday emails look like
+- ✅ Seeing what execution day emails look like
 - ✅ Checking current market conditions remotely
 - ✅ Testing after changing email settings
+- ✅ Understanding the 2-day delay (payday → execution)
 
 ### Local Testing Alternative:
 

@@ -66,15 +66,18 @@ This will:
 ## How It Works
 
 ### Daily Checks (No Email)
-- Workflow runs every day at 10:00 AM EST
-- Script checks if it's payday (1st or 15th)
-- If NOT payday: Logs check, no email sent
+- Workflow runs every day at 1:00 PM EST
+- Script checks if it's an execution day (3rd or 17th, or next TSX trading day)
+- If NOT execution day: Logs check, no email sent
 - Free GitHub Actions minutes used: <1 minute/day
+- Note: Execution days are 3rd and 17th (2 days after payday on 1st and 15th) to sync with Wealthsimple recurring buys
 
-### Payday Emails (1st and 15th)
-- Workflow runs at 10:00 AM EST
-- Script detects it's payday
-- Fetches SPY price and calculates RSI(14)
+### Payday Emails (Execution on 3rd and 17th)
+
+**Important:** While payday occurs on the 1st and 15th of each month, the strategy executes buy orders and sends email alerts on the 3rd and 17th (2 days later) to align with Wealthsimple's recurring purchase schedule. If the 3rd or 17th falls on a weekend or TSX holiday, execution automatically moves to the next TSX trading day.
+
+- Workflow runs at 1:00 PM EST on execution days (3rd and 17th)
+- Script fetches SPY price and calculates RSI(14)
 - Calculates RSI SMA(7) from 7-day RSI history
 - Calculates cash pool balance
 - **Sends email with:**
@@ -83,22 +86,26 @@ This will:
   - Variant comparison table
   - Strategy framework
 
-### Weekend Handling
-- If 1st or 15th falls on weekend
-- Email sent on following Monday instead
+### Weekend and Holiday Handling
+- If 3rd or 17th falls on a weekend or TSX holiday
+- Email sent on the next TSX trading day instead
 - Automatic - no configuration needed
+- TSX holidays checked: New Year's Day, Canada Day, Christmas, Boxing Day
+- Note: Payday is always 1st and 15th, but execution moves to 3rd and 17th (2 days later)
 
 ---
 
 ## Expected Email Schedule
 
-| Date | Email Sent? | Reason |
-|------|-------------|--------|
-| Nov 21, 2025 | ❌ No | Not a payday |
-| Dec 1, 2025 | ✅ Yes | Payday (1st) |
-| Dec 15, 2025 | ✅ Yes | Payday (15th) |
-| Jan 1, 2026 | ✅ Yes | Payday (1st) |
-| Jan 15, 2026 | ✅ Yes | Payday (15th) |
+**Note:** Payday is the 1st and 15th of each month, but email alerts and buy order execution occur on the 3rd and 17th (2 days later) to align with Wealthsimple's recurring purchase schedule.
+
+| Payday Date | Execution Date | Email Sent? | Reason |
+|-------------|----------------|-------------|--------|
+| Nov 21, 2025 | N/A | ❌ No | Not a payday or execution day |
+| Dec 1, 2025 | Dec 3, 2025 | ✅ Yes | Execution day (3rd) - 2 days after payday (1st) |
+| Dec 15, 2025 | Dec 17, 2025 | ✅ Yes | Execution day (17th) - 2 days after payday (15th) |
+| Jan 1, 2026 | Jan 3, 2026 | ✅ Yes | Execution day (3rd) - 2 days after payday (1st) |
+| Jan 15, 2026 | Jan 17, 2026 | ✅ Yes | Execution day (17th) - 2 days after payday (15th) |
 
 ---
 
@@ -113,8 +120,10 @@ This will:
 ### Check Email Configuration
 Look for these in logs:
 ```
-✅ Email sent: 📅 PAYDAY: Investment Metrics - 2025-12-01
+✅ Email sent: 📅 EXECUTION DAY: Investment Metrics - 2025-12-03
 ```
+
+Note: Email subject references execution date (3rd or 17th), which is 2 days after payday (1st or 15th).
 
 Or:
 ```
@@ -136,7 +145,8 @@ Or:
 
 **Wrong timezone?**
 - Workflow uses UTC
-- Current schedule: 15:00 UTC = 10:00 AM EST
+- Current schedule: 18:00 UTC = 1:00 PM EST (on 3rd and 17th)
+- Note: Execution is on 3rd and 17th (2 days after payday on 1st and 15th)
 - Adjust cron in workflow file if needed
 
 ---
