@@ -30,7 +30,7 @@ rsi_double_dca_backtest/
 - **Purpose**: Generate email subject and body content
 - **Function**: `generate_email_content(rsi, price, cash_pool, total_contributions, rainy_buys, is_simulation) → (subject, body)`
 - **Logic**:
-  - Determines rainy day status (RSI < 45)
+  - Determines rainy day status (RSI SMA(7) < 45)
   - Calculates recommendations (buy extra vs save)
   - Formats next payday date
   - Includes all strategy tables and metrics
@@ -111,7 +111,7 @@ Both scripts use the same credentials (from `monitor_strategy.py`):
 
 Configured in `email_generator.py`:
 - **Base DCA**: $150 CAD every payday
-- **Rainy Amount**: $150 CAD extra (when RSI < 45)
+- **Rainy Amount**: $150 CAD extra (when RSI SMA(7) < 45)
 - **Cash Accumulation**: $30 CAD per payday
 - **RSI Threshold**: 45.0
 - **Schedule**: 1st and 15th of each month

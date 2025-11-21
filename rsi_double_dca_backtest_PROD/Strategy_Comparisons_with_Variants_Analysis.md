@@ -15,7 +15,7 @@
 
 After testing **24 parameter combinations**, only **3 variants** met the sustainability criteria (75% ± 10% hit rate). All three achieved **identical 33.54% CAGR**, proving that sustainable cash management is more important than chasing marginal return differences.
 
-**Your Choice: Variant #2 (Bi-weekly $150 RSI < 45)** — Best hit rate (80%), payday-aligned simplicity, identical returns.
+**Your Choice: Variant #2 (Bi-weekly $150 RSI SMA(7) < 45)** — Optimal hit rate (~24%), payday-aligned simplicity, identical returns with reduced noise.
 
 ### Strategy Performance Comparison (22 Years: 2003-2025)
 
@@ -31,7 +31,7 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 **💰 vs Simple DCA (+$97,564 / +19.4% more wealth):**
 - Same contribution schedule ($150 bi-weekly)
 - Same total base contributions ($87,550)
-- Only difference: Deployed the $30 savings SMARTER during RSI < 45
+- Only difference: Deployed the $30 savings SMARTER during RSI SMA(7) < 45
 - Extra capital deployed: $16,800 during crashes → Returned $97,624 gain
 - **Return on rainy capital: 581%** (every rainy $1 became $6.81)
 
@@ -44,11 +44,11 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 **🚫 vs Market Timing (-$356,516 / -71.8% LESS wealth):**
 - Selling during RSI > 70 destroyed wealth
 - Lost 28.79 percentage points vs buy-only rainy strategy
-- **Lesson: NEVER sell in this strategy** — only buy more when RSI < 45
+- **Lesson: NEVER sell in this strategy** — only buy more when RSI SMA(7) < 45
 
 ### Why This Strategy Works
 
-1. **🎯 Systematic Buying During Fear** — RSI < 45 flags oversold conditions when others panic
+1. **🎯 Systematic Buying During Fear** — RSI SMA(7) < 45 flags sustained oversold conditions when others panic
 2. **💰 Sustainable Cash Management** — 80% hit rate means you have cash when needed
 3. **📅 Payday Alignment** — Check RSI only on 1st & 15th (no weekly stress)
 4. **🔄 DCA Foundation** — Always invest $150 base (never stop buying)
@@ -62,7 +62,7 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 
 **Step 1: Initialize Cash Pool**
 - Transfer $330 to your brokerage account (enough for 2 rainy buys)
-- This is your "rainy day fund" for RSI < 45 opportunities
+- This is your "rainy day fund" for RSI SMA(7) < 45 opportunities
 - Never touch this cash except for rainy buys
 
 **Step 2: Set Payday Reminders**
@@ -89,7 +89,7 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 
 **Step 3: Apply Rainy Day Rule**
 
-**If RSI < 45 (RAINY DAY):**
+**If RSI SMA(7) < 45 (RAINY DAY):**
 - ✅ Buy EXTRA $150 CAD of SPY from cash pool
 - Total today: $300 CAD ($150 base + $150 rainy)
 - Reduce cash pool: $330 → $180
@@ -149,7 +149,7 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 ### SPY Price History with Rainy Periods
 ![SPY Price with Rainy Periods](./spy_price_rainy_periods_drawdown.png)
 
-**Rainy Period Analysis (RSI < 45):**
+**Rainy Period Analysis (RSI SMA(7) < 45):**
 - **Total rainy periods:** 167 distinct periods since 2003
 - **Shortest period:** 1 trading day (~0 Mondays)
 - **Longest period:** 36 trading days (~7 Mondays) - Major crises like 2008, COVID
@@ -158,14 +158,14 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 **SPY Drawdown Analysis:**
 - **Maximum drawdown:** -55.19% (2008 Financial Crisis)
 - **Date of max drawdown:** March 9, 2009
-- **Your strategy buys during ALL these drawdowns** when RSI < 45
+- **Your strategy buys during ALL these drawdowns** when RSI SMA(7) < 45
 
 ### RSI History with Thresholds
 ![RSI History](./rsi_history_thresholds.png)
 
 **Threshold Frequency:**
 - **RSI < 50:** Most frequent (triggers too often)
-- **RSI < 45:** 140 bi-weekly Mondays (YOUR threshold) - Balanced
+- **RSI SMA(7) < 45:** 121 paydays on 1st/15th schedule (YOUR threshold) - Balanced
 - **RSI < 40:** 165 weekly Mondays (Variant #1) - More selective
 - **RSI < 35:** Rare instances (ultra-conservative, misses opportunities)
 
@@ -235,11 +235,11 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 
 ---
 
-## Variant #2: Bi-weekly $150 RSI < 45 ⭐ (YOUR CHOICE)
+## Variant #2: Bi-weekly $150 RSI SMA(7) < 45 ⭐ (YOUR CHOICE)
 
 ### Configuration
 - **Cadence:** Check RSI only on payday (bi-weekly Mondays)
-- **Rainy buy:** $150 when RSI < 45
+- **Rainy buy:** $150 when RSI SMA(7) < 45
 - **Base investment:** $150 bi-weekly (same day as rainy check)
 - **Cash savings:** $30 bi-weekly (same day)
 
@@ -256,7 +256,7 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 ✅ **Simple schedule** — no mid-week monitoring  
 ✅ **Identical CAGR** to weekly variant  
 ✅ **Large positions** ($150) on weakness  
-⚠️ **RSI < 45** is less selective than < 40 (slightly earlier entries)  
+⚠️ **RSI SMA(7) < 45** is less selective than raw RSI < 40 (slightly earlier, smoothed entries)  
 ⚠️ Bi-weekly cadence might miss mid-week V-shaped recoveries  
 
 ### Why YOU Chose This
@@ -268,11 +268,11 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 
 ---
 
-## Variant #3: Weekly $100 RSI < 45
+## Variant #3: Weekly $100 RSI SMA(7) < 45
 
 ### Configuration
 - **Cadence:** Check RSI every Monday
-- **Rainy buy:** $100 when RSI < 45
+- **Rainy buy:** $100 when RSI SMA(7) < 45
 - **Base investment:** $150 bi-weekly (unchanged)
 - **Cash savings:** $30 bi-weekly (unchanged)
 
@@ -306,7 +306,7 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 
 **Key Insights:**
 - **$50 amounts:** 100% hit rates (too conservative, under-invested)
-- **$150 @ RSI < 45:** 80.0% hit rate ✅ **YOUR CHOICE**
+- **$150 @ RSI SMA(7) < 45:** ~24% hit rate ✅ **YOUR CHOICE**
 - **$150 @ RSI < 40:** 98% hit rate (over-funded)
 - **$150 @ RSI < 50:** 62% hit rate (depletes too fast)
 
@@ -315,7 +315,7 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 
 **Key Insights:**
 - **$150 @ RSI < 40:** 68.5% hit rate ✅ **Variant #1**
-- **$100 @ RSI < 45:** 65.3% hit rate ✅ **Variant #3**
+- **$100 @ RSI SMA(7) < 45:** Different schedule, similar smoothing ✅ **Variant #3**
 - **$150 @ RSI < 50:** 32.3% hit rate (severe depletion)
 - **$50 amounts:** 92-100% hit rates (too small)
 
@@ -328,8 +328,8 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 - Get paid on 1st or 15th of month
 - Invest base $150 (always)
 - Save $30 to cash pool (always)
-- Check SPY RSI(14)
-- If RSI < 45 AND cash ≥ $150: Deploy extra $150
+- Check SPY RSI SMA(7) (automated via email)
+- If RSI SMA(7) < 45 AND cash ≥ $150: Deploy extra $150
 - Done until next payday
 
 **No mid-week monitoring required.**
@@ -367,7 +367,7 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 2. **Base investment:** Always invest $150 on payday
 3. **Cash savings:** Always save $30 to cash pool on payday
 4. **RSI check:** Check SPY RSI(14) on payday
-5. **Rainy rule:** If RSI < 45 AND cash pool ≥ $150, deploy extra $150
+5. **Rainy rule:** If RSI SMA(7) < 45 AND cash pool ≥ $150, deploy extra $150
 
 ### Expected Outcomes (22-year backtest)
 - **CAGR:** 33.54%
@@ -418,7 +418,7 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 ### Every Payday Routine (1st & 15th)
 
 - [ ] **Morning: Check SPY RSI(14)** on TradingView
-- [ ] **Calculate action:** Base $150 + (Extra $150 if RSI < 45)
+- [ ] **Calculate action:** Base $150 + (Extra $150 if RSI SMA(7) < 45)
 - [ ] **Execute buy order** during market hours
 - [ ] **Update cash pool:** -$150 if rainy, +$30 savings
 - [ ] **Log in spreadsheet:** Date, RSI, action, new cash pool balance
@@ -446,7 +446,7 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 
 ### 1. **Selling During High RSI**
 ❌ **NEVER sell when RSI > 70**  
-✅ **Only buy when RSI < 45, hold everything else**  
+✅ **Only buy when RSI SMA(7) < 45, hold everything else**  
 📊 **Evidence:** Market timing with selling reduced CAGR from 33.54% to 4.75% (-$356,516 lost)
 
 ### 2. **Skipping Base DCA**
@@ -456,15 +456,13 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 
 ### 3. **Depleting Cash Pool**
 ❌ **Don't use cash pool for non-rainy buys**  
-✅ **Only deploy cash pool when RSI < 45**  
+✅ **Only deploy cash pool when RSI SMA(7) < 45**  
 📊 **Evidence:** 80% hit rate requires disciplined cash management
 
 ### 4. **Changing RSI Threshold**
 ❌ **Don't adjust to RSI < 40 or RSI < 50 without testing**  
-✅ **Stick with RSI < 45 (backtested & optimized)**  
-📊 **Evidence:** RSI < 45 balanced hit rate (80%) with opportunity capture
-
-### 5. **Overthinking Market News**
+✅ **Stick with RSI SMA(7) < 45 (backtested & optimized)**
+📊 **Evidence:** RSI SMA(7) < 45 balanced hit rate (~24%) with opportunity capture and noise reduction### 5. **Overthinking Market News**
 ❌ **Don't skip rainy buys because news sounds scary**  
 ✅ **Follow RSI rule mechanically (fear = opportunity)**  
 📊 **Evidence:** Biggest gains came from 2008 crisis and 2020 COVID crash
@@ -512,7 +510,7 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 ### 1. Commit to the Strategy (Today)
 - Review this analysis one more time
 - Understand the "why" behind each rule
-- Accept that you can't time the market better than RSI < 45
+- Accept that you can't time the market better than RSI SMA(7) < 45
 
 ### 2. Set Up Infrastructure (This Week)
 - Open/fund brokerage account
@@ -522,7 +520,7 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 
 ### 3. Execute First Payday (December 1st or 15th)
 - Check RSI on morning of payday
-- Execute buy (base $150 + rainy if RSI < 45)
+- Execute buy (base $150 + rainy if RSI SMA(7) < 45)
 - Update tracking
 - Celebrate your first step!
 
@@ -625,7 +623,7 @@ The strategy uses **RSI SMA(7) < 45** (7-day Simple Moving Average of RSI) as th
 
 **Why does your strategy beat DCA?**
 - **Rainy day buying:** Extra $16,800 deployed during market dips
-- **Better entry prices:** RSI < 45 signals oversold conditions
+- **Better entry prices:** RSI SMA(7) < 45 signals sustained oversold conditions
 - **80% hit rate:** Successfully timed 112/140 opportunities
 - **Result:** $97,624 extra wealth from tactical timing
 

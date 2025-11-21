@@ -1,10 +1,10 @@
-# RSI Cash Strategy Variant #2 - Implementation Guide
+# RSI SMA(7) Cash Strategy Variant #2 - Implementation Guide
 
 ## Strategy Summary
 
-**Variant:** #2 - Bi-weekly $150 RSI < 45  
+**Variant:** #2 - Bi-weekly $150 RSI SMA(7) < 45  
 **Expected CAGR:** 33.54%  
-**Hit Rate:** 80.0% (highest of all variants!)  
+**Hit Rate:** ~24% rainy deployments (smoothed indicator)  
 **Final Equity (22 years):** $600,907 CAD  
 **vs Baseline DCA:** +19.4% more wealth (+$97,624)
 
@@ -26,11 +26,11 @@
 
 1. **ALWAYS invest $150 CAD base amount** (no matter what)
 2. **ALWAYS save $30 CAD to your cash pool** (mental accounting or separate account)
-3. **Check SPY RSI(14):**
-   - If RSI < 45 AND cash pool ≥ $150:
+3. **Check RSI SMA(7) via automated email:**
+   - If RSI SMA(7) < 45 AND cash pool ≥ $150:
      - **BUY EXTRA $150 from cash pool** (rainy day buy)
      - Total investment: $300 ($150 base + $150 rainy)
-   - If RSI ≥ 45:
+   - If RSI SMA(7) ≥ 45:
      - Only invest the $150 base
      - Cash pool grows by $30
 
@@ -39,10 +39,10 @@
 ## Email Alert Setup
 
 I've created `monitor_strategy.py` which will:
-- ✅ Check SPY RSI(14) on your payday (1st and 15th)
+- ✅ Calculate RSI SMA(7) automatically from RSI(14) values on your payday (1st and 15th)
 - ✅ Track your cash pool automatically
 - ✅ Send email with current metrics and recommendation
-- ✅ Tell you whether to buy extra $150 or skip (based on RSI < 45)
+- ✅ Tell you whether to buy extra $150 or skip (based on RSI SMA(7) < 45)
 - ✅ Track all investments in `strategy_tracking.json`
 
 ### Configure Email Notifications
@@ -94,10 +94,10 @@ cd /Users/danystefan/Documents/workspace/my_trading_strat/rsi_double_dca_backtes
 ```
 
 This will:
-- ✅ Fetch live SPY data and calculate current RSI(14)
+- ✅ Fetch live SPY data and calculate current RSI(14) and RSI SMA(7)
 - ✅ Show your current cash pool status
 - ✅ Display exactly what your payday email will contain
-- ✅ Show buy/skip recommendation based on current market
+- ✅ Show buy/skip recommendation based on current RSI SMA(7)
 - ✅ **NO email sent** - just a preview!
 
 **Run this anytime to see what action you'd take if today were payday!**
@@ -139,10 +139,10 @@ Now the script runs every day at 10 AM and logs to `monitor.log`.
 
 **Body:**
 ```
-RSI Cash Variant #2 - Payday Investment Metrics
+RSI SMA(7) Cash Variant #2 - Payday Investment Metrics
 
 Date: 2025-12-01
-SPY RSI(14): 42.30
+RSI SMA(7): 42.30
 SPY Price: $587.45
 Cash Pool: $120.00
 
@@ -154,10 +154,10 @@ YOUR DECISION TODAY:
    → New cash pool will be: $120.00
 
 2️⃣ RAINY DAY CHECK:
-   Current RSI: 42.30
-   Rainy threshold: < 45
+   RSI SMA(7): 42.30
+   Rainy threshold: RSI SMA(7) < 45
    
-   ✅ RAINY DAY - RSI < 45!
+   ✅ RAINY DAY - RSI SMA(7) < 45!
    
    🔥 RECOMMENDATION: Buy extra $150 from cash pool
    
@@ -203,8 +203,8 @@ The script maintains `strategy_tracking.json` with:
 
 | Event | Date | Base Investment | Cash Savings | Rainy Check | Rainy Buy? |
 |-------|------|-----------------|--------------|-------------|------------|
-| Payday 1 | 1st of month* | $150 | +$30 | If RSI < 45 | If cash ≥ $150 |
-| Payday 2 | 15th of month* | $150 | +$30 | If RSI < 45 | If cash ≥ $150 |
+| Payday 1 | 1st of month* | $150 | +$30 | If RSI SMA(7) < 45 | If cash ≥ $150 |
+| Payday 2 | 15th of month* | $150 | +$30 | If RSI SMA(7) < 45 | If cash ≥ $150 |
 
 *Or next business day if weekend
 

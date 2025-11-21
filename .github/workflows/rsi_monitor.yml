@@ -1,4 +1,4 @@
-name: RSI Strategy Monitor
+name: RSI SMA Strategy Monitor
 
 on:
   schedule:
@@ -25,7 +25,7 @@ jobs:
       run: |
         pip install yfinance pandas numpy
     
-    - name: Run RSI Strategy Monitor
+    - name: Run RSI SMA(7) Strategy Monitor
       env:
         SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
         SMTP_PORT: ${{ secrets.SMTP_PORT }}
@@ -36,13 +36,13 @@ jobs:
         # Set FORCE_EMAIL=false for scheduled runs (official emails)
         FORCE_EMAIL: ${{ github.event_name == 'workflow_dispatch' && 'true' || 'false' }}
       run: |
-        python rsi_double_dca_backtest/monitor_strategy.py
+        python rsi_double_dca_backtest_PROD/monitor_strategy.py
     
     - name: Upload logs (if any)
       if: always()
       uses: actions/upload-artifact@v4
       with:
         name: monitor-logs
-        path: rsi_double_dca_backtest/*.log
+        path: rsi_double_dca_backtest_PROD/*.log
         retention-days: 30
         if-no-files-found: ignore

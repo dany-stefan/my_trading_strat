@@ -1,47 +1,66 @@
 """
-Email content generation for RSI strategy monitoring
-Shared by both simulation and production email scripts
+Email content generation for RSI SMA(7) strategy monitoring
+============================================================
+
+This module generates the email subject and body for payday notifications.
+It uses RSI SMA(7) (7-day Simple Moving Average of RSI(14)) as the rainy day threshold.
+
+Shared by both simulation and production email scripts to ensure consistency.
 """
 
 from datetime import datetime, timedelta
 
-# Strategy parameters
-DCA_BASE_AMOUNT = 150.0
-RAINY_AMOUNT = 150.0
-RSI_THRESHOLD = 45.0
-CASH_ACCUMULATION = 30.0
-PAYDAY_DAY_OF_MONTH_2 = 15
+# =============================================================================
+# STRATEGY PARAMETERS
+# =============================================================================
+# These parameters define the core strategy behavior
+
+DCA_BASE_AMOUNT = 150.0          # CAD - Base investment on every payday (always deployed)
+RAINY_AMOUNT = 150.0             # CAD - Extra amount deployed when RSI SMA(7) < 45
+RSI_THRESHOLD = 45.0             # RSI SMA(7) threshold for rainy day detection
+CASH_ACCUMULATION = 30.0         # CAD - Cash saved per payday to build rainy day pool
+PAYDAY_DAY_OF_MONTH_2 = 15       # Second payday of each month (1st and 15th schedule)
 
 
 def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy_buys, is_simulation=False):
     """
     Generate email subject and body for payday notifications.
     
+    Uses RSI SMA(7) < 45 as the rainy day threshold. This smoothed indicator
+    reduces noise and prevents false signals from temporary RSI dips.
+    
     Args:
         rsi_sma: RSI SMA(7) - 7-day Simple Moving Average of RSI(14)
-        price: Current SPY price
-        cash_pool: Current cash pool balance
-        total_contributions: Total contributions to date
-        rainy_buys: List of rainy buy records
-        is_simulation: If True, adds simulation notices
+                 This is the primary threshold indicator (< 45 triggers rainy buy)
+        price: Current SPY price in USD
+        cash_pool: Current cash pool balance in CAD
+        total_contributions: Total contributions to date in CAD
+        rainy_buys: List of rainy buy records (historical data)
+        is_simulation: If True, adds "TEST EMAIL" markers and notices
     
     Returns:
         tuple: (subject, body) - email subject and plain text body
     """
     today = datetime.now().date()
     
-    # Determine next payday
+    # Calculate next payday date (1st or 15th of month)
     if today.day < PAYDAY_DAY_OF_MONTH_2:
         next_payday_text = f"{PAYDAY_DAY_OF_MONTH_2}th of this month"
     else:
         next_month = (today.replace(day=1) + timedelta(days=32)).replace(day=1)
         next_payday_text = f"1st of {next_month.strftime('%B')}"
     
-    # Check if rainy day (using RSI SMA(7) threshold)
+    # =============================================================================
+    # RAINY DAY LOGIC - Core decision making
+    # =============================================================================
+    # Check if RSI SMA(7) is below threshold (rainy day condition)
     is_rainy = rsi_sma < RSI_THRESHOLD
     can_deploy = cash_pool >= RAINY_AMOUNT
     
-    # Determine recommendation
+    # =============================================================================
+    # RECOMMENDATION LOGIC - What action to take today
+    # =============================================================================
+    # Case 1: Rainy day AND sufficient cash → Deploy extra $150
     if is_rainy and can_deploy:
         recommendation = f"🔥 RECOMMENDATION: Buy extra ${RAINY_AMOUNT:.0f} from cash pool"
         total_investment_today = DCA_BASE_AMOUNT + RAINY_AMOUNT
@@ -49,12 +68,16 @@ def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy
         new_cash_pool = cash_pool - RAINY_AMOUNT + CASH_ACCUMULATION
         action_text = f"Total investment today: ${total_investment_today:.0f} (${DCA_BASE_AMOUNT:.0f} base + ${RAINY_AMOUNT:.0f} rainy)"
         cash_after_text = f"Cash pool after rainy buy: ${cash_after_deploy:.2f}\n   Add today's savings: +${CASH_ACCUMULATION:.0f}\n   Final cash pool: ${new_cash_pool:.2f}"
+    
+    # Case 2: Rainy day BUT insufficient cash → Can't deploy (missed opportunity)
     elif is_rainy and not can_deploy:
         recommendation = f"⚠️  Rainy day but insufficient cash (need ${RAINY_AMOUNT:.0f}, have ${cash_pool:.2f})"
         total_investment_today = DCA_BASE_AMOUNT
         new_cash_pool = cash_pool + CASH_ACCUMULATION
         action_text = f"Total investment today: ${total_investment_today:.0f} (base only)"
         cash_after_text = f"Cash pool after saving: ${new_cash_pool:.2f}"
+    
+    # Case 3: Not rainy → Save cash for future rainy days
     else:
         recommendation = f"💰 RECOMMENDATION: Save your cash for next rainy day"
         total_investment_today = DCA_BASE_AMOUNT
@@ -62,14 +85,18 @@ def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy
         action_text = f"Total investment today: ${total_investment_today:.0f} (base only)"
         cash_after_text = f"Cash pool after saving: ${new_cash_pool:.2f}"
     
+    # Display rainy status clearly (using RSI SMA(7) terminology)
     rainy_status = "✅ RAINY DAY - RSI SMA(7) < 45!" if is_rainy else "⛅ NOT RAINY - RSI SMA(7) ≥ 45"
     
-    # Note about initial balance
+    # Note about initial cash pool (only shown on first email)
     initial_note = ""
     if total_contributions == 0:
         initial_note = f"\n   📌 NOTE: Starting with ${cash_pool:.2f} initial cash pool (enough for 2 rainy buys)"
     
-    # Email subject
+    # =============================================================================
+    # EMAIL FORMATTING - Subject and header based on context
+    # =============================================================================
+    # Test/simulation emails are marked clearly to distinguish from production
     if is_simulation:
         subject = f"🧪 TEST EMAIL (Local Run): Investment Metrics - {today.strftime('%B %d, %Y')}"
     else:

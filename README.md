@@ -1,6 +1,6 @@
 # RSI Cash Strategy - Automated Investment Monitor
 
-**Your Strategy:** Variant #2 - Bi-weekly $150 with RSI < 45 Rainy Day Buying
+**Your Strategy:** Variant #2 - Bi-weekly $150 with RSI SMA(7) < 45 Rainy Day Buying
 
 ## 📊 Quick Stats
 
@@ -81,7 +81,7 @@ my_trading_strat/
 1. **Always invest $150 CAD** in SPY (no matter what)
 2. **Always save $30 CAD** to cash pool
 3. **Check RSI(14):**
-   - If RSI < 45 AND cash pool ≥ $150:
+   - If RSI SMA(7) < 45 AND cash pool ≥ $150:
      - 🔥 **Buy extra $150** from cash pool (total $300)
    - If RSI ≥ 45:
      - 💰 Only invest $150, cash pool grows by $30
@@ -200,7 +200,7 @@ Example output:
 ✅ Current SPY RSI(14): 28.29
 ✅ Current SPY Price: $652.53
 🔥 RECOMMENDATION: Buy extra $150 from cash pool
-   (RSI < 45 = Rainy Day!)
+   (RSI SMA(7) < 45 = Rainy Day!)
 ```
 
 ---

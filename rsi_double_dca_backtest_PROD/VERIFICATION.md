@@ -74,10 +74,11 @@ This will:
 ### Payday Emails (1st and 15th)
 - Workflow runs at 10:00 AM EST
 - Script detects it's payday
-- Fetches SPY RSI(14) and price
+- Fetches SPY price and calculates RSI(14)
+- Calculates RSI SMA(7) from 7-day RSI history
 - Calculates cash pool balance
 - **Sends email with:**
-  - Current RSI and recommendation
+  - Current RSI SMA(7) and recommendation
   - Whether to buy extra $150 or skip
   - Variant comparison table
   - Strategy framework
