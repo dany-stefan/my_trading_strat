@@ -253,6 +253,30 @@ Next payday: {'1st' if today.day >= PAYDAY_DAY_OF_MONTH_2 else '15th'} of {'next
 
 ═══════════════════════════════════════════════════════════════════
 
+VARIANT PERFORMANCE SUMMARY (22-year backtest)
+
+┌──────────────┬──────────┬──────────┬──────────┬────────────┐
+│ Variant      │   CAGR   │ Hit Rate │ End Value│ Total Cost │
+├──────────────┼──────────┼──────────┼──────────┼────────────┤
+│ #1 Weekly    │  33.54%  │  68.5%   │ $600,967 │  $104,500  │
+│ $150 RSI<40  │          │          │          │            │
+├──────────────┼──────────┼──────────┼──────────┼────────────┤
+│ #2 Bi-weekly │  33.54%  │  80.0%   │ $600,907 │  $104,350  │
+│ $150 RSI<45  │          │  ⭐ BEST │          │            │
+│ (YOUR PICK)  │          │          │          │            │
+├──────────────┼──────────┼──────────┼──────────┼────────────┤
+│ #3 Weekly    │  33.54%  │  65.3%   │ $600,679 │  $104,450  │
+│ $100 RSI<45  │          │          │          │            │
+└──────────────┴──────────┴──────────┴──────────┴────────────┘
+
+Key Metrics:
+• All 3 variants: Identical 33.54% CAGR (same long-term returns)
+• Your variant (#2): HIGHEST hit rate at 80% (most sustainable)
+• 22-year period: 2003-2025 (includes 2008 crash, COVID, all cycles)
+• Return per $1 invested: $5.76 (every dollar becomes $5.76)
+
+═══════════════════════════════════════════════════════════════════
+
 STRATEGY ASSUMPTIONS & FRAMEWORK
 
 Your Regular Strategy (Variant #2):
