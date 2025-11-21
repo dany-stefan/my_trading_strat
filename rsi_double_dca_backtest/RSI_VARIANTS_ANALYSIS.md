@@ -165,30 +165,6 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 
 ---
 
-## SPY Market Context
-
-### SPY Price History with Rainy Periods
-![SPY Price with Rainy Periods](./spy_price_rainy_periods_drawdown.png)
-
-**Rainy Period Analysis (RSI < 45):**
-- **Total rainy periods:** [Count from backtest]
-- **Shortest period:** ~X Mondays
-- **Longest period:** ~Y Mondays (2008 Financial Crisis, COVID-19)
-- **Average period:** ~Z Mondays
-
-**SPY Maximum Drawdown:** [From backtest] (during [crisis])
-
-### RSI History with Thresholds
-![RSI History](./rsi_history_thresholds.png)
-
-**Threshold Frequency:**
-- **RSI < 50:** [Count] instances (too frequent)
-- **RSI < 45:** 140 bi-weekly Mondays (YOUR threshold)
-- **RSI < 40:** 165 weekly Mondays (Variant #1)
-- **RSI < 35:** [Count] instances (rare, ultra-conservative)
-
----
-
 ## Why Variant #2 Wins for You
 
 ### 1. Payday Alignment = Simplicity
@@ -263,8 +239,6 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 - `rsi_variants_top5_comparison.png` - Top 5 equity curves
 - `rsi_variants_heatmap_biweekly.png` - CAGR & hit rate (bi-weekly cadence)
 - `rsi_variants_heatmap_weekly.png` - CAGR & hit rate (weekly cadence)
-- `spy_price_rainy_periods_drawdown.png` - SPY price history with rainy periods highlighted
-- `rsi_history_thresholds.png` - RSI(14) history with threshold lines
 
 ---
 
