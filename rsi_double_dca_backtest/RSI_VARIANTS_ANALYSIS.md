@@ -30,6 +30,33 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 
 ---
 
+## SPY Market Context
+
+### SPY Price History with Rainy Periods
+![SPY Price with Rainy Periods](./spy_price_rainy_periods_drawdown.png)
+
+**Rainy Period Analysis (RSI < 45):**
+- **Total rainy periods:** 167 distinct periods since 2003
+- **Shortest period:** 1 trading day (~0 Mondays)
+- **Longest period:** 36 trading days (~7 Mondays) - Major crises like 2008, COVID
+- **Average period:** 8.5 trading days (~1.3 Mondays)
+
+**SPY Drawdown Analysis:**
+- **Maximum drawdown:** -55.19% (2008 Financial Crisis)
+- **Date of max drawdown:** March 9, 2009
+- **Your strategy buys during ALL these drawdowns** when RSI < 45
+
+### RSI History with Thresholds
+![RSI History](./rsi_history_thresholds.png)
+
+**Threshold Frequency:**
+- **RSI < 50:** Most frequent (triggers too often)
+- **RSI < 45:** 140 bi-weekly Mondays (YOUR threshold) - Balanced
+- **RSI < 40:** 165 weekly Mondays (Variant #1) - More selective
+- **RSI < 35:** Rare instances (ultra-conservative, misses opportunities)
+
+---
+
 ## Strategy Framework (All Variants)
 
 ### Constant Parameters
@@ -239,6 +266,8 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 - `rsi_variants_top5_comparison.png` - Top 5 equity curves
 - `rsi_variants_heatmap_biweekly.png` - CAGR & hit rate (bi-weekly cadence)
 - `rsi_variants_heatmap_weekly.png` - CAGR & hit rate (weekly cadence)
+- `spy_price_rainy_periods_drawdown.png` - SPY price history with rainy periods & drawdown
+- `rsi_history_thresholds.png` - RSI(14) history with threshold lines
 
 ---
 
