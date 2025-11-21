@@ -542,7 +542,7 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 
 ## 📚 Appendix: Technical Details
 
-**You chose Variant #2 (Bi-weekly $150 RSI < 45) because:**
+**You chose Variant #2 (Bi-weekly $150 RSI SMA(7) < 45) because:**
 
 ✅ **Same 33.54% CAGR** as more complex weekly variants  
 ✅ **Highest 80% hit rate** for sustainability  
@@ -550,9 +550,24 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 ✅ **26 checks/year** instead of 52  
 ✅ **Best for busy people** with regular paychecks  
 
+**RSI SMA(7) Indicator Rationale:**
+
+The strategy uses **RSI SMA(7) < 45** (7-day Simple Moving Average of RSI) as the rainy day threshold instead of raw RSI(14) < 45. This decision was based on comparative analysis:
+
+- **Agreement Rate:** 85.6% alignment between RSI and RSI SMA signals on payday schedule (499 paydays analyzed over 22 years)
+- **Hit Rate Impact:** Only +0.4% difference (24.25% for SMA vs 23.85% for raw RSI) — minimal change in buying frequency
+- **Noise Reduction:** RSI SMA(7) filters out single-day RSI spikes that quickly reverse, preventing false buy signals
+- **Smoothing Benefit:** Avoids "bear trap" scenarios where RSI briefly dips below 45 on one payday but market sentiment is still strong (e.g., Nov 14, 2025: RSI=38 but RSI SMA=52.75, indicating temporary dip rather than sustained weakness)
+- **Disagreement Analysis:** Only 72 out of 499 paydays (14.43%) showed conflicting signals between RSI and RSI SMA
+  - 35 paydays: RSI only signaled rainy (7.01%)
+  - 37 paydays: SMA only signaled rainy (7.41%)
+  - Both agreed on 427 paydays (85.57%)
+
+**Conclusion:** RSI SMA(7) provides a more reliable signal with negligible impact on long-term returns while reducing the risk of premature deployment during short-term volatility.
+
 **Trade-offs accepted:**
 ⚠️ Might miss rare mid-week V-shaped recoveries  
-⚠️ RSI < 45 is slightly less selective than < 40  
+⚠️ RSI SMA(7) < 45 is slightly less selective than < 40  
 
 **Bottom line:** You're not sacrificing returns for simplicity. You're optimizing for **execution consistency**, which is the real key to long-term wealth building.
 

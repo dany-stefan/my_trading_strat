@@ -64,7 +64,7 @@ TRACKING_FILE = Path(__file__).parent / "strategy_tracking.json"
 # =============================================================================
 
 def get_rsi(ticker="SPY", period=14, lookback_days=100):
-    """Fetch SPY data and calculate current RSI and SMA of RSI."""
+    """Fetch SPY data and calculate current RSI and EMA of RSI."""
     end_date = datetime.now()
     start_date = end_date - timedelta(days=lookback_days)
     
@@ -87,14 +87,14 @@ def get_rsi(ticker="SPY", period=14, lookback_days=100):
         rs = avg_gain / avg_loss
         rsi = 100 - (100 / (1 + rs))
         
-        # Calculate SMA(7) of RSI
-        rsi_sma = rsi.rolling(window=7).mean()
+        # Calculate EMA(14) of RSI
+        rsi_ema = rsi.ewm(span=14, adjust=False).mean()
         
         current_rsi = rsi.iloc[-1]
-        current_rsi_sma = rsi_sma.iloc[-1]
+        current_rsi_ema = rsi_ema.iloc[-1]
         current_price = close.iloc[-1]
         
-        return current_rsi, current_rsi_sma, current_price
+        return current_rsi, current_rsi_ema, current_price
     
     except Exception as e:
         print(f"Error fetching RSI: {e}")
@@ -228,16 +228,16 @@ def check_conditions():
     today = datetime.now().date()
     today_str = today.strftime('%Y-%m-%d')
     
-    # Get current RSI and RSI SMA(7)
-    print("Fetching SPY RSI(14) and RSI SMA(7)...")
-    rsi, rsi_sma, price = get_rsi(period=RSI_PERIOD)
+    # Get current RSI
+    print("Fetching SPY RSI(14)...")
+    rsi, rsi_ema, price = get_rsi(period=RSI_PERIOD)
     
     if rsi is None:
         print("❌ Failed to fetch RSI data")
         return
     
     print(f"Current SPY RSI(14): {rsi:.2f}")
-    print(f"Current RSI SMA(7): {rsi_sma:.2f}")
+    print(f"Current RSI EMA(14): {rsi_ema:.2f}")
     print(f"Current SPY Price: ${price:.2f}")
     print(f"Cash Pool: ${cash_pool:.2f}")
     
@@ -265,7 +265,7 @@ def check_conditions():
             # Generate email using shared function
             # Use is_simulation=True when FORCE_EMAIL is enabled (local test run)
             subject, body = generate_email_content(
-                rsi_sma=rsi_sma,  # Using RSI SMA(7) as threshold indicator
+                rsi=rsi,
                 price=price,
                 cash_pool=cash_pool,
                 total_contributions=tracking.get('total_contributions', 0),
@@ -288,14 +288,14 @@ def check_conditions():
     if (is_payday() or FORCE_EMAIL) and not (last_payday == today_str and not FORCE_EMAIL):
         print()
         print("☔ PROCESSING RAINY DAY CHECK...")
-        print(f"   RSI SMA(7) Threshold: < {RSI_THRESHOLD}")
-        print(f"   Current RSI SMA(7): {rsi_sma:.2f}")
+        print(f"   RSI Threshold: < {RSI_THRESHOLD}")
+        print(f"   Current RSI: {rsi:.2f}")
         print(f"   Cash Required: ${RAINY_AMOUNT:.2f}")
         print(f"   Cash Available: ${tracking['cash_pool']:.2f}")
         print()
         
-        if rsi_sma < RSI_THRESHOLD:
-            print(f"   ✅ RSI SMA(7) < {RSI_THRESHOLD} - RAINY DAY DETECTED!")
+        if rsi < RSI_THRESHOLD:
+            print("   ✅ RSI < 45 - RAINY DAY DETECTED!")
             
             if tracking['cash_pool'] >= RAINY_AMOUNT:
                 print(f"   ✅ Cash pool sufficient (${tracking['cash_pool']:.2f} >= ${RAINY_AMOUNT:.2f})")
@@ -308,7 +308,7 @@ def check_conditions():
                 if not FORCE_EMAIL:
                     tracking['rainy_buys'].append({
                         'date': today_str,
-                        'rsi_sma': float(rsi_sma),  # Record RSI SMA(7) instead of raw RSI
+                        'rsi': float(rsi),
                         'price': float(price),
                         'amount': RAINY_AMOUNT,
                         'cash_before': cash_before_rainy,
@@ -326,10 +326,10 @@ def check_conditions():
             
             else:
                 print(f"   ❌ Insufficient cash (${tracking['cash_pool']:.2f} < ${RAINY_AMOUNT:.2f})")
-                print(f"   📊 MISSED OPPORTUNITY - This is expected (~24% hit rate)")
+                print(f"   📊 MISSED OPPORTUNITY - This is expected (80% hit rate target)")
         
         else:
-            print(f"   ℹ️  RSI SMA(7) {rsi_sma:.2f} >= {RSI_THRESHOLD} - No rainy day signal")
+            print(f"   ℹ️  RSI {rsi:.2f} >= {RSI_THRESHOLD} - No rainy day signal")
             print(f"   💰 Cash pool preserved: ${tracking['cash_pool']:.2f}")
     
     # Update last check timestamp

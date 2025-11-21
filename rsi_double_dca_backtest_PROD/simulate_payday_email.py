@@ -32,13 +32,13 @@ RSI_PERIOD = 14
 # HELPER FUNCTIONS
 # =============================================================================
 def get_rsi(ticker="SPY", period=14, lookback_days=100):
-    """Fetch current RSI for a ticker."""
+    """Fetch current RSI and RSI SMA(7) for a ticker."""
     end_date = datetime.now()
     start_date = end_date - timedelta(days=lookback_days)
     
     df = yf.download(ticker, start=start_date, end=end_date, interval="1d", progress=False)
     if df.empty:
-        return None, None
+        return None, None, None
     
     if isinstance(df.columns, pd.MultiIndex):
         df.columns = df.columns.get_level_values(0)
@@ -56,10 +56,14 @@ def get_rsi(ticker="SPY", period=14, lookback_days=100):
     rs = avg_gain / avg_loss
     rsi = 100 - (100 / (1 + rs))
     
+    # Calculate SMA(7) of RSI
+    rsi_sma = rsi.rolling(window=7).mean()
+    
     current_rsi = rsi.iloc[-1]
+    current_rsi_sma = rsi_sma.iloc[-1]
     current_price = prices.iloc[-1]
     
-    return current_rsi, current_price
+    return current_rsi, current_rsi_sma, current_price
 
 def load_tracking():
     """Load tracking data or initialize if not exists."""
@@ -91,13 +95,14 @@ def main():
     print("\nFetching current market data...")
     
     # Fetch current market data
-    rsi, price = get_rsi("SPY", RSI_PERIOD)
+    rsi, rsi_sma, price = get_rsi("SPY", RSI_PERIOD)
     
     if rsi is None:
         print("❌ Error: Could not fetch RSI data")
         return
     
     print(f"✅ Current SPY RSI(14): {rsi:.2f}")
+    print(f"✅ Current RSI SMA(7): {rsi_sma:.2f}")
     print(f"✅ Current SPY Price: ${price:.2f}")
     
     # Load tracking
@@ -112,7 +117,7 @@ def main():
     
     # Generate email content using shared function
     subject, email_body = generate_email_content(
-        rsi=rsi,
+        rsi_sma=rsi_sma,  # Using RSI SMA(7) as threshold indicator
         price=price,
         cash_pool=cash_pool,
         total_contributions=total_contributions,

@@ -13,12 +13,12 @@ CASH_ACCUMULATION = 30.0
 PAYDAY_DAY_OF_MONTH_2 = 15
 
 
-def generate_email_content(rsi, price, cash_pool, total_contributions, rainy_buys, is_simulation=False):
+def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy_buys, is_simulation=False):
     """
     Generate email subject and body for payday notifications.
     
     Args:
-        rsi: Current RSI value
+        rsi_sma: RSI SMA(7) - 7-day Simple Moving Average of RSI(14)
         price: Current SPY price
         cash_pool: Current cash pool balance
         total_contributions: Total contributions to date
@@ -37,8 +37,8 @@ def generate_email_content(rsi, price, cash_pool, total_contributions, rainy_buy
         next_month = (today.replace(day=1) + timedelta(days=32)).replace(day=1)
         next_payday_text = f"1st of {next_month.strftime('%B')}"
     
-    # Check if rainy day
-    is_rainy = rsi < RSI_THRESHOLD
+    # Check if rainy day (using RSI SMA(7) threshold)
+    is_rainy = rsi_sma < RSI_THRESHOLD
     can_deploy = cash_pool >= RAINY_AMOUNT
     
     # Determine recommendation
@@ -62,7 +62,7 @@ def generate_email_content(rsi, price, cash_pool, total_contributions, rainy_buy
         action_text = f"Total investment today: ${total_investment_today:.0f} (base only)"
         cash_after_text = f"Cash pool after saving: ${new_cash_pool:.2f}"
     
-    rainy_status = "✅ RAINY DAY - RSI < 45!" if is_rainy else "⛅ NOT RAINY - RSI ≥ 45"
+    rainy_status = "✅ RAINY DAY - RSI SMA(7) < 45!" if is_rainy else "⛅ NOT RAINY - RSI SMA(7) ≥ 45"
     
     # Note about initial balance
     initial_note = ""
@@ -90,7 +90,7 @@ def generate_email_content(rsi, price, cash_pool, total_contributions, rainy_buy
 {test_notice}
 Date: {today.strftime('%B %d, %Y')}{date_suffix}
 Current SPY Price: ${price:.2f} USD
-Current RSI(14): {rsi:.2f}
+RSI SMA(7): {rsi_sma:.2f}
 
 📊 TODAY'S PAYDAY ACTIONS
 
@@ -98,8 +98,8 @@ Current RSI(14): {rsi:.2f}
    Invest: ${DCA_BASE_AMOUNT:.0f} CAD into SPY
    
 2️⃣ RAINY DAY CHECK:
-   Current RSI: {rsi:.2f}
-   Rainy threshold: < {RSI_THRESHOLD}
+   RSI SMA(7): {rsi_sma:.2f}
+   Rainy threshold: RSI SMA(7) < {RSI_THRESHOLD}
    
    {rainy_status}
    
@@ -133,10 +133,10 @@ Your Regular Strategy (Variant #2):
 • Asset: SPY (S&P 500 ETF) converted to CAD
 
 Rainy Day Rule:
-• Check RSI(14) only on payday (bi-weekly)
-• If RSI < 45: Deploy extra $150 from cash pool
-• If RSI ≥ 45: Only invest base $150, save the $30
-• Expected hit rate: 80% of rainy opportunities
+• Check RSI SMA(7) only on payday (bi-weekly)
+• If RSI SMA(7) < 45: Deploy extra $150 from cash pool
+• If RSI SMA(7) ≥ 45: Only invest base $150, save the $30
+• Expected hit rate: ~24% rainy deployments (smoothed indicator reduces noise)
 
 💰 PERFORMANCE VS OTHER STRATEGIES
 

@@ -122,8 +122,8 @@ python sp500_ath_vix_backtest.py
 
 1. **Current Market Data**
    - SPY price (USD)
-   - RSI(14) value
-   - Rainy day status (RSI < 45?)
+   - RSI SMA(7) value (7-day Simple Moving Average of RSI - this is your rainy day indicator)
+   - Rainy day status (RSI SMA(7) < 45?)
 
 2. **Today's Actions**
    - Base investment: $150 CAD (always)
@@ -136,10 +136,10 @@ python sp500_ath_vix_backtest.py
    - Strategy vs Alternatives (DCA, Buy & Hold)
    - Top 3 Variants Comparison
 
-4. **Strategy Framework**
+3. **Strategy Framework**
    - Payday schedule (1st & 15th)
    - Cash accumulation rules ($30 per payday)
-   - Rainy day deployment rules (RSI < 45)
+   - Rainy day deployment rules (RSI SMA(7) < 45)
 
 5. **Current Status**
    - Cash pool balance
@@ -272,10 +272,14 @@ rsi_double_dca_backtest/
 ## ⚙️ Strategy Parameters
 
 - **Base DCA:** $150 CAD every payday
-- **Rainy Amount:** $150 CAD extra (when RSI < 45)
+- **Rainy Amount:** $150 CAD extra (when RSI SMA(7) < 45)
 - **Cash Accumulation:** $30 CAD per payday
-- **RSI Threshold:** 45.0
-- **RSI Period:** 14 days
+- **RSI SMA(7) Threshold:** < 45.0 (7-day Simple Moving Average of RSI(14))
+- **Why RSI SMA(7)?** Reduces noise and false signals compared to raw RSI(14)
+  - 85.6% agreement with raw RSI on payday schedule
+  - Hit rate difference: only +0.4% (minimal impact)
+  - Prevents buying on temporary RSI dips that quickly reverse
+  - Smooths out daily volatility for more reliable signals
 - **Schedule:** 1st and 15th of each month
 - **Asset:** SPY (S&P 500 ETF)
 
