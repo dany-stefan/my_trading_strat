@@ -20,14 +20,11 @@ Thumbs.db
 # Logs
 *.log
 
-# Strategy tracking (contains personal data)
+# Strategy tracking (contains personal data) - keep private
 strategy_tracking.json
 
-# Temporary files
-*.csv
-*.png
-!equity_*.png
-!rsi_variants_*.png
+# Temporary files - allow specific analysis files
+# (CSVs and PNGs from backtest are committed for documentation)
 
 # Sensitive
 *.pem
