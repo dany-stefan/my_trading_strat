@@ -252,10 +252,9 @@ def convert_to_html(text):
         # Detect main header
         elif line.startswith('🎯 RSI STRATEGY MONITOR'):
             html += f'<h1>{line}</h1>\n'
-        # Detect section dividers
-        elif line.startswith('════'):
-            if not in_table:
-                html += '<div class="divider"></div>\n'
+        # Skip ASCII divider lines completely
+        elif line.startswith('════') or line.startswith('═══'):
+            continue
         # Detect ASCII table borders (ignore them)
         elif line.startswith('┌─') or line.startswith('├─') or line.startswith('└─'):
             continue
@@ -434,15 +433,11 @@ def main():
     print("=" * 80)
     
     email_body = f"""
-════════════════════════════════════════════════════════════════════
 🎯 RSI STRATEGY MONITOR - PAYDAY SIMULATION
-════════════════════════════════════════════════════════════════════
 
 Date: {simulated_payday_date} (SIMULATED)
 Current SPY Price: ${price:.2f} USD
 Current RSI(14): {rsi:.2f}
-
-════════════════════════════════════════════════════════════════════
 
 📊 TODAY'S PAYDAY ACTIONS
 
@@ -462,14 +457,12 @@ Current RSI(14): {rsi:.2f}
 
 Next payday: {next_payday_text}
 
-═══════════════════════════════════════════════════════════════════
-
 VARIANT PERFORMANCE SUMMARY (22-year backtest)
 
 | Variant | CAGR | Hit Rate | End Value | Total Cost |
 |---------|------|----------|-----------|------------|
 | #1 Weekly $150 RSI<40 | 33.54% | 68.5% | $600,967 | $104,500 |
-| **#2 Bi-weekly $150 RSI<45 (YOUR PICK)** | **33.54%** | **80.0% ⭐** | **$600,907** | **$104,350** |
+| #2 Bi-weekly $150 RSI<45 (YOUR PICK) | 33.54% | 80.0% ⭐ | $600,907 | $104,350 |
 | #3 Weekly $100 RSI<45 | 33.54% | 65.3% | $600,679 | $104,450 |
 
 Key Metrics:
@@ -477,8 +470,6 @@ Key Metrics:
 • Your variant (#2): HIGHEST hit rate at 80% (most sustainable)
 • 22-year period: 2003-2025 (includes 2008 crash, COVID, all cycles)
 • Return per $1 invested: $5.76 (every dollar becomes $5.76)
-
-═══════════════════════════════════════════════════════════════════
 
 STRATEGY ASSUMPTIONS & FRAMEWORK
 
@@ -494,39 +485,35 @@ Rainy Day Rule:
 • If RSI ≥ 45: Only invest base $150, save the $30
 • Expected hit rate: 80% of rainy opportunities
 
-═══════════════════════════════════════════════════════════════════
-
 💰 PERFORMANCE VS OTHER STRATEGIES
 
 Your Strategy vs Alternatives (22 years: 2003-2025):
 
 | Strategy | CAGR | Final Value | Total Invested | Profit | vs Your Strategy |
 |----------|------|-------------|----------------|--------|------------------|
-| **YOUR RAINY DAY (Variant #2)** | **33.54%** | **$600,907** | **$104,350** | **$496,557** | **BASELINE** |
-| Simple DCA (No Rainy) | 32.48% | $503,343 | $87,550 | $415,793 | **-$97,564** ⚠️ |
-| Buy & Hold (Lump Sum) | 31.12% | $450,234 | $87,550 | $362,684 | **-$133,873** ⚠️ |
+| YOUR RAINY DAY (Variant #2) | 33.54% | $600,907 | $104,350 | $496,557 | BASELINE |
+| Simple DCA (No Rainy) | 32.48% | $503,343 | $87,550 | $415,793 | -$97,564 ⚠️ |
+| Buy & Hold (Lump Sum) | 31.12% | $450,234 | $87,550 | $362,684 | -$133,873 ⚠️ |
 
 📈 WHAT YOU GAINED BY CHOOSING THIS STRATEGY:
 
-• **vs Simple DCA**: You gained an extra **$97,564** (+19.4% more wealth!)
+• vs Simple DCA: You gained an extra $97,564 (+19.4% more wealth!)
   - Cost: Only $16,800 extra deployed during crashes
   - Return on rainy capital: 581% (every rainy $1 became $6.81)
   
-• **vs Buy & Hold**: You gained an extra **$133,873** (+26.5% more wealth!)
+• vs Buy & Hold: You gained an extra $133,873 (+26.5% more wealth!)
   - DCA smoothed your entry prices over 22 years
   - Rainy buys captured crash discounts (2008, 2020, etc.)
   
-• **Key Advantage**: Same contributions as simple DCA ($150 bi-weekly)
+• Key Advantage: Same contributions as simple DCA ($150 bi-weekly)
   - You just deployed the $30 savings SMARTER (during RSI < 45)
   - Hit rate: 80% success rate on rainy deployments
   - No timing skill needed - just follow RSI on payday
 
-📊 **See attached charts:**
+📊 See attached charts:
 - strategy_comparison_with_baseline.png - Growth curves comparison
 - rainy_day_analysis_detailed.png - Hit/miss pattern & cash pool
 - spy_price_rainy_periods_drawdown.png - When you bought during crashes
-
-═══════════════════════════════════════════════════════════════════
 
 WHY YOU CHOSE VARIANT #2 (Reminder)
 
@@ -535,7 +522,7 @@ Top 3 Variants Comparison:
 | Rank | Cadence | Amount | RSI | CAGR | Hit Rate | Why NOT |
 |------|---------|--------|-----|------|----------|---------|
 | #1 | Weekly Every Mon | $150 | < 40 | 33.54% | 68.5% | Must check weekly |
-| **#2 ✅ (YOU)** | **Bi-weekly Payday 1st & 15th** | **$150** | **< 45** | **33.54%** | **80.0%** | **PAYDAY ALIGNED SIMPLE!** |
+| #2 ✅ (YOU) | Bi-weekly Payday 1st & 15th | $150 | < 45 | 33.54% | 80.0% | PAYDAY ALIGNED SIMPLE! |
 | #3 | Weekly Every Mon | $100 | < 45 | 33.54% | 65.3% | Smaller position |
 
 Your Choice = #2 Because:
@@ -543,8 +530,6 @@ Your Choice = #2 Because:
 ✅ Highest hit rate (80% vs 68.5% and 65.3%)
 ✅ Same returns as #1 and #3 (33.54% CAGR)
 ✅ Best for busy people with paychecks
-
-═══════════════════════════════════════════════════════════════════
 
 CURRENT STATUS
 
@@ -558,12 +543,8 @@ Expected Long-Term Results (22 years):
 • Total Invested: $104,350
 • Successful Rainy Buys: 112 / 140 opportunities (80%)
 
-═══════════════════════════════════════════════════════════════════
-
 This is a SIMULATED email for testing purposes.
 Actual payday emails will be sent on the 1st and 15th of each month.
-
-════════════════════════════════════════════════════════════════════
 """
     
     # Print plain text version
