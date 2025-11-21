@@ -818,4 +818,17 @@ print(f"\nSPY DRAWDOWN ANALYSIS:")
 print(f"  Maximum drawdown: {spy_drawdown.min():.2f}%")
 print(f"  Date of max DD: {spy_drawdown.idxmin().date()}")
 
+# Calculate buy-and-hold market return
+first_price = prices["SPY_CAD"].iloc[0]
+last_price = prices["SPY_CAD"].iloc[-1]
+years = (prices.index[-1] - prices.index[0]).days / 365.25
+buy_hold_return = (last_price / first_price)
+buy_hold_cagr = (buy_hold_return ** (1 / years)) - 1
+
+print(f"\nBUY-AND-HOLD SPY COMPARISON:")
+print(f"  Market (SPY) CAGR: {buy_hold_cagr*100:.2f}%")
+print(f"  $1,000 → ${1000 * buy_hold_return:,.0f} (just hold SPY)")
+print(f"  Your strategy beats market by: +{(best['cagr'] - buy_hold_cagr)*100:.2f} percentage points")
+print(f"  Baseline DCA beats market by: +{(baseline['cagr'] - buy_hold_cagr)*100:.2f} percentage points")
+
 print("\n" + "=" * 80)
