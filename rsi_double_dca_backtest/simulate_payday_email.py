@@ -128,9 +128,10 @@ def main():
     if is_rainy and can_deploy:
         recommendation = f"🔥 RECOMMENDATION: Buy extra ${RAINY_AMOUNT:.0f} from cash pool"
         total_investment_today = DCA_BASE_AMOUNT + RAINY_AMOUNT
-        new_cash_pool = cash_pool - RAINY_AMOUNT
+        # IMPORTANT: Even on rainy days, you still save $30 to cash pool
+        new_cash_pool = cash_pool - RAINY_AMOUNT + CASH_ACCUMULATION
         action_text = f"Total investment today: ${total_investment_today:.0f} (${DCA_BASE_AMOUNT:.0f} base + ${RAINY_AMOUNT:.0f} rainy)"
-        cash_after_text = f"Cash pool after: ${new_cash_pool:.2f}"
+        cash_after_text = f"Cash pool after: ${new_cash_pool:.2f} (deployed ${RAINY_AMOUNT:.0f}, saved ${CASH_ACCUMULATION:.0f})"
     elif is_rainy and not can_deploy:
         recommendation = f"⚠️  Rainy day but insufficient cash (need ${RAINY_AMOUNT:.0f}, have ${cash_pool:.2f})"
         total_investment_today = DCA_BASE_AMOUNT
