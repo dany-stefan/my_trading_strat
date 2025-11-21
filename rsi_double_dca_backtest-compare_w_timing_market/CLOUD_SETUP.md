@@ -134,48 +134,6 @@ Adjust if needed for your timezone.
 
 ---
 
-## 🧪 Testing Your Setup (Manual Trigger)
-
-You can **manually test** the GitHub Actions workflow to receive an email **even when it's not payday**:
-
-### Steps:
-
-1. Go to your GitHub repository
-2. Click the **Actions** tab at the top
-3. On the left sidebar, select **RSI Strategy Monitor** workflow
-4. Click the **Run workflow** button (top right, next to the branch dropdown)
-5. You'll see a dropdown with an option:
-   - **"Send email even if not payday (for testing)"**
-   - Select **true**
-6. Click the green **Run workflow** button
-
-### What Happens:
-
-Within 1-2 minutes, you'll receive an email with:
-- **Subject:** "🧪 TEST EMAIL (Not Payday): Investment Metrics - [Date]"
-- **Content:** Current SPY price, RSI, and your recommendation
-- **Note:** This will NOT update your cash pool or tracking (test mode only)
-
-### Perfect For:
-
-- ✅ Verifying email configuration works
-- ✅ Seeing what payday emails look like
-- ✅ Checking current market conditions remotely
-- ✅ Testing after changing email settings
-
-### Local Testing Alternative:
-
-If you want to test locally without GitHub:
-
-```bash
-cd /Users/danystefan/Documents/workspace/my_trading_strat
-FORCE_EMAIL=true ./venv/bin/python rsi_double_dca_backtest/monitor_strategy.py
-```
-
-This sends a test email from your machine.
-
----
-
 ## Troubleshooting
 
 ### Email not sending?

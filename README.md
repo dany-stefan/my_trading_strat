@@ -135,6 +135,28 @@ Checks if it's payday and sends email alert if configured.
 
 **Full guide:** See `CLOUD_SETUP.md`
 
+### 🧪 Testing the Email (Manual Trigger)
+
+You can **manually trigger** the GitHub Actions workflow to receive a test email **even when it's not payday**:
+
+1. Go to your GitHub repository
+2. Click **Actions** tab
+3. Select **RSI Strategy Monitor** workflow
+4. Click **Run workflow** (top right)
+5. Set **"Send email even if not payday"** to **true**
+6. Click **Run workflow**
+
+The test email will:
+- Be marked as "🧪 TEST EMAIL (Not Payday)"
+- Show current market conditions
+- **NOT update** your cash pool or tracking
+- Arrive in your inbox within 1-2 minutes
+
+**Perfect for:**
+- Testing your email configuration
+- Previewing what payday emails look like
+- Checking current market conditions remotely
+
 ---
 
 ## 📈 Visualizations Generated

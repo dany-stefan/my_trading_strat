@@ -7,6 +7,15 @@ on:
     # Also runs at 1:00 PM EST (18:00 UTC) on 1st and 15th (paydays)
     - cron: '0 18 1,15 * *'
   workflow_dispatch:  # Allows manual trigger from GitHub UI
+    inputs:
+      force_email:
+        description: 'Send email even if not payday (for testing)'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
 
 jobs:
   monitor:
@@ -32,6 +41,7 @@ jobs:
         SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
         SENDER_PASSWORD: ${{ secrets.SENDER_PASSWORD }}
         RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
+        FORCE_EMAIL: ${{ github.event.inputs.force_email || 'false' }}
       run: |
         python rsi_double_dca_backtest/monitor_strategy.py
     
