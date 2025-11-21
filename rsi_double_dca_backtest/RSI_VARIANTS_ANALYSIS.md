@@ -12,9 +12,11 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 
 **Your Choice: Variant #2 (Bi-weekly $150 RSI < 45)** — Best hit rate (80%), payday-aligned simplicity, identical returns.
 
+**vs Baseline DCA:** Your strategy delivers **+1.07% CAGR improvement** and **+$97,624 more wealth** (+19.4%) over simple bi-weekly $150 DCA with no rainy day buying.
+
 ---
 
-![Top 5 Variants Comparison](./rsi_variants_top5_comparison.png)
+![Strategy Comparison with Baseline](./strategy_comparison_with_baseline.png)
 
 ---
 
@@ -27,6 +29,11 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 | #3 | Weekly | $100 | < 45 | **33.54%** | 65.3% | $600,679 | $104,450 | 169 / 259 |
 
 **Key Insight:** All three variants deliver identical 33.54% CAGR. The difference is in **execution simplicity** and **hit rate sustainability**.
+
+**Baseline DCA Comparison:**
+- **Simple DCA (no rainy):** 32.48% CAGR, $503,343 end value, $87,550 invested
+- **Your strategy improvement:** +1.07% CAGR, +$97,624 (+19.4% more wealth)
+- **Extra capital deployed:** $16,800 in rainy buys = $97,624 extra gain (581% return on rainy capital!)
 
 ---
 
@@ -54,6 +61,21 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 - **RSI < 45:** 140 bi-weekly Mondays (YOUR threshold) - Balanced
 - **RSI < 40:** 165 weekly Mondays (Variant #1) - More selective
 - **RSI < 35:** Rare instances (ultra-conservative, misses opportunities)
+
+### Rainy Day Buy Analysis (Your Variant #2)
+![Rainy Day Analysis](./rainy_day_analysis_detailed.png)
+
+**Hit/Miss Pattern by RSI Band:**
+- **Extreme (<30):** 19/26 hit (73.1%), $2,850 deployed, avg drawdown -16.0%
+- **Very Low (30-35):** 21/28 hit (75.0%), $3,150 deployed, avg drawdown -10.1%
+- **Low (35-40):** 28/37 hit (75.7%), $4,200 deployed, avg drawdown -11.2%
+- **Moderate (40-45):** 41/49 hit (83.7%), $6,150 deployed, avg drawdown -9.5%
+
+**Key Insights:**
+- **Total extra capital deployed:** $16,350 across 109 successful buys
+- **Buying during drawdowns:** Average -11.2% SPY drawdown when deploying rainy cash
+- **Deeper RSI = Deeper drawdowns:** Extreme RSI (<30) coincides with -16% avg drawdowns (2008, 2020)
+- **Cumulative deployment:** Gradual build-up of extra positions during every crisis since 2003
 
 ---
 
@@ -258,16 +280,19 @@ After testing **24 parameter combinations**, only **3 variants** met the sustain
 
 ### Data
 - `rsi_variants_summary.csv` - All 24 variants with full metrics
+- `equity_baseline_dca.csv` - Simple DCA baseline (no rainy strategy)
 - `equity_variant_1_weekly_150_40.csv` - Variant #1 equity curve
 - `equity_variant_2_biweekly_150_45.csv` - YOUR variant equity curve
 - `equity_variant_3_weekly_100_45.csv` - Variant #3 equity curve
 
 ### Visualizations
+- `strategy_comparison_with_baseline.png` - Top 3 variants vs simple DCA baseline
 - `rsi_variants_top5_comparison.png` - Top 5 equity curves
 - `rsi_variants_heatmap_biweekly.png` - CAGR & hit rate (bi-weekly cadence)
 - `rsi_variants_heatmap_weekly.png` - CAGR & hit rate (weekly cadence)
 - `spy_price_rainy_periods_drawdown.png` - SPY price history with rainy periods & drawdown
 - `rsi_history_thresholds.png` - RSI(14) history with threshold lines
+- `rainy_day_analysis_detailed.png` - Hit/miss markers by RSI band with SPY drawdown correlation
 
 ---
 

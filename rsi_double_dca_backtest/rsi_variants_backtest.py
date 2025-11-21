@@ -134,7 +134,60 @@ print(f"Bi-weekly Mondays (payday): {len(biweekly_schedule)}")
 print(f"Weekly Mondays (all): {len(weekly_schedule)}")
 
 # =============================================================================
-# SIMULATION FUNCTION
+# BASELINE DCA SIMULATION (No Rainy Days)
+# =============================================================================
+def simulate_baseline_dca():
+    """
+    Simulate simple bi-weekly DCA with no rainy day strategy.
+    Just $150 every bi-weekly Monday, no cash accumulation or rainy buys.
+    """
+    shares = 0.0
+    contributions = INITIAL_LUMP_SUM
+    
+    # Initial lump sum
+    first_price = prices.loc[start_date, "SPY_CAD"]
+    if first_price > 0:
+        shares = INITIAL_LUMP_SUM / first_price
+    
+    equity_records = []
+    
+    for dt, row in prices.iterrows():
+        price_cad = row["SPY_CAD"]
+        
+        # Bi-weekly payday: base investment only (no cash savings, no rainy buys)
+        if dt in biweekly_set:
+            if price_cad > 0:
+                shares += DCA_BASE_AMOUNT / price_cad
+                contributions += DCA_BASE_AMOUNT
+        
+        # Track equity (shares only, no cash pool)
+        equity_records.append({"date": dt, "equity": shares * price_cad})
+    
+    # Calculate metrics
+    eq_df = pd.DataFrame(equity_records).set_index("date")
+    eq = eq_df["equity"]
+    
+    start_val = eq.iloc[0]
+    end_val = eq.iloc[-1]
+    years = (eq.index[-1] - eq.index[0]).days / 365.25
+    cagr = (end_val / start_val) ** (1/years) - 1 if start_val > 0 and years > 0 else np.nan
+    
+    roll_max = eq.cummax()
+    drawdown = (eq / roll_max) - 1
+    max_dd = drawdown.min()
+    
+    return {
+        "strategy": "Baseline DCA",
+        "contributions": contributions,
+        "end_equity": end_val,
+        "cagr": cagr,
+        "max_drawdown": max_dd,
+        "equity_curve": eq_df,
+        "years": years
+    }
+
+# =============================================================================
+# RSI VARIANT SIMULATION FUNCTION
 # =============================================================================
 def simulate_variant(cadence: str, rainy_amount: float, rsi_threshold: float):
     """
@@ -233,9 +286,14 @@ print("\n" + "=" * 80)
 print("RUNNING PARAMETER SWEEP")
 print("=" * 80)
 
+# First, simulate baseline DCA
+print("\n--- Baseline DCA (No Rainy Strategy) ---")
+baseline = simulate_baseline_dca()
+print(f"Baseline DCA: CAGR={baseline['cagr']*100:.2f}%, End=${baseline['end_equity']:,.0f}, Invested=${baseline['contributions']:,.0f}")
+
 results = []
 total_variants = len(CADENCES) * len(RAINY_AMOUNTS) * len(RSI_THRESHOLDS)
-print(f"Testing {total_variants} variants...")
+print(f"\n--- Testing {total_variants} RSI Strategy Variants ---")
 
 for i, (cadence, rainy_amt, rsi_thresh) in enumerate(product(CADENCES, RAINY_AMOUNTS, RSI_THRESHOLDS), 1):
     print(f"[{i}/{total_variants}] {cadence}, ${int(rainy_amt)}, RSI<{rsi_thresh}...", end=" ")
@@ -307,6 +365,10 @@ summary_df = pd.DataFrame([
 ])
 summary_df.to_csv(out_dir / "rsi_variants_summary.csv", index=False)
 print(f"\nExported: rsi_variants_summary.csv")
+
+# Export baseline equity curve
+baseline["equity_curve"].to_csv(out_dir / "equity_baseline_dca.csv")
+print(f"Exported: equity_baseline_dca.csv")
 
 # Export top 5 equity curves
 for rank, r in enumerate(filtered_results[:5], 1):
@@ -424,9 +486,192 @@ plt.close()
 print("Exported: rsi_history_thresholds.png")
 
 # =============================================================================
-# VISUALIZATION 3 - Top 5 Variants
+# VISUALIZATION 2.5 - Rainy Day Analysis (Hit/Miss with SPY Drawdown)
 # =============================================================================
-print("\nGenerating comparison chart...")
+print("\nGenerating rainy day buy analysis chart...")
+
+# Get your chosen variant (#2) for detailed analysis
+your_variant = filtered_results[1]  # Index 1 = Rank #2
+variant_cadence = your_variant['cadence']
+variant_rsi_threshold = your_variant['rsi_threshold']
+variant_rainy_amount = your_variant['rainy_amount']
+
+# Re-simulate to track individual rainy day events
+rainy_schedule = weekly_set if variant_cadence == "weekly" else biweekly_set
+cash_pool = 0.0
+rainy_events = []
+
+for dt in biweekly_set:
+    cash_pool += CASH_ACCUMULATION  # Save $30 every payday
+    
+    if dt in rainy_schedule:
+        if dt in prices.index:
+            rsi_val = prices.loc[dt, 'RSI']
+            spy_price = prices.loc[dt, INDEX_TICKER]
+            
+            if pd.notna(rsi_val) and rsi_val < variant_rsi_threshold:
+                # Rainy day detected
+                hit = cash_pool >= variant_rainy_amount
+                amount_deployed = variant_rainy_amount if hit else 0
+                
+                if hit:
+                    cash_pool -= variant_rainy_amount
+                
+                # Determine RSI band
+                if rsi_val < 30:
+                    band = "Extreme (<30)"
+                elif rsi_val < 35:
+                    band = "Very Low (30-35)"
+                elif rsi_val < 40:
+                    band = "Low (35-40)"
+                else:
+                    band = "Moderate (40-45)"
+                
+                rainy_events.append({
+                    'date': dt,
+                    'rsi': rsi_val,
+                    'spy_price': spy_price,
+                    'hit': hit,
+                    'amount': amount_deployed,
+                    'band': band,
+                    'cash_pool': cash_pool
+                })
+
+# Create DataFrame
+rainy_df = pd.DataFrame(rainy_events)
+
+# Calculate cumulative extra buying
+rainy_df['cumulative_extra'] = rainy_df['amount'].cumsum()
+
+# Get SPY drawdown for rainy dates
+rainy_df['spy_drawdown'] = rainy_df['date'].apply(lambda d: spy_drawdown.loc[d] if d in spy_drawdown.index else 0)
+
+# Create figure with 3 subplots
+fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(18, 14), sharex=True,
+                                     gridspec_kw={'height_ratios': [2, 1, 1]})
+
+# Top panel: SPY Price with Hit/Miss markers colored by RSI band
+ax1_twin = ax1.twinx()
+ax1.plot(prices.index, prices[INDEX_TICKER], color='#1f77b4', linewidth=1.5, label='SPY Price', alpha=0.6)
+
+# Plot rainy day markers
+band_colors = {
+    "Extreme (<30)": '#8B0000',      # Dark red
+    "Very Low (30-35)": '#DC143C',   # Crimson
+    "Low (35-40)": '#FF6347',        # Tomato
+    "Moderate (40-45)": '#FFA500'    # Orange
+}
+
+for band in band_colors.keys():
+    band_data = rainy_df[rainy_df['band'] == band]
+    hits = band_data[band_data['hit']]
+    misses = band_data[~band_data['hit']]
+    
+    if not hits.empty:
+        ax1_twin.scatter(hits['date'], hits['rsi'], c=band_colors[band], 
+                        marker='o', s=100, edgecolors='black', linewidths=1.5,
+                        label=f'{band} (Hit)', zorder=5, alpha=0.8)
+    
+    if not misses.empty:
+        ax1_twin.scatter(misses['date'], misses['rsi'], c=band_colors[band], 
+                        marker='x', s=100, linewidths=2,
+                        label=f'{band} (Miss)', zorder=5, alpha=0.8)
+
+ax1.set_ylabel('SPY Price (USD)', fontsize=12, fontweight='bold', color='#1f77b4')
+ax1_twin.set_ylabel('RSI Level', fontsize=12, fontweight='bold')
+ax1_twin.set_ylim(0, 50)
+ax1_twin.axhline(y=variant_rsi_threshold, color='red', linestyle='--', linewidth=1.5, alpha=0.7, label=f'Your Threshold ({variant_rsi_threshold})')
+ax1.set_title(f'Rainy Day Buy Opportunities: Variant #2 (Bi-weekly ${int(variant_rainy_amount)} RSI<{variant_rsi_threshold})', 
+             fontsize=14, fontweight='bold', pad=15)
+ax1.grid(alpha=0.3, linestyle='--')
+ax1.set_yscale('log')
+ax1.tick_params(axis='y', labelcolor='#1f77b4')
+
+# Combine legends
+lines1, labels1 = ax1.get_legend_handles_labels()
+lines2, labels2 = ax1_twin.get_legend_handles_labels()
+ax1_twin.legend(lines1 + lines2, labels1 + labels2, loc='upper left', fontsize=8, ncol=2)
+
+# Middle panel: SPY Drawdown with rainy day markers
+ax2.fill_between(prices.index, spy_drawdown, 0, where=(spy_drawdown < 0), 
+                 color='#d62728', alpha=0.3, label='Drawdown')
+ax2.plot(prices.index, spy_drawdown, color='#d62728', linewidth=1, alpha=0.8)
+
+# Mark rainy day buys on drawdown chart
+hits_only = rainy_df[rainy_df['hit']]
+ax2.scatter(hits_only['date'], hits_only['spy_drawdown'], c='green', 
+           marker='^', s=80, edgecolors='black', linewidths=1,
+           label=f'Successful Buy (n={len(hits_only)})', zorder=5)
+
+ax2.axhline(y=0, color='black', linestyle='-', linewidth=0.5)
+ax2.set_ylabel('SPY Drawdown (%)', fontsize=12, fontweight='bold')
+ax2.grid(alpha=0.3, linestyle='--')
+ax2.legend(loc='lower left', fontsize=10)
+
+# Bottom panel: Cumulative extra buying power deployed
+ax3.plot(rainy_df['date'], rainy_df['cumulative_extra'], color='#2ca02c', 
+        linewidth=2.5, label='Cumulative Extra Capital Deployed')
+ax3.fill_between(rainy_df['date'], 0, rainy_df['cumulative_extra'], 
+                 alpha=0.3, color='#2ca02c')
+
+ax3.set_ylabel('Cumulative Extra\nBuying ($CAD)', fontsize=12, fontweight='bold')
+ax3.set_xlabel('Date', fontsize=12, fontweight='bold')
+ax3.grid(alpha=0.3, linestyle='--')
+ax3.legend(loc='upper left', fontsize=10)
+ax3.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
+
+plt.tight_layout()
+plt.savefig(out_dir / "rainy_day_analysis_detailed.png", dpi=150, bbox_inches='tight')
+plt.close()
+print("Exported: rainy_day_analysis_detailed.png")
+
+# Print rainy day statistics by band
+print("\nRainy Day Statistics by RSI Band:")
+for band in ["Extreme (<30)", "Very Low (30-35)", "Low (35-40)", "Moderate (40-45)"]:
+    band_data = rainy_df[rainy_df['band'] == band]
+    if not band_data.empty:
+        hits = band_data[band_data['hit']].shape[0]
+        total = band_data.shape[0]
+        total_deployed = band_data['amount'].sum()
+        avg_drawdown = band_data['spy_drawdown'].mean()
+        print(f"  {band}: {hits}/{total} hit ({hits/total*100:.1f}%), ${total_deployed:,.0f} deployed, avg DD: {avg_drawdown:.1f}%")
+
+# =============================================================================
+# VISUALIZATION 3 - Top 3 Variants vs Baseline DCA
+# =============================================================================
+print("\nGenerating comparison chart with baseline DCA...")
+fig, ax = plt.subplots(figsize=(16, 8))
+
+# Plot baseline first (gray, dashed)
+ax.plot(baseline["equity_curve"].index, baseline["equity_curve"]["equity"], 
+        label=f"Baseline DCA (No Rainy): {baseline['cagr']*100:.2f}% CAGR", 
+        linewidth=2.5, color='gray', linestyle='--', alpha=0.7)
+
+# Plot top 3 variants
+colors = ['#ff7f0e', '#1f77b4', '#2ca02c']  # Orange for #1, Blue for #2, Green for #3
+labels = ['#1 Weekly $150 RSI<40', '#2 Bi-weekly $150 RSI<45 (YOUR CHOICE)', '#3 Weekly $100 RSI<45']
+for rank, r in enumerate(filtered_results[:3], 1):
+    eq_df = r["equity_curve"]
+    label = f"{labels[rank-1]}: {r['cagr']*100:.2f}% CAGR"
+    linewidth = 3 if rank == 2 else 2  # Thicker line for your choice
+    ax.plot(eq_df.index, eq_df["equity"], label=label, linewidth=linewidth, color=colors[rank-1])
+
+ax.set_title("Top 3 RSI Cash Strategies vs Simple DCA Baseline", 
+             fontsize=14, fontweight='bold', pad=15)
+ax.set_ylabel("Portfolio Value (CAD)", fontsize=12, fontweight='bold')
+ax.set_xlabel("Date", fontsize=12, fontweight='bold')
+ax.grid(alpha=0.3)
+ax.legend(loc='upper left', fontsize=10)
+ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
+plt.tight_layout()
+plt.savefig(out_dir / "strategy_comparison_with_baseline.png", dpi=150)
+plt.close()
+print("Exported: strategy_comparison_with_baseline.png")
+
+# =============================================================================
+# VISUALIZATION 4 - Top 5 Variants Only
+# =============================================================================
+print("\nGenerating top 5 variants chart...")
 fig, ax = plt.subplots(figsize=(16, 8))
 
 colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd']
@@ -533,6 +778,13 @@ print(f"  Hit rate: {best['hit_rate']*100:.1f}%")
 print(f"  Final equity: ${best['end_equity']:,.0f}")
 print(f"  Total contributions: ${best['contributions']:,.0f}")
 print(f"  Rainy buys: {best['rainy_hits']} / {best['rainy_total']}")
+
+print(f"\nBASELINE DCA COMPARISON:")
+print(f"  Baseline CAGR: {baseline['cagr']*100:.2f}%")
+print(f"  Baseline equity: ${baseline['end_equity']:,.0f}")
+print(f"  Baseline invested: ${baseline['contributions']:,.0f}")
+print(f"  CAGR improvement: +{(best['cagr'] - baseline['cagr'])*100:.2f} percentage points")
+print(f"  Equity improvement: +${(best['end_equity'] - baseline['end_equity']):,.0f} ({((best['end_equity']/baseline['end_equity'])-1)*100:.1f}% more)")
 
 print(f"\nRAINY PERIOD ANALYSIS (RSI < 45):")
 print(f"  Total rainy periods: {len(rainy_periods)}")
