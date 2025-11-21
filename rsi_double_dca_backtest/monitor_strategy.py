@@ -221,6 +221,28 @@ def check_conditions():
             if tracking.get('initial_cash_pool') and cash_pool >= 330.0 and len(tracking.get('rainy_buys', [])) == 0:
                 initial_cash_note = f"\n💡 NOTE: Starting cash pool balance: ${tracking.get('initial_cash_pool', 330.0):.2f}\n   This is your initial reserve for rainy day opportunities.\n"
             
+            # Precompute conditional lines so f-string expressions don't contain backslashes
+            rainy_status_line = '✅ RAINY DAY - RSI < 45!' if rsi < RSI_THRESHOLD else '⛅ NOT RAINY - RSI ≥ 45'
+            
+            if rsi < RSI_THRESHOLD and cash_pool >= RAINY_AMOUNT:
+                recommendation_line = '🔥 RECOMMENDATION: Buy extra $150 from cash pool'
+                totals_line = '   Total investment today: $300 ($150 base + $150 rainy)'
+                after_buy_line = (
+                    f'   After rainy buy: ${cash_pool - RAINY_AMOUNT:.2f}\n'
+                    f'   Add savings: +${CASH_ACCUMULATION:.0f}\n'
+                    f'   Final pool: ${cash_pool - RAINY_AMOUNT + CASH_ACCUMULATION:.2f}'
+                )
+            elif rsi >= RSI_THRESHOLD:
+                # Not a rainy day
+                recommendation_line = '💰 RECOMMENDATION: Save your cash for next rainy day'
+                totals_line = '   Total investment today: $150 (base only)'
+                after_buy_line = ''
+            else:
+                # Rainy day but insufficient cash
+                recommendation_line = f'⚠️  Rainy day but insufficient cash (need ${RAINY_AMOUNT:.0f}, have ${cash_pool:.2f})'
+                totals_line = '   Total investment today: $150 (base only)'
+                after_buy_line = ''
+            
             body = f"""
 {STRATEGY_NAME} - Payday Investment Metrics
 
@@ -242,12 +264,12 @@ YOUR DECISION TODAY:
    Current RSI: {rsi:.2f}
    Rainy threshold: < {RSI_THRESHOLD}
    
-   {'✅ RAINY DAY - RSI < 45!' if rsi < RSI_THRESHOLD else '⛅ NOT RAINY - RSI ≥ 45'}
+   {rainy_status_line}
    
-   {'🔥 RECOMMENDATION: Buy extra $150 from cash pool' if rsi < RSI_THRESHOLD and cash_pool >= RAINY_AMOUNT else '💰 RECOMMENDATION: Save your cash for next rainy day' if rsi >= RSI_THRESHOLD else '⚠️  Rainy day but insufficient cash (need $' + str(RAINY_AMOUNT) + ', have $' + str(cash_pool) + ')'}
+   {recommendation_line}
    
-   {'   Total investment today: $300 ($150 base + $150 rainy)' if rsi < RSI_THRESHOLD and cash_pool >= RAINY_AMOUNT else '   Total investment today: $150 (base only)'}
-   {'   After rainy buy: $' + str(cash_pool - RAINY_AMOUNT) + '\n   Add savings: +$' + str(CASH_ACCUMULATION) + '\n   Final pool: $' + str(cash_pool - RAINY_AMOUNT + CASH_ACCUMULATION) if rsi < RSI_THRESHOLD and cash_pool >= RAINY_AMOUNT else ''}
+   {totals_line}
+   {after_buy_line}
 
 Next payday: {'1st' if today.day >= PAYDAY_DAY_OF_MONTH_2 else '15th'} of {'next month' if today.day >= PAYDAY_DAY_OF_MONTH_2 else 'this month'}
 
