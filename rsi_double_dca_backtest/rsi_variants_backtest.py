@@ -370,8 +370,8 @@ print(f"\nExported: rsi_variants_summary.csv")
 baseline["equity_curve"].to_csv(out_dir / "equity_baseline_dca.csv")
 print(f"Exported: equity_baseline_dca.csv")
 
-# Export top 5 equity curves
-for rank, r in enumerate(filtered_results[:5], 1):
+# Export top 3 equity curves (focus on your chosen variants)
+for rank, r in enumerate(filtered_results[:3], 1):
     filename = f"equity_variant_{rank}_{r['cadence']}_{int(r['rainy_amount'])}_{r['rsi_threshold']}.csv"
     r["equity_curve"].to_csv(out_dir / filename)
     print(f"Exported: {filename}")
@@ -647,21 +647,18 @@ ax.plot(baseline["equity_curve"].index, baseline["equity_curve"]["equity"],
         label=f"Baseline DCA (No Rainy): {baseline['cagr']*100:.2f}% CAGR", 
         linewidth=2.5, color='gray', linestyle='--', alpha=0.7)
 
-# Plot top 3 variants
-colors = ['#ff7f0e', '#1f77b4', '#2ca02c']  # Orange for #1, Blue for #2, Green for #3
-labels = ['#1 Weekly $150 RSI<40', '#2 Bi-weekly $150 RSI<45 (YOUR CHOICE)', '#3 Weekly $100 RSI<45']
-for rank, r in enumerate(filtered_results[:3], 1):
-    eq_df = r["equity_curve"]
-    label = f"{labels[rank-1]}: {r['cagr']*100:.2f}% CAGR"
-    linewidth = 3 if rank == 2 else 2  # Thicker line for your choice
-    ax.plot(eq_df.index, eq_df["equity"], label=label, linewidth=linewidth, color=colors[rank-1])
+# Plot only your chosen variant #2
+your_variant = filtered_results[1]  # Rank #2
+eq_df = your_variant["equity_curve"]
+label = f"#2 Bi-weekly $150 RSI<45 (YOUR CHOICE): {your_variant['cagr']*100:.2f}% CAGR"
+ax.plot(eq_df.index, eq_df["equity"], label=label, linewidth=3, color='#1f77b4')
 
-ax.set_title("Top 3 RSI Cash Strategies vs Simple DCA Baseline", 
+ax.set_title("Your RSI Cash Strategy vs Simple DCA Baseline", 
              fontsize=14, fontweight='bold', pad=15)
 ax.set_ylabel("Portfolio Value (CAD)", fontsize=12, fontweight='bold')
 ax.set_xlabel("Date", fontsize=12, fontweight='bold')
 ax.grid(alpha=0.3)
-ax.legend(loc='upper left', fontsize=10)
+ax.legend(loc='upper left', fontsize=11)
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
 plt.tight_layout()
 plt.savefig(out_dir / "strategy_comparison_with_baseline.png", dpi=150)
@@ -669,97 +666,119 @@ plt.close()
 print("Exported: strategy_comparison_with_baseline.png")
 
 # =============================================================================
-# VISUALIZATION 4 - Top 5 Variants Only
+# VISUALIZATION 4 - Variant #2 Only (Detailed View)
 # =============================================================================
-print("\nGenerating top 5 variants chart...")
+print("\nGenerating variant #2 detailed equity chart...")
 fig, ax = plt.subplots(figsize=(16, 8))
 
-colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd']
-for rank, r in enumerate(filtered_results[:5], 1):
-    eq_df = r["equity_curve"]
-    label = f"#{rank}: {r['cadence']} ${int(r['rainy_amount'])} RSI<{r['rsi_threshold']} ({r['cagr']*100:.2f}% CAGR)"
-    ax.plot(eq_df.index, eq_df["equity"], label=label, linewidth=2, color=colors[rank-1])
+# Plot your variant #2 only
+your_variant = filtered_results[1]  # Rank #2
+eq_df = your_variant["equity_curve"]
+ax.plot(eq_df.index, eq_df["equity"], label=f"Bi-weekly $150 RSI<45: {your_variant['cagr']*100:.2f}% CAGR", 
+        linewidth=2.5, color='#1f77b4')
+ax.fill_between(eq_df.index, 0, eq_df["equity"], alpha=0.2, color='#1f77b4')
 
-ax.set_title("Top 5 RSI Cash Strategy Variants (by CAGR, filtered by 75% ± 10% hit rate)", 
+ax.set_title("Your Strategy: Bi-weekly $150 with RSI < 45 Rainy Day Buying", 
              fontsize=14, fontweight='bold', pad=15)
 ax.set_ylabel("Portfolio Value (CAD)", fontsize=12, fontweight='bold')
 ax.set_xlabel("Date", fontsize=12, fontweight='bold')
 ax.grid(alpha=0.3)
-ax.legend(loc='upper left', fontsize=10)
+ax.legend(loc='upper left', fontsize=11)
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
+
+# Add annotations for major milestones
+milestones = [
+    (pd.Timestamp('2009-03-09'), 'Financial Crisis Bottom'),
+    (pd.Timestamp('2020-03-23'), 'COVID-19 Bottom'),
+]
+for date, label in milestones:
+    if date in eq_df.index:
+        value = eq_df.loc[date, 'equity']
+        ax.annotate(label, xy=(date, value), xytext=(10, 20), 
+                   textcoords='offset points', fontsize=9,
+                   arrowprops=dict(arrowstyle='->', color='red', lw=1.5),
+                   bbox=dict(boxstyle='round,pad=0.3', facecolor='yellow', alpha=0.7))
+
 plt.tight_layout()
-plt.savefig(out_dir / "rsi_variants_top5_comparison.png", dpi=150)
+plt.savefig(out_dir / "variant_2_equity_curve.png", dpi=150)
 plt.close()
-print("Exported: rsi_variants_top5_comparison.png")
+print("Exported: variant_2_equity_curve.png")
 
 # =============================================================================
-# HEATMAP - CAGR by Amount and Threshold (bi-weekly only)
+# HEATMAP - CAGR by Amount and Threshold (bi-weekly only - your chosen cadence)
 # =============================================================================
-print("\nGenerating heatmaps...")
+print("\nGenerating bi-weekly parameter heatmap...")
 
-for cadence in CADENCES:
-    cadence_results = [r for r in results if r['cadence'] == cadence]
-    
-    # Create pivot table
-    heatmap_data = []
-    for r in cadence_results:
-        heatmap_data.append({
-            'rainy_amount': r['rainy_amount'],
-            'rsi_threshold': r['rsi_threshold'],
-            'cagr': r['cagr'] * 100,
-            'hit_rate': r['hit_rate'] * 100
-        })
-    df_heat = pd.DataFrame(heatmap_data)
-    
-    # CAGR heatmap
-    pivot_cagr = df_heat.pivot(index='rainy_amount', columns='rsi_threshold', values='cagr')
-    pivot_hit = df_heat.pivot(index='rainy_amount', columns='rsi_threshold', values='hit_rate')
-    
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
-    
-    # CAGR
-    im1 = ax1.imshow(pivot_cagr.values, cmap='RdYlGn', aspect='auto')
-    ax1.set_xticks(range(len(pivot_cagr.columns)))
-    ax1.set_xticklabels([f"<{int(x)}" for x in pivot_cagr.columns])
-    ax1.set_yticks(range(len(pivot_cagr.index)))
-    ax1.set_yticklabels([f"${int(x)}" for x in pivot_cagr.index])
-    ax1.set_xlabel('RSI Threshold', fontweight='bold')
-    ax1.set_ylabel('Rainy Amount', fontweight='bold')
-    ax1.set_title(f'CAGR (%) - {cadence.title()} Cadence', fontweight='bold')
-    
-    # Annotate values
-    for i in range(len(pivot_cagr.index)):
-        for j in range(len(pivot_cagr.columns)):
-            text = ax1.text(j, i, f'{pivot_cagr.values[i, j]:.1f}%',
-                           ha="center", va="center", color="black", fontsize=9, fontweight='bold')
-    
-    plt.colorbar(im1, ax=ax1, label='CAGR (%)')
-    
-    # Hit Rate
-    im2 = ax2.imshow(pivot_hit.values, cmap='Blues', aspect='auto', vmin=0, vmax=100)
-    ax2.set_xticks(range(len(pivot_hit.columns)))
-    ax2.set_xticklabels([f"<{int(x)}" for x in pivot_hit.columns])
-    ax2.set_yticks(range(len(pivot_hit.index)))
-    ax2.set_yticklabels([f"${int(x)}" for x in pivot_hit.index])
-    ax2.set_xlabel('RSI Threshold', fontweight='bold')
-    ax2.set_ylabel('Rainy Amount', fontweight='bold')
-    ax2.set_title(f'Hit Rate (%) - {cadence.title()} Cadence', fontweight='bold')
-    
-    # Annotate values + highlight target zone
-    for i in range(len(pivot_hit.index)):
-        for j in range(len(pivot_hit.columns)):
-            val = pivot_hit.values[i, j]
-            color = "white" if 65 <= val <= 85 else "black"
-            weight = 'bold' if 65 <= val <= 85 else 'normal'
-            text = ax2.text(j, i, f'{val:.1f}%',
-                           ha="center", va="center", color=color, fontsize=9, fontweight=weight)
-    
-    plt.colorbar(im2, ax=ax2, label='Hit Rate (%)')
-    
-    plt.tight_layout()
-    plt.savefig(out_dir / f"rsi_variants_heatmap_{cadence}.png", dpi=150)
-    plt.close()
-    print(f"Exported: rsi_variants_heatmap_{cadence}.png")
+# Only show bi-weekly since that's your chosen cadence
+cadence = 'biweekly'
+cadence_results = [r for r in results if r['cadence'] == cadence]
+
+# Create pivot table
+heatmap_data = []
+for r in cadence_results:
+    heatmap_data.append({
+        'rainy_amount': r['rainy_amount'],
+        'rsi_threshold': r['rsi_threshold'],
+        'cagr': r['cagr'] * 100,
+        'hit_rate': r['hit_rate'] * 100
+    })
+df_heat = pd.DataFrame(heatmap_data)
+
+# CAGR heatmap
+pivot_cagr = df_heat.pivot(index='rainy_amount', columns='rsi_threshold', values='cagr')
+pivot_hit = df_heat.pivot(index='rainy_amount', columns='rsi_threshold', values='hit_rate')
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
+
+# CAGR
+im1 = ax1.imshow(pivot_cagr.values, cmap='RdYlGn', aspect='auto')
+ax1.set_xticks(range(len(pivot_cagr.columns)))
+ax1.set_xticklabels([f"<{int(x)}" for x in pivot_cagr.columns])
+ax1.set_yticks(range(len(pivot_cagr.index)))
+ax1.set_yticklabels([f"${int(x)}" for x in pivot_cagr.index])
+ax1.set_xlabel('RSI Threshold', fontweight='bold')
+ax1.set_ylabel('Rainy Amount', fontweight='bold')
+ax1.set_title(f'CAGR (%) - {cadence.title()} Cadence', fontweight='bold')
+
+# Annotate values with highlight for your choice (150, 45)
+for i in range(len(pivot_cagr.index)):
+    for j in range(len(pivot_cagr.columns)):
+        is_your_choice = (pivot_cagr.index[i] == 150 and pivot_cagr.columns[j] == 45)
+        bbox = dict(boxstyle='round,pad=0.3', facecolor='yellow', alpha=0.8) if is_your_choice else None
+        text = ax1.text(j, i, f'{pivot_cagr.values[i, j]:.1f}%',
+                       ha="center", va="center", color="black", fontsize=9, fontweight='bold',
+                       bbox=bbox)
+
+plt.colorbar(im1, ax=ax1, label='CAGR (%)')
+
+# Hit Rate
+im2 = ax2.imshow(pivot_hit.values, cmap='Blues', aspect='auto', vmin=0, vmax=100)
+ax2.set_xticks(range(len(pivot_hit.columns)))
+ax2.set_xticklabels([f"<{int(x)}" for x in pivot_hit.columns])
+ax2.set_yticks(range(len(pivot_hit.index)))
+ax2.set_yticklabels([f"${int(x)}" for x in pivot_hit.index])
+ax2.set_xlabel('RSI Threshold', fontweight='bold')
+ax2.set_ylabel('Rainy Amount', fontweight='bold')
+ax2.set_title(f'Hit Rate (%) - {cadence.title()} Cadence', fontweight='bold')
+
+# Annotate values + highlight target zone and your choice
+for i in range(len(pivot_hit.index)):
+    for j in range(len(pivot_hit.columns)):
+        val = pivot_hit.values[i, j]
+        is_your_choice = (pivot_hit.index[i] == 150 and pivot_hit.columns[j] == 45)
+        color = "white" if 65 <= val <= 85 else "black"
+        weight = 'bold' if 65 <= val <= 85 else 'normal'
+        bbox = dict(boxstyle='round,pad=0.3', facecolor='yellow', alpha=0.8) if is_your_choice else None
+        text = ax2.text(j, i, f'{val:.1f}%',
+                       ha="center", va="center", color=color, fontsize=9, fontweight=weight,
+                       bbox=bbox)
+
+plt.colorbar(im2, ax=ax2, label='Hit Rate (%)')
+
+plt.tight_layout()
+plt.savefig(out_dir / f"rsi_variants_heatmap_{cadence}.png", dpi=150)
+plt.close()
+print(f"Exported: rsi_variants_heatmap_{cadence}.png")
 
 # =============================================================================
 # FINAL REPORT

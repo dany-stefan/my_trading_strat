@@ -2,11 +2,18 @@
 
 ## ✅ Quick Checklist
 
-### 1. Code Pushed to GitHub
+### 1. Test Email Preview Locally First
+```bash
+cd /Users/danystefan/Documents/workspace/my_trading_strat/rsi_double_dca_backtest
+/Users/danystefan/Documents/workspace/my_trading_strat/.venv/bin/python simulate_payday_email.py
+```
+**This shows you what the email will look like WITHOUT sending it!**
+
+### 2. Code Pushed to GitHub
 - [x] Repository created: https://github.com/dany-stefan/my_trading_strat
 - [x] Code pushed successfully
 
-### 2. Secrets Configuration Required
+### 3. Secrets Configuration Required
 
 Go to: https://github.com/dany-stefan/my_trading_strat/settings/secrets/actions
 
@@ -20,13 +27,31 @@ Add these 5 secrets (click "New repository secret" for each):
 | `SENDER_PASSWORD` | `kzuf dozw badx wwro` |
 | `RECIPIENT_EMAIL` | `d4388707373@gmail.com` |
 
-### 3. Enable GitHub Actions
+### 4. Enable GitHub Actions
 
 1. Go to: https://github.com/dany-stefan/my_trading_strat/actions
 2. If prompted, click **"I understand my workflows, go ahead and enable them"**
 3. You should see "RSI Strategy Monitor" workflow listed
 
-### 4. Test the Workflow
+### 4. Test Email Preview Locally (Before Cloud Setup)
+
+**Preview what your payday email will look like WITHOUT sending:**
+
+```bash
+cd /Users/danystefan/Documents/workspace/my_trading_strat/rsi_double_dca_backtest
+/Users/danystefan/Documents/workspace/my_trading_strat/.venv/bin/python simulate_payday_email.py
+```
+
+This will:
+- ✅ Fetch live SPY RSI and price data
+- ✅ Show exactly what your payday email will contain
+- ✅ Display current cash pool status
+- ✅ Show buy/skip recommendation based on current RSI
+- ✅ **No email sent** - just a preview in terminal
+
+**Run this anytime** to see what action you'd take if today were payday!
+
+### 5. Test the Workflow (After Cloud Setup)
 
 1. Go to: https://github.com/dany-stefan/my_trading_strat/actions
 2. Click **"RSI Strategy Monitor"**

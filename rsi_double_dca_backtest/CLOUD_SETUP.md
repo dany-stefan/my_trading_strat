@@ -60,7 +60,18 @@ Your email credentials need to be stored securely:
 
 ---
 
-## Step 4: Test It Manually
+## Step 4: Preview Email Locally First (Optional but Recommended)
+
+**Before triggering the cloud workflow, test locally:**
+
+```bash
+cd /Users/danystefan/Documents/workspace/my_trading_strat/rsi_double_dca_backtest
+/Users/danystefan/Documents/workspace/my_trading_strat/.venv/bin/python simulate_payday_email.py
+```
+
+This shows exactly what the email will contain - no email sent, just a preview!
+
+## Step 5: Test Cloud Workflow
 
 1. Click on **RSI Strategy Monitor** workflow
 

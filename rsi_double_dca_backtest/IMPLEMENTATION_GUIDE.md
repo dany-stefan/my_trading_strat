@@ -4,8 +4,15 @@
 
 **Variant:** #2 - Bi-weekly $150 RSI < 45  
 **Expected CAGR:** 33.54%  
-**Hit Rate:** 80.0%  
-**Final Equity (22 years):** $600,907 CAD
+**Hit Rate:** 80.0% (highest of all variants!)  
+**Final Equity (22 years):** $600,907 CAD  
+**vs Baseline DCA:** +19.4% more wealth (+$97,624)
+
+**Why this variant beats simple DCA:**
+- Same bi-weekly schedule, but adds rainy day buying
+- +1.07% higher CAGR with minimal effort
+- 80% success rate on rainy opportunities
+- See full analysis: `RSI_VARIANTS_ANALYSIS.md`
 
 ---
 
@@ -77,7 +84,25 @@ I've created `monitor_strategy.py` which will:
 
 ## Running the Monitor
 
-### Manual Test (Do this first!)
+### Preview Email Without Sending (Do this first!)
+
+**Before setting up email credentials, preview what you'll receive:**
+
+```bash
+cd /Users/danystefan/Documents/workspace/my_trading_strat/rsi_double_dca_backtest
+/Users/danystefan/Documents/workspace/my_trading_strat/.venv/bin/python simulate_payday_email.py
+```
+
+This will:
+- ✅ Fetch live SPY data and calculate current RSI(14)
+- ✅ Show your current cash pool status
+- ✅ Display exactly what your payday email will contain
+- ✅ Show buy/skip recommendation based on current market
+- ✅ **NO email sent** - just a preview!
+
+**Run this anytime to see what action you'd take if today were payday!**
+
+### Manual Test with Email (After email setup)
 ```bash
 cd /Users/danystefan/Documents/workspace/my_trading_strat
 .venv/bin/python rsi_double_dca_backtest/monitor_strategy.py
