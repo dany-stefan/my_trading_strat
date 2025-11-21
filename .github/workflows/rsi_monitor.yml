@@ -1,8 +1,3 @@
-SMTP_SERVER = smtp.gmail.com
-SMTP_PORT = 587
-SENDER_EMAIL = d4388707373@gmail.com
-SENDER_PASSWORD = kzuf dozw badx wwro
-RECIPIENT_EMAIL = d4388707373@gmail.com
 name: RSI Strategy Monitor
 
 on:
