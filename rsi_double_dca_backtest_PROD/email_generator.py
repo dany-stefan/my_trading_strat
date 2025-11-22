@@ -9,6 +9,7 @@ Shared by both simulation and production email scripts to ensure consistency.
 """
 
 from datetime import datetime, timedelta
+from market_metrics import calculate_market_metrics
 
 # =============================================================================
 # STRATEGY PARAMETERS
@@ -43,55 +44,44 @@ def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy
     """
     today = datetime.now().date()
     
-    # Calculate next payday date (1st or 15th of month)
-    if today.day < PAYDAY_DAY_OF_MONTH_2:
-        next_payday_text = f"{PAYDAY_DAY_OF_MONTH_2}th of this month"
-    else:
-        next_month = (today.replace(day=1) + timedelta(days=32)).replace(day=1)
-        next_payday_text = f"1st of {next_month.strftime('%B')}"
+    # Calculate all market metrics using centralized module
+    metrics = calculate_market_metrics(
+        rsi_sma=rsi_sma,
+        price=price,
+        cash_pool=cash_pool,
+        total_contributions=total_contributions,
+        rainy_buys=rainy_buys,
+        rsi_threshold=RSI_THRESHOLD,
+        dca_base_amount=DCA_BASE_AMOUNT,
+        rainy_amount=RAINY_AMOUNT,
+        cash_accumulation=CASH_ACCUMULATION,
+        payday_day_of_month_2=PAYDAY_DAY_OF_MONTH_2
+    )
     
-    # =============================================================================
-    # RAINY DAY LOGIC - Core decision making
-    # =============================================================================
-    # Check if RSI SMA(7) is below threshold (rainy day condition)
-    is_rainy = rsi_sma < RSI_THRESHOLD
-    can_deploy = cash_pool >= RAINY_AMOUNT
+    # Extract all computed values from metrics module
+    all_metrics = metrics.get_all_metrics()
+    is_rainy = all_metrics["is_rainy"]
+    can_deploy = all_metrics["can_deploy"]
+    total_investment_today = all_metrics["total_investment_today"]
+    new_cash_pool = all_metrics["new_cash_pool"]
+    next_payday_text = all_metrics["next_payday_text"]
+    rainy_buys_count = all_metrics["rainy_buys_count"]
     
-    # =============================================================================
-    # RECOMMENDATION LOGIC - What action to take today
-    # =============================================================================
-    # Case 1: Rainy day AND sufficient cash → Deploy extra $150
-    if is_rainy and can_deploy:
-        recommendation = f"🔥 RECOMMENDATION: Buy extra ${RAINY_AMOUNT:.0f} from cash pool"
-        total_investment_today = DCA_BASE_AMOUNT + RAINY_AMOUNT
-        cash_after_deploy = cash_pool - RAINY_AMOUNT
-        new_cash_pool = cash_pool - RAINY_AMOUNT + CASH_ACCUMULATION
-        action_text = f"⭐⭐⭐ ACTION REQUIRED: BUY ${total_investment_today:.0f} CAD TOTAL ⭐⭐⭐\n   (${DCA_BASE_AMOUNT:.0f} base + ${RAINY_AMOUNT:.0f} rainy)"
-        cash_after_text = f"Cash pool after rainy buy: ${cash_after_deploy:.2f}\n   Add today's savings: +${CASH_ACCUMULATION:.0f}\n   Final cash pool: ${new_cash_pool:.2f}"
+    # Display values
+    price_display = all_metrics["price_display"]
+    rsi_sma_display = all_metrics["rsi_sma_display"]
+    cash_pool_display = all_metrics["cash_pool_display"]
+    total_contributions_display = all_metrics["total_contributions_display"]
+    new_cash_pool_display = all_metrics["new_cash_pool_display"]
     
-    # Case 2: Rainy day BUT insufficient cash → Can't deploy (missed opportunity)
-    elif is_rainy and not can_deploy:
-        recommendation = f"⚠️  Rainy day but insufficient cash (need ${RAINY_AMOUNT:.0f}, have ${cash_pool:.2f})"
-        total_investment_today = DCA_BASE_AMOUNT
-        new_cash_pool = cash_pool + CASH_ACCUMULATION
-        action_text = f"⭐⭐⭐ ACTION REQUIRED: BUY ${total_investment_today:.0f} CAD TOTAL ⭐⭐⭐\n   (base only - insufficient cash for rainy)"
-        cash_after_text = f"Cash pool after saving: ${new_cash_pool:.2f}"
-    
-    # Case 3: Not rainy → Save cash for future rainy days
-    else:
-        recommendation = f"💰 RECOMMENDATION: Save your cash for next rainy day"
-        total_investment_today = DCA_BASE_AMOUNT
-        new_cash_pool = cash_pool + CASH_ACCUMULATION
-        action_text = f"⭐⭐⭐ ACTION REQUIRED: BUY ${total_investment_today:.0f} CAD TOTAL ⭐⭐⭐\n   (base only - not rainy today)"
-        cash_after_text = f"Cash pool after saving: ${new_cash_pool:.2f}"
-    
-    # Display rainy status clearly (using RSI SMA(7) terminology)
-    rainy_status = "✅ RAINY DAY - RSI SMA(7) < 45!" if is_rainy else "⛅ NOT RAINY - RSI SMA(7) ≥ 45"
-    
-    # Note about initial cash pool (only shown on first email)
-    initial_note = ""
-    if total_contributions == 0:
-        initial_note = f"\n   📌 NOTE: Starting with ${cash_pool:.2f} initial cash pool (enough for 2 rainy buys)"
+    # Text blocks
+    recommendation = all_metrics["recommendation"]
+    action_text = all_metrics["action_text"]
+    cash_after_text = all_metrics["cash_after_text"]
+    rainy_status = all_metrics["rainy_status"]
+    decision_result = all_metrics["decision_result"]
+    initial_note = all_metrics["initial_note"]
+    cash_available_line = all_metrics["cash_available_line"]
     
     # =============================================================================
     # EMAIL FORMATTING - Subject and header based on context
@@ -112,22 +102,39 @@ def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy
         date_suffix = ""
         test_notice = ""
     
+    # Metrics markdown table (embed in email)
+    metrics_markdown = f"""
+📌 METRICS SNAPSHOT (Markdown)
+| Metric | Value |
+|---|---|
+| SPY Price | {price_display} |
+| RSI SMA(7) | {rsi_sma_display} |
+| Cash Pool | {cash_pool_display} |
+| Threshold | {RSI_THRESHOLD:.0f} |
+| Rainy Today? | {('Yes' if is_rainy else 'No')} |
+"""
+
     body = f"""
-🎯 RSI STRATEGY MONITOR{header_suffix}
+🎯 RSI STRATEGY MONITOR - PROD{header_suffix}
 {test_notice}
-Date: {today.strftime('%B %d, %Y')}{date_suffix}
-Current SPY Price: ${price:.2f} USD
-RSI SMA(7): {rsi_sma:.2f}
+════════════════════════════════════════════════════════════════
+📅 DATE: {today.strftime('%B %d, %Y')}{date_suffix}
+📈 SPY PRICE: {price_display} USD
+📊 RSI SMA(7): {rsi_sma_display}
+
+📌 EVALUATION TIMING: This email is sent on the 3rd and 17th of each month
+   (2 days after payday on 1st/15th) when RSI is evaluated for rainy day.
+════════════════════════════════════════════════════════════════
 
 ═══════════════════════════════════════════════════════════════
 📋 DECISION FROM STRATEGY RULES
 ═══════════════════════════════════════════════════════════════
 
 DECISION PATH:
-• RSI SMA(7) = {rsi_sma:.2f}
+• RSI SMA(7) = {rsi_sma_display}
 • Threshold = {RSI_THRESHOLD}
-• Result: {"RSI < 45 → RAINY DAY ✅" if is_rainy else "RSI ≥ 45 → NOT RAINY ❌"}
-{"• Cash Available: $" + f"{cash_pool:.2f}" if is_rainy else ""}
+• Result: {decision_result}
+{cash_available_line}
 
 {action_text}
 
@@ -139,7 +146,7 @@ DECISION PATH:
    Invest: ${DCA_BASE_AMOUNT:.0f} CAD into SPY
    
 2️⃣ RAINY DAY CHECK:
-   RSI SMA(7): {rsi_sma:.2f}
+   RSI SMA(7): {rsi_sma_display}
    Rainy threshold: RSI SMA(7) < {RSI_THRESHOLD}
    
    {rainy_status}
@@ -149,6 +156,8 @@ DECISION PATH:
    {cash_after_text}
 
 Next payday: {next_payday_text}
+
+{metrics_markdown}
 
 VARIANT PERFORMANCE SUMMARY (22-year backtest)
 
@@ -207,6 +216,9 @@ Your Strategy vs Alternatives (22 years: 2003-2025):
 - strategy_comparison_with_baseline.png - Growth curves comparison
 - rainy_day_analysis_detailed.png - Hit/miss pattern & cash pool
 - spy_price_rainy_periods_drawdown.png - When you bought during crashes
+- cash_pool_hit_miss.png - Cash pool evolution with rainy buy markers
+- spy_price_hit_miss.png - SPY price with successful/missed buy markers
+- rsi_hit_miss.png - RSI indicator with rainy day trigger points
 
 WHY YOU CHOSE VARIANT #2 (Reminder)
 
@@ -226,9 +238,9 @@ Your Choice = #2 Because:
 
 CURRENT STATUS
 
-Cash Pool: ${cash_pool:.2f}
-Total Contributions to Date: ${total_contributions:,.2f}
-Total Rainy Buys to Date: {len(rainy_buys)}{initial_note}
+Cash Pool: {cash_pool_display}
+Total Contributions to Date: {total_contributions_display}
+Total Rainy Buys to Date: {rainy_buys_count}{initial_note}
 
 Expected Long-Term Results (22 years):
 • CAGR: 33.54%

@@ -81,6 +81,28 @@ def convert_to_html(text):
         tbody tr:nth-child(even) td {
             background-color: #f8f9fa !important;
         }
+        /* Highlighted decision tables */
+        table.decision-table thead th {
+            background-color: #22313f;
+            border-color: #1a252f;
+            text-align: center;
+        }
+        table.decision-table tbody td {
+            background-color: #ffffff;
+            text-align: center;
+        }
+        .highlight-cell {
+            background-color: #fff3cd !important;
+            border: 2px solid #ffc107 !important;
+            font-weight: 700;
+            color: #8a6d3b !important;
+        }
+        .table-caption {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 10px 0 4px 0;
+        }
         .status-box {
             background-color: #d4edda;
             border-left: 5px solid #28a745;
@@ -221,12 +243,23 @@ def convert_to_html(text):
         # Detect ASCII table borders and box characters (ignore them)
         elif line.startswith('┌─') or line.startswith('├─') or line.startswith('└─') or line.startswith('╔═') or line.startswith('║') or line.startswith('╚═'):
             continue
-        # Detect markdown-style table header row
-        elif not in_table and '|' in line and ('Rank' in line or 'Variant' in line or 'Cadence' in line or 'Strategy' in line):
+        # Detect TURBO decision table with Factor header (markdown format)
+        elif not in_table and '| Factor' in line and ('| Rainy?' in line or '| Today' in line or '| Status' in line or '| Value' in line):
             in_table = True
             cells = [cell.strip() for cell in line.split('|')[1:-1]]
             table_headers = cells
-            html += '<table>\n<thead>\n<tr>'
+            html += '<table class="decision-table">\n<thead>\n<tr>'
+            for cell in cells:
+                html += f'<th>{cell}</th>'
+            html += '</tr>\n</thead>\n<tbody>\n'
+        # Detect markdown-style table header row
+        elif not in_table and '|' in line and ('Market Regime' in line or 'Scenario' in line or 'Rank' in line or 'Variant' in line or 'Cadence' in line or 'Strategy' in line or 'Metric' in line):
+            in_table = True
+            cells = [cell.strip() for cell in line.split('|')[1:-1]]
+            table_headers = cells
+            # Use decision-table class for specific comparison tables
+            table_class = 'decision-table' if ('Market Regime' in line or 'Scenario' in line) else ''
+            html += f'<table class="{table_class}">\n<thead>\n<tr>'
             for cell in cells:
                 html += f'<th>{cell}</th>'
             html += '</tr>\n</thead>\n<tbody>\n'
@@ -239,9 +272,12 @@ def convert_to_html(text):
             # All data rows are white (removed highlight logic)
             html += f'<tr>'
             for cell in cells:
+                raw = cell
                 # Remove markdown bold markers
                 cell = cell.replace('**', '')
-                html += f'<td>{cell}</td>'
+                # Highlight selected values (contain ⭐ or 👉)
+                highlight = 'highlight-cell' if ('⭐' in raw or '👉' in raw) else ''
+                html += f'<td class="{highlight}">{cell}</td>'
             html += '</tr>\n'
         # Detect end of table (empty line after table rows)
         elif in_table and not line.strip():
@@ -251,6 +287,9 @@ def convert_to_html(text):
         # ASCII table rows with │
         elif line.startswith('│') and not in_table:
             # Skip ASCII table rows - we handle markdown tables instead
+            continue
+        # Code blocks (decision flowchart)
+        elif line.startswith('```'):
             continue
         # Regular content
         else:
@@ -267,7 +306,7 @@ def convert_to_html(text):
                     clean_line = line.replace('⭐⭐⭐', '').strip()
                     html += f'<div class="action-required">{clean_line}</div>\n'
                 # Decision box sections
-                elif 'DECISION FROM TABLE' in line or 'DECISION FROM STRATEGY' in line or 'DECISION PATH' in line:
+                elif 'DECISION FROM TABLE' in line or 'DECISION FROM STRATEGY' in line or 'DECISION PATH' in line or line.startswith('📦'):
                     html += f'<div class="decision-box"><strong>{line}</strong></div>\n'
                 # Status boxes
                 elif line.startswith('🔥 RECOMMENDATION') or line.startswith('✅ RAINY'):
@@ -275,7 +314,7 @@ def convert_to_html(text):
                 elif line.startswith('⚠️') or line.startswith('💰 RECOMMENDATION'):
                     html += f'<div class="warning-box"><strong>{line}</strong></div>\n'
                 # Section headers with emojis
-                elif line.startswith('📊') or line.startswith('📈') or line.startswith('💵'):
+                elif line.startswith('📊') or line.startswith('📈') or line.startswith('💵') or line.startswith('🔬') or line.startswith('🆕') or line.startswith('🎯') or line.startswith('🏆') or line.startswith('📌') or line.startswith('🎮'):
                     html += f'<h2>{line}</h2>\n'
                 # Numbered steps (1️⃣, 2️⃣, etc.)
                 elif '1️⃣' in line or '2️⃣' in line or '3️⃣' in line:
@@ -292,11 +331,18 @@ def convert_to_html(text):
                 elif len(line) > 2 and line[0].isdigit() and line[1] == '.':
                     html += f'<div class="info-section">{line}</div>\n'
                 # Key Metrics or special labels
-                elif line.startswith('Key Metrics:') or line.startswith('Your Choice') or line.startswith('Expected Long-Term'):
+                elif line.startswith('Key Metrics:') or line.startswith('Your Choice') or line.startswith('Expected Long-Term') or line.startswith('TURBO PERFORMANCE') or line.startswith('DECISION FLOWCHART'):
                     html += f'<p class="section-title">{line}</p>\n'
                 # Lines with checkmarks
                 elif line.startswith('✅') or line.startswith('✔️'):
-                    html += f'<p><strong>{line}</strong></p>\n'
+                    # Do not bold STEP 1 line inside action plan
+                    if line.startswith('✅ STEP 1:'):
+                        html += f'<p>{line}</p>\n'
+                    else:
+                        html += f'<p><strong>{line}</strong></p>\n'
+                # Flowchart lines (indented decision tree)
+                elif '↓' in line or '┌─' in line or '└─' in line:
+                    html += f'<p style="font-family: monospace; margin: 5px 0;">{line}</p>\n'
                 # Regular paragraphs - check for inline formatting
                 else:
                     # Convert markdown-style bold (**text**) to HTML

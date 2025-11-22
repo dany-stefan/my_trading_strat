@@ -172,6 +172,17 @@ def convert_to_html(text):
             font-size: 18px;
             color: #0d47a1;
         }
+        /* Decision / scenario table highlight classes (parity with TURBO) */
+        table.decision-table thead th {
+            background-color: #22313f;
+            border-color: #1a252f;
+        }
+        .highlight-cell {
+            background-color: #fff3cd !important;
+            border: 2px solid #ffc107 !important;
+            font-weight: 700;
+            color: #8a6d3b !important;
+        }
         @media only screen and (max-width: 600px) {
             .container {
                 padding: 12px;

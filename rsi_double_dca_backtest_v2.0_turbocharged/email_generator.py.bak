@@ -52,6 +52,7 @@ def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy
     market_regime = "UNKNOWN"
     adaptive_threshold = RSI_THRESHOLD
     volatility_sizing = RAINY_AMOUNT
+    vix_level = "Unknown"
     
     if spy_200ma and price:
         deviation_pct = ((price - spy_200ma) / spy_200ma) * 100
@@ -68,10 +69,13 @@ def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy
     if vix:
         if vix < 15:
             volatility_sizing = 150.0  # Standard
+            vix_level = "Low"
         elif vix < 25:
             volatility_sizing = 180.0  # +20%
+            vix_level = "Medium"
         else:
             volatility_sizing = 210.0  # +40%
+            vix_level = "High"
     
     # Calculate next payday date (1st or 15th of month)
     if today.day < PAYDAY_DAY_OF_MONTH_2:
@@ -142,56 +146,65 @@ def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy
         date_suffix = " 🚀"
         test_notice = ""
     
-    # Enhanced action display for TURBO
-    if is_rainy and can_deploy:
-        action_box = f"""
-╔══════════════════════════════════════════════════════════════╗
-║  🔥 RAINY DAY ALERT - DEPLOY EXTRA CAPITAL                  ║
-╚══════════════════════════════════════════════════════════════╝
-
-TODAY'S ACTION PLAN:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ STEP 1: Base DCA → Invest $150 CAD (always)
-🔥 STEP 2: RAINY BUY → Deploy ${RAINY_AMOUNT:.0f} CAD from cash pool
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⭐⭐⭐ ACTION REQUIRED: RAINY BUY ${RAINY_AMOUNT:.0f} CAD ⭐⭐⭐
-
-WHY RAINY? RSI SMA(7) = {rsi_sma:.2f} < {RSI_THRESHOLD} (bearish)
-CASH STATUS: ${cash_pool:.2f} → ${new_cash_pool:.2f} (after buy & save)
-"""
-    elif is_rainy and not can_deploy:
-        action_box = f"""
-╔══════════════════════════════════════════════════════════════╗
-║  ⚠️  RAINY DAY BUT INSUFFICIENT CASH                        ║
-╚══════════════════════════════════════════════════════════════╝
-
-TODAY'S ACTION PLAN:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ STEP 1: Base DCA → Invest $150 CAD (always)
-❌ STEP 2: NO RAINY BUY (need ${RAINY_AMOUNT:.0f}, have ${cash_pool:.2f})
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⭐⭐⭐ ACTION REQUIRED: BUY ${total_investment_today:.0f} CAD TOTAL ⭐⭐⭐
-
-WHY RAINY? RSI SMA(7) = {rsi_sma:.2f} < {RSI_THRESHOLD} (bearish)
-CASH STATUS: ${cash_pool:.2f} → ${new_cash_pool:.2f} (after save)
-NOTE: Missed rainy opportunity - keep building cash pool!
-"""
+    # Enhanced action display for TURBO (match PROD structure)
+    # Determine TURBO-specific values
+    if spy_200ma and vix:
+        is_rainy_adaptive = rsi_sma < adaptive_threshold
+        advanced_amount = volatility_sizing if is_rainy_adaptive and cash_pool >= volatility_sizing else 0
+        advanced_total = DCA_BASE_AMOUNT + advanced_amount
     else:
-        action_box = f"""
-╔══════════════════════════════════════════════════════════════╗
-║  💰 STANDARD PAYDAY - SAVE FOR RAINY DAYS                   ║
-╚══════════════════════════════════════════════════════════════╝
-
-TODAY'S ACTION PLAN:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ STEP 1: Base DCA → Invest $150 CAD (always)
-💾 STEP 2: SAVE → Add $30 to cash pool for next rainy day
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⭐⭐⭐ ACTION REQUIRED: BUY ${total_investment_today:.0f} CAD TOTAL ⭐⭐⭐
-
-MARKET STATUS: RSI SMA(7) = {rsi_sma:.2f} ≥ {RSI_THRESHOLD} (healthy)
-CASH STATUS: ${cash_pool:.2f} → ${new_cash_pool:.2f} (after save)
-"""
+        is_rainy_adaptive = is_rainy
+        advanced_amount = RAINY_AMOUNT if is_rainy and can_deploy else 0
+        advanced_total = total_investment_today
+    
+    if is_rainy_adaptive and cash_pool >= (volatility_sizing if spy_200ma and vix else RAINY_AMOUNT):
+        action_box = f"""1️⃣ BASE INVESTMENT (always):
+   Invest: ${DCA_BASE_AMOUNT:.0f} CAD into SPY
+   
+2️⃣ RAINY DAY CHECK (TURBO):
+   RSI SMA(7): {rsi_sma:.2f}
+   Rainy threshold: RSI SMA(7) < {adaptive_threshold if spy_200ma and vix else RSI_THRESHOLD:.0f} (adaptive)
+   
+   ✅ RAINY DAY - RSI SMA(7) < {adaptive_threshold if spy_200ma and vix else RSI_THRESHOLD:.0f}!
+   
+   🔥 RECOMMENDATION: Buy extra ${advanced_amount:.0f} from cash pool
+   
+   ⭐⭐⭐ ACTION REQUIRED: RAINY BUY ${advanced_amount:.0f} CAD ⭐⭐⭐
+   (Plus your regular ${DCA_BASE_AMOUNT:.0f} base = ${advanced_total:.0f} total today)
+   
+   {cash_after_text}"""
+    elif is_rainy_adaptive and cash_pool < (volatility_sizing if spy_200ma and vix else RAINY_AMOUNT):
+        action_box = f"""1️⃣ BASE INVESTMENT (always):
+   Invest: ${DCA_BASE_AMOUNT:.0f} CAD into SPY
+   
+2️⃣ RAINY DAY CHECK (TURBO):
+   RSI SMA(7): {rsi_sma:.2f}
+   Rainy threshold: RSI SMA(7) < {adaptive_threshold if spy_200ma and vix else RSI_THRESHOLD:.0f} (adaptive)
+   
+   ✅ RAINY DAY - RSI SMA(7) < {adaptive_threshold if spy_200ma and vix else RSI_THRESHOLD:.0f}!
+   
+   ⚠️  Rainy day but insufficient cash (need ${volatility_sizing if spy_200ma and vix else RAINY_AMOUNT:.0f}, have ${cash_pool:.2f})
+   
+   ⭐⭐⭐ ACTION REQUIRED: BASE BUY ONLY ${DCA_BASE_AMOUNT:.0f} CAD ⭐⭐⭐
+   (Insufficient cash for rainy buy - keep building pool!)
+   
+   {cash_after_text}"""
+    else:
+        action_box = f"""1️⃣ BASE INVESTMENT (always):
+   Invest: ${DCA_BASE_AMOUNT:.0f} CAD into SPY
+   
+2️⃣ RAINY DAY CHECK (TURBO):
+   RSI SMA(7): {rsi_sma:.2f}
+   Rainy threshold: RSI SMA(7) < {adaptive_threshold if spy_200ma and vix else RSI_THRESHOLD:.0f} (adaptive)
+   
+   ⛅ NOT RAINY - RSI SMA(7) ≥ {adaptive_threshold if spy_200ma and vix else RSI_THRESHOLD:.0f}
+   
+   💰 RECOMMENDATION: Save your cash for next rainy day
+   
+   ⭐⭐⭐ ACTION REQUIRED: BASE BUY ONLY ${DCA_BASE_AMOUNT:.0f} CAD ⭐⭐⭐
+   (Not rainy today - save for next opportunity)
+   
+   {cash_after_text}"""
     
     # Advanced strategy comparison
     advanced_comparison = ""
@@ -231,6 +244,7 @@ TABLE DECISION:
 
 RESULT: {"✅ RAINY - Deploy $" + f"{int(volatility_sizing)}" if is_rainy_adaptive and cash_pool >= volatility_sizing else "❌ NOT RAINY" if not is_rainy_adaptive else "⚠️ RAINY BUT INSUFFICIENT CASH"} 
 ⭐⭐⭐ TURBO ACTION: {"RAINY BUY $" + f"{advanced_amount:.0f}" + " CAD" if advanced_amount > 0 else "BASE BUY ONLY $150 CAD"} ⭐⭐⭐
+   (Plus regular ${DCA_BASE_AMOUNT:.0f} base = ${advanced_total:.0f} total today)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 📊 MARKET CONTEXT & BUYING JUSTIFICATION:
@@ -379,27 +393,34 @@ DIFFERENCE: ${abs(advanced_total - (DCA_BASE_AMOUNT + (RAINY_AMOUNT if is_rainy 
 → You have BOTH emails - pick what feels right for YOUR risk tolerance!
 """
     
-    # Create decision table values display
+    # Create decision table values display for TURBO
     if spy_200ma and vix:
         regime_emoji = "🐂" if market_regime == "BULL" else "🐻" if market_regime == "BEAR" else "⚖️"
         vix_level = "Low" if vix < 15 else "Medium" if vix < 25 else "High"
+        is_rainy_adaptive = rsi_sma < adaptive_threshold
+        
         decision_values = f"""
-╔══════════════════════════════════════════════════════════════╗
-║  📊 DECISION TABLE VALUES - TURBO STRATEGY                  ║
-╚══════════════════════════════════════════════════════════════╝
+════════════════════════════════════════════════════════════════
+📋 DECISION FROM TABLE (TURBO) - See TURBO_RAINY_BUY_DECISION_TABLE.md
+════════════════════════════════════════════════════════════════
 
-⭐⭐⭐ KEY DECISION FACTORS ⭐⭐⭐
+DECISION PATH (3-Factor System):
 
 1️⃣ MARKET REGIME (200-day MA):
    • SPY Price: ${price:.2f} USD
    • 200-day MA: ${spy_200ma:.2f} USD
    • Deviation: {((price - spy_200ma) / spy_200ma * 100):+.1f}%
    • Regime: {regime_emoji} {market_regime}
+   • Adaptive Threshold: RSI < {adaptive_threshold:.0f} {
+    "(selective in bull)" if market_regime == "BULL"
+    else "(aggressive in bear)" if market_regime == "BEAR"
+    else "(standard)"
+  }
 
 2️⃣ VOLATILITY (VIX Fear Index):
    • Current VIX: {vix:.1f}
    • Level: {vix_level} volatility
-   • Sizing: ${volatility_sizing:.0f} CAD {
+   • Rainy Sizing: ${volatility_sizing:.0f} CAD {
     "(standard)" if vix < 15
     else "(+20% more)" if vix < 25
     else "(+40% more - HIGH FEAR!)"
@@ -407,14 +428,11 @@ DIFFERENCE: ${abs(advanced_total - (DCA_BASE_AMOUNT + (RAINY_AMOUNT if is_rainy 
 
 3️⃣ OVERSOLD INDICATOR (RSI):
    • RSI SMA(7): {rsi_sma:.2f}
-   • Adaptive Threshold: < {adaptive_threshold:.0f} {
-    "(selective in bull)" if market_regime == "BULL"
-    else "(aggressive in bear)" if market_regime == "BEAR"
-    else "(standard)"
-  }
-   • Status: {"✅ RAINY DAY" if rsi_sma < adaptive_threshold else "❌ NOT RAINY"}
+   • Threshold: < {adaptive_threshold:.0f}
+   • Result: {"RSI < " + f"{adaptive_threshold:.0f}" + " → RAINY DAY ✅" if is_rainy_adaptive else "RSI ≥ " + f"{adaptive_threshold:.0f}" + " → NOT RAINY ❌"}
+{"• Cash Available: $" + f"{cash_pool:.2f}" if is_rainy_adaptive else ""}
 
-══════════════════════════════════════════════════════════════
+════════════════════════════════════════════════════════════════
 """
     else:
         decision_values = ""
@@ -424,14 +442,22 @@ DIFFERENCE: ${abs(advanced_total - (DCA_BASE_AMOUNT + (RAINY_AMOUNT if is_rainy 
 {test_notice}
 ════════════════════════════════════════════════════════════════
 📅 DATE: {today.strftime('%B %d, %Y')}{date_suffix}
+📈 SPY PRICE: ${price:.2f} USD
+📊 RSI SMA(7): {rsi_sma:.2f}
+
+📌 EVALUATION TIMING: This email is sent on the 3rd and 17th of each month
+   (2 days after payday on 1st/15th) when RSI is evaluated for rainy day.
 ════════════════════════════════════════════════════════════════
 
 {decision_values}
-{action_box}
-{advanced_comparison}
 
-📈 NEXT PAYDAY: {next_payday_text}
-💡 STRATEGY: RSI SMA(7) smoothed indicator (7-day avg) reduces noise
+📊 TODAY'S PAYDAY ACTIONS
+
+{action_box}
+
+Next payday: {next_payday_text}
+
+{advanced_comparison}
 
 📈 NEXT PAYDAY: {next_payday_text}
 💡 STRATEGY: RSI SMA(7) smoothed indicator (7-day avg) reduces noise
@@ -442,17 +468,63 @@ DIFFERENCE: ${abs(advanced_total - (DCA_BASE_AMOUNT + (RAINY_AMOUNT if is_rainy 
 
 🔬 ENHANCED RAINY DAY CRITERIA EXPLANATION:
 
-Why RSI SMA(7) < 45?
+Why RSI SMA(7) with Adaptive Thresholds?
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Traditional RSI(14) is too noisy - single-day spikes create false signals
 RSI SMA(7) = 7-day average of RSI(14) = smoother, more reliable
 
-✅ BENEFITS OF RSI SMA(7):
+📅 EVALUATION TIMING:
+   • Payday: 1st and 15th of each month (cash received)
+   • Evaluation Day: +2 business days (3rd and 17th)
+   • Production emails sent: 3rd and 17th when RSI is checked
+
+✅ BENEFITS OF RSI SMA(7) + ADAPTIVE SYSTEM:
    • Filters out single-day volatility spikes
    • Confirms sustained weakness (not just panic)
-   • 80% hit rate vs 68.5% with raw RSI < 40
-   • Reduces false positives in choppy markets
-   
+   • Adapts to market regime (more aggressive in bear markets)
+   • VIX-based sizing captures high-volatility opportunities
+   • 80% hit rate with enhanced returns in crashes
+
+📊 TURBO DECISION TABLE - 3-Factor System
+
+The rainy buy amount is determined by THREE variables:
+
+1️⃣ MARKET REGIME (from 200-day MA deviation):
+    • {"**BULL (SPY > 200MA +5%): RSI must be < 42 (selective)**" if market_regime == "BULL" else "BULL (SPY > 200MA +5%): RSI must be < 42 (selective)"}
+    • {"**NEUTRAL (SPY within ±5%): RSI must be < 45 (standard)**" if market_regime == "NEUTRAL" else "NEUTRAL (SPY within ±5%): RSI must be < 45 (standard)"}
+    • {"**BEAR (SPY < 200MA -5%): RSI must be < 48 (aggressive)**" if market_regime == "BEAR" else "BEAR (SPY < 200MA -5%): RSI must be < 48 (aggressive)"}
+
+{f"📦 ACTUAL VALUES (Regime): SPY ${price:.2f} | 200MA ${spy_200ma:.2f} | 200MA+5% ${spy_200ma * 1.05:.2f} | 200MA-5% ${spy_200ma * 0.95:.2f} | Dev {((price - spy_200ma) / spy_200ma * 100):+.1f}% | RSI {rsi_sma:.2f} | Thresh < {adaptive_threshold:.0f}" if spy_200ma is not None else f"📦 ACTUAL VALUES (Regime): SPY ${price:.2f} | RSI {rsi_sma:.2f} | Thresh < {adaptive_threshold:.0f}"}
+
+2️⃣ VIX LEVEL (fear/volatility sizing):
+    • {"**Low VIX (< 15): Deploy $150 (standard)**" if vix is not None and vix < 15 else "Low VIX (< 15): Deploy $150 (standard)"}
+    • {"**Medium VIX (15-25): Deploy $180 (+20%)**" if vix is not None and 15 <= vix < 25 else "Medium VIX (15-25): Deploy $180 (+20%)"}
+    • {"**High VIX (> 25): Deploy $210 (+40% - max opportunity!)**" if vix is not None and vix >= 25 else "High VIX (> 25): Deploy $210 (+40% - max opportunity!)"}
+
+{f"📦 VIX TODAY: {vix:.1f} ({vix_level}) | Rainy sizing ${volatility_sizing:.0f}" if vix is not None else "📦 VIX TODAY: N/A"}
+
+3️⃣ RSI SMA(7) (must be below regime threshold to trigger rainy buy)
+🎮 DECISION TIME
+
+If RSI SMA(7) Triggers Rainy Buy (Based on Regime Threshold):
+
+| Market Regime | VIX < 15 (Low) | VIX 15-25 (Med) | VIX > 25 (High) | Example Scenario |
+|---------------|----------------|-----------------|-----------------|------------------|
+| **BULL** (RSI < 42) | {"⭐ $150" if market_regime == "BULL" and vix < 15 and is_rainy_adaptive else "$150"} | {"⭐ $180" if market_regime == "BULL" and 15 <= vix < 25 and is_rainy_adaptive else "$180"} | {"⭐ $210" if market_regime == "BULL" and vix >= 25 and is_rainy_adaptive else "$210"} | Bull correction with rising fear |
+| **NEUTRAL** (RSI < 45) | {"⭐ $150" if market_regime == "NEUTRAL" and vix < 15 and is_rainy_adaptive else "$150"} | {"⭐ $180" if market_regime == "NEUTRAL" and 15 <= vix < 25 and is_rainy_adaptive else "$180"} | {"⭐ $210" if market_regime == "NEUTRAL" and vix >= 25 and is_rainy_adaptive else "$210"} | Sideways market dip |
+| **BEAR** (RSI < 48) | {"⭐ $150" if market_regime == "BEAR" and vix < 15 and is_rainy_adaptive else "$150"} | {"⭐ $180" if market_regime == "BEAR" and 15 <= vix < 25 and is_rainy_adaptive else "$180"} | {"⭐ $210" if market_regime == "BEAR" and vix >= 25 and is_rainy_adaptive else "$210"} | Bear market capitulation |
+
+Total Execution Day Investment:
+
+| Scenario | Base Buy | Rainy Buy | Total Deployed |
+|----------|----------|-----------|----------------|
+| **NOT Rainy** (RSI above threshold) | {"⭐ $150" if not is_rainy_adaptive else "$150"} | {"⭐ $0" if not is_rainy_adaptive else "$0"} | {"⭐ **$150**" if not is_rainy_adaptive else "**$150**"} |
+| **Rainy + Low VIX** | {"⭐ $150" if is_rainy_adaptive and vix < 15 else "$150"} | {"⭐ $150" if is_rainy_adaptive and vix < 15 else "$150"} | {"⭐ **$300**" if is_rainy_adaptive and vix < 15 else "**$300**"} |
+| **Rainy + Med VIX** | {"⭐ $150" if is_rainy_adaptive and 15 <= vix < 25 else "$150"} | {"⭐ $180" if is_rainy_adaptive and 15 <= vix < 25 else "$180"} | {"⭐ **$330**" if is_rainy_adaptive and 15 <= vix < 25 else "**$330**"} |
+| **Rainy + High VIX** | {"⭐ $150" if is_rainy_adaptive and vix >= 25 else "$150"} | {"⭐ $210" if is_rainy_adaptive and vix >= 25 else "$210"} | {"⭐ **$360**" if is_rainy_adaptive and vix >= 25 else "**$360**"} |
+
+
+
 📊 HISTORICAL VALIDATION:
    • 22-year backtest (2003-2025)
    • Captured all major crashes: 2008, 2020 COVID, 2022 bear

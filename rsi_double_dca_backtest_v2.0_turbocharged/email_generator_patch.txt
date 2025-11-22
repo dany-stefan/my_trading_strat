@@ -1,0 +1,33 @@
+Lines to update in email_generator.py:
+
+Line 513-515 (regime threshold table rows):
+CHANGE FROM:
+| **BULL** (RSI < 42) | {"⭐ $150" if market_regime == "BULL" and vix < 15 and is_rainy_adaptive else "$150"} | {"⭐ $180" if market_regime == "BULL" and 15 <= vix < 25 and is_rainy_adaptive else "$180"} | {"⭐ $210" if market_regime == "BULL" and vix >= 25 and is_rainy_adaptive else "$210"} | Bull correction with rising fear |
+| **NEUTRAL** (RSI < 45) | {"⭐ $150" if market_regime == "NEUTRAL" and vix < 15 and is_rainy_adaptive else "$150"} | {"⭐ $180" if market_regime == "NEUTRAL" and 15 <= vix < 25 and is_rainy_adaptive else "$180"} | {"⭐ $210" if market_regime == "NEUTRAL" and vix >= 25 and is_rainy_adaptive else "$210"} | Sideways market dip |
+| **BEAR** (RSI < 48) | {"⭐ $150" if market_regime == "BEAR" and vix < 15 and is_rainy_adaptive else "$150"} | {"⭐ $180" if market_regime == "BEAR" and 15 <= vix < 25 and is_rainy_adaptive else "$180"} | {"⭐ $210" if market_regime == "BEAR" and vix >= 25 and is_rainy_adaptive else "$210"} | Bear market capitulation |
+
+CHANGE TO:
+| {"⭐ **BULL** (RSI < 42)" if market_regime == "BULL" and is_rainy_adaptive else "**BULL** (RSI < 42)"} | {"⭐ $150" if market_regime == "BULL" and vix < 15 and is_rainy_adaptive else "$150"} | {"⭐ $180" if market_regime == "BULL" and 15 <= vix < 25 and is_rainy_adaptive else "$180"} | {"⭐ $210" if market_regime == "BULL" and vix >= 25 and is_rainy_adaptive else "$210"} | Bull correction with rising fear |
+| {"⭐ **NEUTRAL** (RSI < 45)" if market_regime == "NEUTRAL" and is_rainy_adaptive else "**NEUTRAL** (RSI < 45)"} | {"⭐ $150" if market_regime == "NEUTRAL" and vix < 15 and is_rainy_adaptive else "$150"} | {"⭐ $180" if market_regime == "NEUTRAL" and 15 <= vix < 25 and is_rainy_adaptive else "$180"} | {"⭐ $210" if market_regime == "NEUTRAL" and vix >= 25 and is_rainy_adaptive else "$210"} | Sideways market dip |
+| {"⭐ **BEAR** (RSI < 48)" if market_regime == "BEAR" and is_rainy_adaptive else "**BEAR** (RSI < 48)"} | {"⭐ $150" if market_regime == "BEAR" and vix < 15 and is_rainy_adaptive else "$150"} | {"⭐ $180" if market_regime == "BEAR" and 15 <= vix < 25 and is_rainy_adaptive else "$180"} | {"⭐ $210" if market_regime == "BEAR" and vix >= 25 and is_rainy_adaptive else "$210"} | Bear market capitulation |
+
+
+Lines 160-179 (ACTION REQUIRED section):
+ADD AFTER LINE 160:
+        # Use volatility_sizing for consistency across all display
+        rainy_amount_display = volatility_sizing if spy_200ma and vix else RAINY_AMOUNT
+
+CHANGE LINE 174 FROM:
+   🔥 RECOMMENDATION: Buy extra ${advanced_amount:.0f} from cash pool
+TO:
+   🔥 RECOMMENDATION: Buy extra ${rainy_amount_display:.0f} from cash pool
+
+CHANGE LINE 176 FROM:
+   ⭐⭐⭐ ACTION REQUIRED: RAINY BUY ${advanced_amount:.0f} CAD ⭐⭐⭐
+TO:
+   ⭐⭐⭐ ACTION REQUIRED: RAINY BUY ${rainy_amount_display:.0f} CAD ⭐⭐⭐
+
+CHANGE LINE 177 FROM:
+   (Plus your regular ${DCA_BASE_AMOUNT:.0f} base = ${advanced_total:.0f} total today)
+TO:
+   (Plus your regular ${DCA_BASE_AMOUNT:.0f} base = ${DCA_BASE_AMOUNT + rainy_amount_display:.0f} total today)

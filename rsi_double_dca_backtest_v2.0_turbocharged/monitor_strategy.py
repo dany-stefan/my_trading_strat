@@ -23,7 +23,7 @@ import json
 import os
 from pathlib import Path
 from email_formatter import convert_to_html
-from email_generator import generate_email_content
+from email_generator_turbo import generate_email_content  # Use TURBO generator (keeps PROD separate)
 from payday_scheduler import get_scheduler
 from strategy_config import get_strategy_config
 
@@ -69,7 +69,7 @@ TRACKING_FILE = Path(__file__).parent / "strategy_tracking.json"
 # HELPER FUNCTIONS
 # =============================================================================
 
-def get_rsi(ticker="SPY", period=None, lookback_days=250):
+def get_rsi(ticker="SPY", period=None, lookback_days=400):
     """
     Fetch SPY data and calculate RSI indicators.
     
@@ -118,16 +118,23 @@ def get_rsi(ticker="SPY", period=None, lookback_days=250):
         current_rsi = rsi.iloc[-1]
         current_rsi_sma = rsi_sma.iloc[-1]
         current_price = close.iloc[-1]
-        current_ma_200 = ma_200.iloc[-1] if not pd.isna(ma_200.iloc[-1]) else None
+        # Ensure we always return a numeric 200MA by using the last valid value
+        if pd.isna(ma_200.iloc[-1]):
+            ma_200_valid = ma_200.dropna()
+            current_ma_200 = ma_200_valid.iloc[-1] if not ma_200_valid.empty else None
+        else:
+            current_ma_200 = ma_200.iloc[-1]
         
         # Fetch VIX
-        vix_df = yf.download("^VIX", start=end_date - timedelta(days=5), end=end_date, interval="1d", progress=False)
+        vix_df = yf.download("^VIX", start=end_date - timedelta(days=10), end=end_date, interval="1d", progress=False)
         current_vix = None
         if not vix_df.empty:
             if isinstance(vix_df.columns, pd.MultiIndex):
                 vix_df.columns = vix_df.columns.get_level_values(0)
             vix_close = vix_df["Close"] if "Close" in vix_df.columns else vix_df["Adj Close"]
-            current_vix = vix_close.iloc[-1]
+            vix_close = vix_close.dropna()
+            if not vix_close.empty:
+                current_vix = float(vix_close.iloc[-1])
         
         return current_rsi, current_rsi_sma, current_price, current_ma_200, current_vix
     
@@ -206,11 +213,13 @@ def send_email(subject, body):
         
         # Attach PNG charts
         chart_files = [
-            'strategy_comparison_with_baseline.png',
-            'rainy_day_analysis_detailed.png',
-            'spy_price_rainy_periods_drawdown.png',
-            'variant_2_equity_curve.png',
-            'rsi_history_thresholds.png'
+            'strategy_comparison_prod_vs_turbo.png',
+            'dashboard_interactive_turbo.png',
+            'regime_performance_turbo.png',
+            'monte_carlo_cash_pool_turbo.png',
+            'consecutive_rainy_heatmap_turbo.png',
+            'yearly_prod_vs_turbo.png',
+            'rainy_amount_over_time_prod_vs_turbo.png'
         ]
         
         for chart_file in chart_files:
@@ -294,7 +303,62 @@ def check_conditions():
             if FORCE_EMAIL and last_payday == today_str:
                 print("   (Forcing email even though already processed today)")
             
-            # Generate email using shared function
+            # Generate metrics snapshot markdown and email using shared function
+            try:
+                from market_metrics import calculate_market_metrics as _calc_metrics
+                metrics_obj = _calc_metrics(price=price, spy_200ma=ma_200, vix=vix, rsi_sma=rsi_sma)
+                metrics = metrics_obj.get_all_metrics()
+                timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                # Write metrics snapshot markdown (for audit and reuse)
+                snapshot_lines = [
+                    f"# Metrics Snapshot - {timestamp}",
+                    "",
+                    "| Metric | Value |",
+                    "|---|---|",
+                    f"| SPY Price | {metrics['price_display']} |",
+                    f"| 200MA | {metrics['spy_200ma_display']} |",
+                    f"| Deviation | {metrics['deviation_display']} |",
+                    f"| 200MA +5% | {metrics['ma_plus_5_display']} |",
+                    f"| 200MA -5% | {metrics['ma_minus_5_display']} |",
+                    f"| RSI SMA(7) | {metrics.get('rsi_sma_display','N/A')} |",
+                    f"| VIX | {metrics['vix_display']} ({metrics['vix_level_display']}) |",
+                    f"| Market Regime | {metrics['regime_emoji']} {metrics['market_regime']} |",
+                    f"| Adaptive Threshold | {int(metrics['adaptive_threshold'])} |",
+                    f"| Rainy Sizing | ${int(metrics['volatility_sizing'])} |",
+                    "",
+                ]
+                snapshot_path = Path(__file__).parent / "METRICS_SNAPSHOT.md"
+                snapshot_path.write_text("\n".join(snapshot_lines), encoding="utf-8")
+                
+                # Update README_MARKET_METRICS.md with live snapshot
+                readme_path = Path(__file__).parent / "README_MARKET_METRICS.md"
+                if readme_path.exists():
+                    readme_content = readme_path.read_text(encoding="utf-8")
+                    # Replace the snapshot section
+                    import re
+                    pattern = r"(## 📊 Latest Snapshot.*?\*Last Updated:)[^\n]*(\n\n---)"
+                    snapshot_block = f"""## 📊 Latest Snapshot
+*Auto-updated on each monitor run*
+
+| Metric | Value |
+|---|---|
+| SPY Price | {metrics['price_display']} |
+| 200MA | {metrics['spy_200ma_display']} |
+| Deviation | {metrics['deviation_display']} |
+| 200MA +5% | {metrics['ma_plus_5_display']} |
+| 200MA -5% | {metrics['ma_minus_5_display']} |
+| RSI SMA(7) | {metrics.get('rsi_sma_display','N/A')} |
+| VIX | {metrics['vix_display']} ({metrics['vix_level_display']}) |
+| Market Regime | {metrics['regime_emoji']} {metrics['market_regime']} |
+| Adaptive Threshold | {int(metrics['adaptive_threshold'])} |
+| Rainy Sizing | ${int(metrics['volatility_sizing'])} |
+
+*Last Updated: {timestamp}*\n\n---"""
+                    readme_content = re.sub(pattern, snapshot_block, readme_content, flags=re.DOTALL)
+                    readme_path.write_text(readme_content, encoding="utf-8")
+            except Exception as _e:
+                print(f"Warning: failed to write metrics snapshot markdown: {_e}")
+
             # Use is_simulation=True when FORCE_EMAIL is enabled (local test run)
             subject, body = generate_email_content(
                 rsi_sma=rsi_sma,  # Using RSI SMA(7) as threshold indicator

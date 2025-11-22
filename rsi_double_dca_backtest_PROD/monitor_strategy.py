@@ -195,7 +195,10 @@ def send_email(subject, body):
             'rainy_day_analysis_detailed.png',
             'spy_price_rainy_periods_drawdown.png',
             'variant_2_equity_curve.png',
-            'rsi_history_thresholds.png'
+            'rsi_history_thresholds.png',
+            'cash_pool_hit_miss.png',
+            'spy_price_hit_miss.png',
+            'rsi_hit_miss.png'
         ]
         
         for chart_file in chart_files:
@@ -275,7 +278,56 @@ def check_conditions():
             if FORCE_EMAIL and last_payday == today_str:
                 print("   (Forcing email even though already processed today)")
             
-            # Generate email using shared function
+            # Generate metrics snapshot markdown and email using shared function
+            try:
+                from market_metrics import calculate_market_metrics as _calc_metrics
+                metrics_obj = _calc_metrics(
+                    rsi_sma=rsi_sma,
+                    price=price,
+                    cash_pool=cash_pool,
+                    total_contributions=tracking.get('total_contributions', 0),
+                    rainy_buys=tracking.get('rainy_buys', [])
+                )
+                m = metrics_obj.get_all_metrics()
+                timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                snapshot_lines = [
+                    f"# Metrics Snapshot - {timestamp}",
+                    "",
+                    "| Metric | Value |",
+                    "|---|---|",
+                    f"| SPY Price | {m['price_display']} |",
+                    f"| RSI SMA(7) | {m['rsi_sma_display']} |",
+                    f"| Cash Pool | {m['cash_pool_display']} |",
+                    f"| Threshold | {int(m['rsi_threshold'])} |",
+                    f"| Rainy Today? | {'Yes' if m['is_rainy'] else 'No'} |",
+                    "",
+                ]
+                snapshot_path = Path(__file__).parent / "METRICS_SNAPSHOT.md"
+                snapshot_path.write_text("\n".join(snapshot_lines), encoding="utf-8")
+                
+                # Update README_MARKET_METRICS.md with live snapshot
+                readme_path = Path(__file__).parent / "README_MARKET_METRICS.md"
+                if readme_path.exists():
+                    readme_content = readme_path.read_text(encoding="utf-8")
+                    import re
+                    pattern = r"(## 📊 Latest Snapshot.*?\*Last Updated:)[^\n]*(\n\n---)"
+                    snapshot_block = f"""## 📊 Latest Snapshot
+*Auto-updated on each monitor run*
+
+| Metric | Value |
+|---|---|
+| SPY Price | {m['price_display']} |
+| RSI SMA(7) | {m['rsi_sma_display']} |
+| Cash Pool | {m['cash_pool_display']} |
+| Threshold | {int(m['rsi_threshold'])} |
+| Rainy Today? | {'Yes' if m['is_rainy'] else 'No'} |
+
+*Last Updated: {timestamp}*\n\n---"""
+                    readme_content = re.sub(pattern, snapshot_block, readme_content, flags=re.DOTALL)
+                    readme_path.write_text(readme_content, encoding="utf-8")
+            except Exception as _e:
+                print(f"Warning: failed to write metrics snapshot markdown: {_e}")
+
             # Use is_simulation=True when FORCE_EMAIL is enabled (local test run)
             subject, body = generate_email_content(
                 rsi_sma=rsi_sma,  # Using RSI SMA(7) as threshold indicator
