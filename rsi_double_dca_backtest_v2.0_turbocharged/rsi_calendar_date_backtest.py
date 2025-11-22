@@ -88,6 +88,20 @@ if prices.empty:
 prices["SPY_CAD"] = prices[INDEX_TICKER] / prices[FX_TICKER]
 
 # =============================================================================
+# ADDITIONAL INDICATORS FOR TURBO COMPARISON (200-day MA, VIX)
+# =============================================================================
+print("Computing 200-day MA and fetching VIX for TURBO overlay...")
+prices["MA_200"] = prices[INDEX_TICKER].rolling(200).mean()
+
+# Fetch VIX daily close and align to price index
+vix_series = fetch_series("^VIX", START_DATE, end_date)
+if vix_series.empty:
+    print("Warning: VIX series empty; defaulting to 20.0 (medium)")
+    vix_series = pd.Series(20.0, index=prices.index)
+vix_series = vix_series.reindex(prices.index).fillna(method="ffill").fillna(method="bfill")
+prices["VIX"] = vix_series
+
+# =============================================================================
 # INDICATORS (RSI and RSI SMA)
 # =============================================================================
 print("Computing RSI(14) and RSI SMA(7) on SPY...")
@@ -242,9 +256,11 @@ def simulate_rainy_day_strategy():
     total_rainy_days = 0
     successful_rainy_buys = 0
     
+    contrib_cum = contributions
     for dt, row in prices.iterrows():
         price_cad = row["SPY_CAD"]
         rsi_sma = row["RSI_SMA"]
+        contrib_today = 0.0
         
         # Execution day logic
         if dt in execution_set:
@@ -252,6 +268,8 @@ def simulate_rainy_day_strategy():
             if price_cad > 0:
                 shares += DCA_BASE_AMOUNT / price_cad
                 contributions += DCA_BASE_AMOUNT
+                contrib_cum += DCA_BASE_AMOUNT
+                contrib_today += DCA_BASE_AMOUNT
             
             # Check for rainy day
             is_rainy = rsi_sma < RSI_THRESHOLD
@@ -263,6 +281,8 @@ def simulate_rainy_day_strategy():
                 if cash_pool >= RAINY_AMOUNT:
                     shares += RAINY_AMOUNT / price_cad
                     contributions += RAINY_AMOUNT
+                    contrib_cum += RAINY_AMOUNT
+                    contrib_today += RAINY_AMOUNT
                     cash_pool -= RAINY_AMOUNT
                     successful_rainy_buys += 1
                     
@@ -283,7 +303,9 @@ def simulate_rainy_day_strategy():
             "date": dt, 
             "equity": shares * price_cad + cash_pool,
             "shares_value": shares * price_cad,
-            "cash_pool": cash_pool
+            "cash_pool": cash_pool,
+            "contrib_cum": contrib_cum,
+            "contrib_today": contrib_today
         })
     
     # Calculate metrics
@@ -303,7 +325,126 @@ def simulate_rainy_day_strategy():
     rainy_frequency = total_rainy_days / len(execution_schedule)
     
     return {
-        "strategy": f"RSI SMA({RSI_SMA_PERIOD}) < {RSI_THRESHOLD}",
+        "strategy": f"PROD: RSI SMA({RSI_SMA_PERIOD}) < {RSI_THRESHOLD} & rainy ${RAINY_AMOUNT}",
+        "contributions": contributions,
+        "end_equity": end_val,
+        "final_cash_pool": cash_pool,
+        "cagr": cagr,
+        "max_drawdown": max_dd,
+        "equity_curve": eq_df,
+        "years": years,
+        "total_rainy_days": total_rainy_days,
+        "successful_rainy_buys": successful_rainy_buys,
+        "hit_rate": hit_rate,
+        "rainy_frequency": rainy_frequency,
+        "rainy_buys": rainy_buys,
+        "execution_days": len(execution_schedule)
+    }
+
+# =============================================================================
+# TURBO STRATEGY SIMULATION (Adaptive threshold + VIX sizing)
+# =============================================================================
+def simulate_turbo_strategy():
+    def classify_regime(price: float, ma200: float) -> str:
+        if pd.isna(ma200) or ma200 == 0:
+            return "NEUTRAL"
+        dev = (price - ma200) / ma200
+        if dev > 0.05:
+            return "BULL"
+        elif dev < -0.05:
+            return "BEAR"
+        else:
+            return "NEUTRAL"
+
+    shares = 0.0
+    cash_pool = max(INITIAL_CASH_POOL, 450.0)
+    contributions = INITIAL_LUMP_SUM
+
+    first_price = prices.loc[start_date, "SPY_CAD"]
+    if first_price > 0:
+        shares = INITIAL_LUMP_SUM / first_price
+
+    equity_records = []
+    rainy_buys = []
+    total_rainy_days = 0
+    successful_rainy_buys = 0
+
+    contrib_cum = contributions
+    for dt, row in prices.iterrows():
+        price_cad = row["SPY_CAD"]
+        rsi_sma = row["RSI_SMA"]
+        spy_price = row[INDEX_TICKER]
+        ma200 = row["MA_200"]
+        vix_val = row["VIX"]
+        contrib_today = 0.0
+
+        if dt in execution_set:
+            # Base investment (always)
+            if price_cad > 0:
+                shares += DCA_BASE_AMOUNT / price_cad
+                contributions += DCA_BASE_AMOUNT
+                contrib_cum += DCA_BASE_AMOUNT
+                contrib_today += DCA_BASE_AMOUNT
+
+            # Determine regime and threshold
+            regime = classify_regime(spy_price, ma200)
+            adaptive_thresh = 42 if regime == "BULL" else 48 if regime == "BEAR" else 45
+
+            # VIX-based sizing
+            if vix_val < 15:
+                rainy_amt_today = 150
+            elif vix_val < 25:
+                rainy_amt_today = 180
+            else:
+                rainy_amt_today = 210
+
+            is_rainy = rsi_sma < adaptive_thresh
+            if is_rainy:
+                total_rainy_days += 1
+                if cash_pool >= rainy_amt_today:
+                    shares += rainy_amt_today / price_cad
+                    contributions += rainy_amt_today
+                    contrib_cum += rainy_amt_today
+                    contrib_today += rainy_amt_today
+                    cash_pool -= rainy_amt_today
+                    successful_rainy_buys += 1
+                    rainy_buys.append({
+                        "date": dt,
+                        "rsi_sma": rsi_sma,
+                        "price": price_cad,
+                        "amount": rainy_amt_today,
+                        "regime": regime,
+                        "vix": vix_val,
+                        "threshold": adaptive_thresh,
+                        "cash_before": cash_pool + rainy_amt_today,
+                        "cash_after": cash_pool
+                    })
+
+            cash_pool += CASH_ACCUMULATION
+
+        equity_records.append({
+            "date": dt,
+            "equity": shares * price_cad + cash_pool,
+            "shares_value": shares * price_cad,
+            "cash_pool": cash_pool,
+            "contrib_cum": contrib_cum,
+            "contrib_today": contrib_today
+        })
+
+    eq_df = pd.DataFrame(equity_records).set_index("date")
+    eq = eq_df["equity"]
+    start_val = eq.iloc[0]
+    end_val = eq.iloc[-1]
+    years = (eq.index[-1] - eq.index[0]).days / 365.25
+    cagr = (end_val / start_val) ** (1/years) - 1 if start_val > 0 and years > 0 else np.nan
+    roll_max = eq.cummax()
+    drawdown = (eq / roll_max) - 1
+    max_dd = drawdown.min()
+    hit_rate = successful_rainy_buys / total_rainy_days if total_rainy_days > 0 else 0
+    rainy_frequency = total_rainy_days / len(execution_schedule)
+
+    return {
+        "strategy": "TURBO: Adaptive RSI (42/45/48) + VIX sizing (150/180/210)",
         "contributions": contributions,
         "end_equity": end_val,
         "final_cash_pool": cash_pool,
@@ -323,56 +464,121 @@ def simulate_rainy_day_strategy():
 # RUN SIMULATIONS
 # =============================================================================
 print("\n" + "=" * 80)
-print("RUNNING SIMULATIONS")
+print("RUNNING SIMULATIONS: PROD vs TURBO")
 print("=" * 80)
 
-baseline = simulate_baseline_dca()
-rainy_strategy = simulate_rainy_day_strategy()
+prod_strategy = simulate_rainy_day_strategy()
+turbo_strategy = simulate_turbo_strategy()
 
 # =============================================================================
 # RESULTS
 # =============================================================================
 print("\n" + "=" * 80)
-print("BACKTEST RESULTS - CALENDAR DATE SCHEDULE (3rd & 17th)")
+print("BACKTEST RESULTS - PROD vs TURBO (3rd & 17th)")
 print("=" * 80)
 print(f"\nExecution Schedule: 3rd and 17th of each month (or next TSX trading day)")
-print(f"Total execution days: {rainy_strategy['execution_days']}")
-print(f"Period: {rainy_strategy['years']:.2f} years")
+print(f"Total execution days: {prod_strategy['execution_days']}")
+print(f"Period: {prod_strategy['years']:.2f} years")
 
 print("\n" + "-" * 80)
-print("BASELINE DCA (No Rainy Day Strategy)")
+print(f"PROD STRATEGY: RSI SMA({RSI_SMA_PERIOD}) < {RSI_THRESHOLD} & rainy ${RAINY_AMOUNT}")
 print("-" * 80)
-print(f"Total contributions: ${baseline['contributions']:,.2f}")
-print(f"Final equity: ${baseline['end_equity']:,.2f}")
-print(f"CAGR: {baseline['cagr']*100:.2f}%")
-print(f"Max drawdown: {baseline['max_drawdown']*100:.2f}%")
-print(f"ROI: {(baseline['end_equity']/baseline['contributions']-1)*100:.1f}%")
+print(f"Total contributions: ${prod_strategy['contributions']:,.2f}")
+print(f"Final equity: ${prod_strategy['end_equity']:,.2f}")
+print(f"Final cash pool: ${prod_strategy['final_cash_pool']:,.2f}")
+print(f"CAGR: {prod_strategy['cagr']*100:.2f}%")
+print(f"Max drawdown: {prod_strategy['max_drawdown']*100:.2f}%")
+print(f"Hit rate: {prod_strategy['hit_rate']*100:.1f}% | Rainy freq: {prod_strategy['rainy_frequency']*100:.1f}%")
 
 print("\n" + "-" * 80)
-print(f"RAINY DAY STRATEGY: RSI SMA({RSI_SMA_PERIOD}) < {RSI_THRESHOLD}")
+print("TURBO STRATEGY: Adaptive (42/45/48) + VIX sizing (150/180/210)")
 print("-" * 80)
-print(f"Total contributions: ${rainy_strategy['contributions']:,.2f}")
-print(f"Final equity: ${rainy_strategy['end_equity']:,.2f}")
-print(f"Final cash pool: ${rainy_strategy['final_cash_pool']:,.2f}")
-print(f"CAGR: {rainy_strategy['cagr']*100:.2f}%")
-print(f"Max drawdown: {rainy_strategy['max_drawdown']*100:.2f}%")
-print(f"ROI: {(rainy_strategy['end_equity']/rainy_strategy['contributions']-1)*100:.1f}%")
-
-print(f"\nRainy Day Statistics:")
-print(f"  Total rainy days (RSI SMA < {RSI_THRESHOLD}): {rainy_strategy['total_rainy_days']}")
-print(f"  Successful deployments: {rainy_strategy['successful_rainy_buys']}")
-print(f"  Hit rate: {rainy_strategy['hit_rate']*100:.1f}%")
-print(f"  Rainy day frequency: {rainy_strategy['rainy_frequency']*100:.1f}%")
-print(f"  Missed opportunities: {rainy_strategy['total_rainy_days'] - rainy_strategy['successful_rainy_buys']}")
+print(f"Total contributions: ${turbo_strategy['contributions']:,.2f}")
+print(f"Final equity: ${turbo_strategy['end_equity']:,.2f}")
+print(f"Final cash pool: ${turbo_strategy['final_cash_pool']:,.2f}")
+print(f"CAGR: {turbo_strategy['cagr']*100:.2f}%")
+print(f"Max drawdown: {turbo_strategy['max_drawdown']*100:.2f}%")
+print(f"Hit rate: {turbo_strategy['hit_rate']*100:.1f}% | Rainy freq: {turbo_strategy['rainy_frequency']*100:.1f}%")
 
 print("\n" + "-" * 80)
-print("PERFORMANCE COMPARISON")
+print("PERFORMANCE COMPARISON (TURBO vs PROD)")
 print("-" * 80)
-outperformance = rainy_strategy['end_equity'] - baseline['end_equity']
-outperformance_pct = (outperformance / baseline['end_equity']) * 100
-print(f"Rainy strategy vs Baseline: +${outperformance:,.2f} ({outperformance_pct:+.1f}%)")
-print(f"Extra capital deployed: ${rainy_strategy['contributions'] - baseline['contributions']:,.2f}")
-print(f"Return on rainy capital: {(outperformance / (rainy_strategy['contributions'] - baseline['contributions']))*100:.1f}%")
+outperformance = turbo_strategy['end_equity'] - prod_strategy['end_equity']
+outperformance_pct = (outperformance / prod_strategy['end_equity']) * 100
+print(f"TURBO minus PROD: +${outperformance:,.2f} ({outperformance_pct:+.1f}%)")
+print(f"Extra capital deployed (TURBO - PROD): ${turbo_strategy['contributions'] - prod_strategy['contributions']:,.2f}")
+
+# =============================================================================
+# YEARLY PERFORMANCE (ROI/Profit) - PROD vs TURBO
+# =============================================================================
+print("\n" + "=" * 80)
+print("YEARLY PERFORMANCE (ROI/Profit) - PROD vs TURBO")
+print("=" * 80)
+
+def compute_yearly_stats(eq_df: pd.DataFrame) -> pd.DataFrame:
+    df = eq_df.copy()
+    df = df[['equity', 'contrib_cum']].copy()
+    df['year'] = df.index.year
+    # Take first and last entries per year
+    first = df.groupby('year').first().rename(columns={'equity':'equity_start','contrib_cum':'contrib_start'})
+    last = df.groupby('year').last().rename(columns={'equity':'equity_end','contrib_cum':'contrib_end'})
+    out = first.join(last, how='inner')
+    out['contrib_year'] = out['contrib_end'] - out['contrib_start']
+    out['profit_year'] = (out['equity_end'] - out['equity_start']) - out['contrib_year']
+    out['roi_pct'] = np.where(out['equity_start']>0, out['profit_year'] / out['equity_start'] * 100.0, np.nan)
+    return out.reset_index()
+
+prod_yearly = compute_yearly_stats(prod_strategy['equity_curve'])
+turbo_yearly = compute_yearly_stats(turbo_strategy['equity_curve'])
+
+yearly = prod_yearly.merge(turbo_yearly, on='year', suffixes=('_prod','_turbo'))
+yearly['diff_profit'] = yearly['profit_year_turbo'] - yearly['profit_year_prod']
+yearly['winner'] = np.where(yearly['diff_profit']>0, 'TURBO', np.where(yearly['diff_profit']<0, 'PROD', 'TIE'))
+
+yearly_cols = [
+    'year',
+    'equity_start_prod','equity_end_prod','contrib_year_prod','profit_year_prod','roi_pct_prod',
+    'equity_start_turbo','equity_end_turbo','contrib_year_turbo','profit_year_turbo','roi_pct_turbo',
+    'diff_profit','winner'
+]
+yearly[yearly_cols].to_csv('yearly_prod_vs_turbo.csv', index=False)
+print("✅ Saved: yearly_prod_vs_turbo.csv")
+
+# Yearly visuals: profit comparison and profit difference
+try:
+    fig_y, (ay1, ay2) = plt.subplots(2, 1, figsize=(16, 10))
+
+    years_idx = yearly['year']
+    width = 0.4
+
+    # Subplot 1: Profit by year (PROD vs TURBO)
+    ay1.bar(years_idx - 0.2, yearly['profit_year_prod'], width=0.4, label='PROD Profit', color='#2E86AB', alpha=0.85)
+    ay1.bar(years_idx + 0.2, yearly['profit_year_turbo'], width=0.4, label='TURBO Profit', color='#06A77D', alpha=0.85)
+    ay1.set_title('Yearly Profit (CAD): PROD vs TURBO', fontsize=13, fontweight='bold')
+    ay1.set_ylabel('Profit (CAD)')
+    ay1.grid(True, axis='y', alpha=0.3)
+    ay1.legend(loc='upper left')
+
+    # Subplot 2: Profit difference (TURBO - PROD)
+    colors = np.where(yearly['diff_profit'] >= 0, '#06A77D', '#D62828')
+    ay2.bar(years_idx, yearly['diff_profit'], color=colors, alpha=0.8)
+    ay2.axhline(0, color='black', linewidth=1)
+    ay2.set_title('Yearly Profit Difference: TURBO - PROD (CAD)', fontsize=13, fontweight='bold')
+    ay2.set_xlabel('Year')
+    ay2.set_ylabel('Diff (CAD)')
+    ay2.grid(True, axis='y', alpha=0.3)
+
+    # Format x-axis ticks to show every year clearly
+    ay1.set_xticks(years_idx)
+    ay2.set_xticks(years_idx)
+    for ax in (ay1, ay2):
+        ax.set_xticklabels([str(y) for y in years_idx], rotation=45, ha='right')
+
+    plt.tight_layout()
+    plt.savefig('yearly_prod_vs_turbo.png', dpi=300, bbox_inches='tight')
+    print("✅ Saved: yearly_prod_vs_turbo.png")
+except Exception as e:
+    print(f"⚠️  Failed to generate yearly charts: {e}")
 
 # =============================================================================
 # SAVE RESULTS
@@ -382,16 +588,18 @@ print("SAVING RESULTS")
 print("=" * 80)
 
 # Save equity curves
-baseline['equity_curve'].to_csv('equity_baseline_calendar_dates.csv')
-rainy_strategy['equity_curve'].to_csv('equity_rainy_strategy_calendar_dates.csv')
-print(f"✅ Saved: equity_baseline_calendar_dates.csv")
-print(f"✅ Saved: equity_rainy_strategy_calendar_dates.csv")
+prod_strategy['equity_curve'].to_csv('equity_prod_rainy_calendar_dates.csv')
+turbo_strategy['equity_curve'].to_csv('equity_turbo_rainy_calendar_dates.csv')
+print(f"✅ Saved: equity_prod_rainy_calendar_dates.csv")
+print(f"✅ Saved: equity_turbo_rainy_calendar_dates.csv")
 
-# Save rainy buys log
-if rainy_strategy['rainy_buys']:
-    rainy_df = pd.DataFrame(rainy_strategy['rainy_buys'])
-    rainy_df.to_csv('rainy_buys_calendar_dates.csv', index=False)
-    print(f"✅ Saved: rainy_buys_calendar_dates.csv ({len(rainy_strategy['rainy_buys'])} records)")
+# Save rainy buys logs
+if prod_strategy['rainy_buys']:
+    pd.DataFrame(prod_strategy['rainy_buys']).to_csv('rainy_buys_prod_calendar_dates.csv', index=False)
+    print(f"✅ Saved: rainy_buys_prod_calendar_dates.csv ({len(prod_strategy['rainy_buys'])} records)")
+if turbo_strategy['rainy_buys']:
+    pd.DataFrame(turbo_strategy['rainy_buys']).to_csv('rainy_buys_turbo_calendar_dates.csv', index=False)
+    print(f"✅ Saved: rainy_buys_turbo_calendar_dates.csv ({len(turbo_strategy['rainy_buys'])} records)")
 
 # =============================================================================
 # VISUALIZATION
@@ -402,31 +610,31 @@ print("=" * 80)
 
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(16, 12))
 
-# Top panel: Equity curves
-ax1.plot(baseline['equity_curve'].index, baseline['equity_curve']['equity'], 
-         label='Baseline DCA (3rd & 17th)', color='#2E86AB', linewidth=2, alpha=0.7)
-ax1.plot(rainy_strategy['equity_curve'].index, rainy_strategy['equity_curve']['equity'],
-         label=f'Rainy Day Strategy (RSI SMA < {RSI_THRESHOLD})', color='#06A77D', linewidth=2.5)
+# Top panel: Equity curves (PROD vs TURBO)
+ax1.plot(prod_strategy['equity_curve'].index, prod_strategy['equity_curve']['equity'], 
+         label=f'PROD: RSI SMA < {RSI_THRESHOLD} & rainy ${RAINY_AMOUNT}', color='#2E86AB', linewidth=2, alpha=0.85)
+ax1.plot(turbo_strategy['equity_curve'].index, turbo_strategy['equity_curve']['equity'],
+         label='TURBO: Adaptive (42/45/48) + VIX sizing', color='#06A77D', linewidth=2.5)
 
 ax1.set_ylabel('Portfolio Value (CAD)', fontsize=12, fontweight='bold')
-ax1.set_title('Strategy Performance: Calendar Date Schedule (3rd & 17th)\nPayday: 1st & 15th, Execution: 3rd & 17th (2 days later)', 
+ax1.set_title('PROD vs TURBO: Calendar Date Schedule (3rd & 17th)\nPayday: 1st & 15th, Execution: 3rd & 17th (2 days later)', 
               fontsize=14, fontweight='bold', pad=15)
 ax1.legend(loc='upper left', fontsize=11)
 ax1.grid(True, alpha=0.3)
 ax1.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'${x/1000:.0f}K'))
 
-# Bottom panel: Outperformance
-outperformance_series = rainy_strategy['equity_curve']['equity'] - baseline['equity_curve']['equity']
+# Bottom panel: Outperformance (TURBO - PROD)
+outperformance_series = turbo_strategy['equity_curve']['equity'] - prod_strategy['equity_curve']['equity']
 ax2.fill_between(outperformance_series.index, 0, outperformance_series, 
-                  where=(outperformance_series >= 0), color='#06A77D', alpha=0.3, label='Outperformance')
+                  where=(outperformance_series >= 0), color='#06A77D', alpha=0.3, label='TURBO > PROD')
 ax2.fill_between(outperformance_series.index, 0, outperformance_series,
-                  where=(outperformance_series < 0), color='#D62828', alpha=0.3, label='Underperformance')
+                  where=(outperformance_series < 0), color='#D62828', alpha=0.3, label='TURBO < PROD')
 ax2.plot(outperformance_series.index, outperformance_series, color='#1A1A1A', linewidth=1.5)
 ax2.axhline(y=0, color='black', linestyle='-', linewidth=1)
 
 ax2.set_xlabel('Date', fontsize=12, fontweight='bold')
-ax2.set_ylabel('Rainy Strategy - Baseline (CAD)', fontsize=12, fontweight='bold')
-ax2.set_title('Cumulative Outperformance', fontsize=12, fontweight='bold')
+ax2.set_ylabel('TURBO - PROD (CAD)', fontsize=12, fontweight='bold')
+ax2.set_title('Cumulative Outperformance (TURBO vs PROD)', fontsize=12, fontweight='bold')
 ax2.legend(loc='upper left', fontsize=10)
 ax2.grid(True, alpha=0.3)
 ax2.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'${x/1000:.0f}K'))
@@ -438,8 +646,60 @@ for ax in [ax1, ax2]:
     plt.setp(ax.xaxis.get_majorticklabels(), rotation=45, ha='right')
 
 plt.tight_layout()
-plt.savefig('strategy_comparison_calendar_dates.png', dpi=300, bbox_inches='tight')
-print(f"✅ Saved: strategy_comparison_calendar_dates.png")
+plt.savefig('strategy_comparison_prod_vs_turbo.png', dpi=300, bbox_inches='tight')
+print(f"✅ Saved: strategy_comparison_prod_vs_turbo.png")
+
+# Additional visualization: Rainy amount over time (PROD vs TURBO)
+try:
+    exec_idx = pd.DatetimeIndex(execution_schedule)
+    rainy_prod = pd.Series(0.0, index=exec_idx)
+    rainy_turbo = pd.Series(0.0, index=exec_idx)
+
+    if prod_strategy['rainy_buys']:
+        dfp = pd.DataFrame(prod_strategy['rainy_buys'])
+        dfp['date'] = pd.to_datetime(dfp['date'])
+        dfp = dfp.set_index('date').sort_index()
+        for dt_i, row_i in dfp.iterrows():
+            if dt_i in rainy_prod.index:
+                rainy_prod.loc[dt_i] = float(row_i['amount'])
+
+    if turbo_strategy['rainy_buys']:
+        dft = pd.DataFrame(turbo_strategy['rainy_buys'])
+        dft['date'] = pd.to_datetime(dft['date'])
+        dft = dft.set_index('date').sort_index()
+        for dt_i, row_i in dft.iterrows():
+            if dt_i in rainy_turbo.index:
+                rainy_turbo.loc[dt_i] = float(row_i['amount'])
+
+    rainy_df = pd.DataFrame({
+        'rainy_prod': rainy_prod,
+        'rainy_turbo': rainy_turbo
+    })
+    # Rolling-average overlays (3-execution window)
+    rainy_df['rainy_prod_roll3'] = rainy_df['rainy_prod'].rolling(window=3, min_periods=1).mean()
+    rainy_df['rainy_turbo_roll3'] = rainy_df['rainy_turbo'].rolling(window=3, min_periods=1).mean()
+    rainy_df.to_csv('rainy_amounts_timeseries.csv')
+
+    fig_r, ar = plt.subplots(figsize=(16, 6))
+    ar.plot(rainy_df.index, rainy_df['rainy_prod'], label='PROD Rainy Amount', color='#2E86AB', linewidth=1.5, marker='o', alpha=0.8)
+    ar.plot(rainy_df.index, rainy_df['rainy_turbo'], label='TURBO Rainy Amount', color='#06A77D', linewidth=1.8, marker='o', alpha=0.9)
+    ar.plot(rainy_df.index, rainy_df['rainy_prod_roll3'], label='PROD 3-Exec Avg', color='#2E86AB', linewidth=2.0, linestyle='--', alpha=0.9)
+    ar.plot(rainy_df.index, rainy_df['rainy_turbo_roll3'], label='TURBO 3-Exec Avg', color='#06A77D', linewidth=2.2, linestyle='--', alpha=0.9)
+    ar.axhline(150, color='#999999', linestyle='--', linewidth=1, alpha=0.7, label='PROD Fixed Rainy ($150)')
+    ar.set_title('Rainy Amount Over Time: PROD vs TURBO', fontsize=13, fontweight='bold')
+    ar.set_xlabel('Execution Date')
+    ar.set_ylabel('Rainy Amount (CAD)')
+    ar.grid(True, alpha=0.3)
+    ar.legend(loc='upper left')
+    ar.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
+    ar.xaxis.set_major_locator(mdates.YearLocator(2))
+    plt.setp(ar.xaxis.get_majorticklabels(), rotation=45, ha='right')
+    plt.tight_layout()
+    plt.savefig('rainy_amount_over_time_prod_vs_turbo.png', dpi=300, bbox_inches='tight')
+    print("✅ Saved: rainy_amount_over_time_prod_vs_turbo.png")
+    print("✅ Saved: rainy_amounts_timeseries.csv")
+except Exception as e:
+    print(f"⚠️  Failed to generate rainy-amount-over-time chart: {e}")
 
 print("\n" + "=" * 80)
 print("GENERATING ENHANCED VISUALIZATIONS (v2.0 TURBOCHARGED)")
@@ -455,15 +715,15 @@ try:
     )
     
     # Prepare data for enhanced visualizations
-    equity_df = rainy_strategy['equity_curve'].copy()
+    equity_df = turbo_strategy['equity_curve'].copy()
     equity_df['spy_price'] = prices['SPY_CAD']
     equity_df['rsi_sma'] = prices['RSI_SMA']
     
-    rainy_buys_df = pd.DataFrame(rainy_strategy['rainy_buys'])
+    rainy_buys_df = pd.DataFrame(turbo_strategy['rainy_buys'])
     if len(rainy_buys_df) > 0:
         rainy_buys_df['date'] = pd.to_datetime(rainy_buys_df['date'])
     
-    cash_pool_df = rainy_strategy['equity_curve'][['cash_pool']].copy()
+    cash_pool_df = turbo_strategy['equity_curve'][['cash_pool']].copy()
     
     execution_schedule_index = pd.DatetimeIndex(execution_schedule)
     
@@ -478,12 +738,12 @@ try:
     
     print("📊 Creating Monte Carlo cash pool simulation...")
     create_monte_carlo_cash_pool_simulation(
-        initial_pool=INITIAL_CASH_POOL,
+        initial_pool=max(INITIAL_CASH_POOL, 450.0),
         accumulation=CASH_ACCUMULATION,
-        rainy_amount=RAINY_AMOUNT,
-        rainy_frequency=rainy_strategy['rainy_frequency'],
+        rainy_amount=180,
+        rainy_frequency=turbo_strategy['rainy_frequency'],
         n_simulations=1000,
-        n_execution_days=rainy_strategy['execution_days'],
+        n_execution_days=turbo_strategy['execution_days'],
         output_path="monte_carlo_cash_pool_turbo.png"
     )
     
@@ -502,16 +762,15 @@ except Exception as e:
     print("   Continuing with standard charts...")
 
 print("\n" + "=" * 80)
-print("BACKTEST COMPLETE - v2.0 TURBOCHARGED")
+print("BACKTEST COMPLETE - PROD vs TURBO (v2.0 TURBOCHARGED)")
 print("=" * 80)
 print(f"\n📊 Summary:")
 print(f"   Execution schedule: 3rd & 17th (payday: 1st & 15th)")
-print(f"   Total executions: {rainy_strategy['execution_days']}")
-print(f"   Rainy days: {rainy_strategy['total_rainy_days']} ({rainy_strategy['rainy_frequency']*100:.1f}%)")
-print(f"   Hit rate: {rainy_strategy['hit_rate']*100:.1f}%")
-print(f"   Final value: ${rainy_strategy['end_equity']:,.2f}")
-print(f"   Outperformance: +${outperformance:,.2f} ({outperformance_pct:+.1f}%)")
-print(f"   CAGR: {rainy_strategy['cagr']*100:.2f}%")
+print(f"   Total executions: {prod_strategy['execution_days']}")
+print(f"   PROD final value: ${prod_strategy['end_equity']:,.2f}")
+print(f"   TURBO final value: ${turbo_strategy['end_equity']:,.2f}")
+print(f"   Outperformance (TURBO-PROD): +${outperformance:,.2f} ({outperformance_pct:+.1f}%)")
+print(f"   PROD CAGR: {prod_strategy['cagr']*100:.2f}% | TURBO CAGR: {turbo_strategy['cagr']*100:.2f}%")
 print(f"\n📈 Enhanced Charts Generated:")
 print(f"   ✅ dashboard_interactive_turbo.png")
 print(f"   ✅ regime_performance_turbo.png")

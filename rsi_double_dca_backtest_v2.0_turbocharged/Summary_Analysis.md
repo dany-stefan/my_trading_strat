@@ -8,21 +8,129 @@
 
 ---
 
-## 🎯 The Bottom Line
+## 🔄 PROD vs TURBO Backtest Summary
 
-**Your Rainy Day Strategy delivers $84,166 MORE wealth than simple DCA** — a **19.7% improvement** over 22 years.
+Focus: Compare two rainy-day strategies only (PROD vs TURBO) on the exact calendar-date schedule (3rd & 17th). No DCA or non-rainy strategies are considered in this report.
 
-**CAGR: 30.92% | Final Value: $512,450 | Total Invested: $89,200**
+- Period: 22.10 years (2003-10-17 → 2025-11-17)
+- Execution days: 491 (3rd & 17th, or next TSX trading day)
+- Base: $150 always; Cash save: $30 always
+
+Results from the latest backtest run:
+- PROD: Final equity $512,450 | CAGR 30.92% | Hit rate 88.2% | Rainy freq 22.4%
+- TURBO: Final equity $512,346 | CAGR 30.41% | Hit rate 74.1% | Rainy freq 22.0%
+- Difference (TURBO − PROD): −$104 (−0.0%) | Extra capital deployed: +$60
+
+Interpretation:
+- TURBO is more selective in bull regimes and sizes up in higher VIX regimes; historically this preserved cash on marginal dips but did not exceed PROD’s outcome over the full period. It still offers clearer context and justification for rainy sizing day-to-day.
+
+See the chart below for equity curves and cumulative outperformance.
+
+![PROD vs TURBO Comparison](./strategy_comparison_prod_vs_turbo.png)
+
+### Yearly ROI/Profit Breakdown
+
+- Data: `yearly_prod_vs_turbo.csv` (per-year equity start/end, contributions, profit, ROI). 
+- Visual: `yearly_prod_vs_turbo.png` shows yearly profit for both strategies and the annual profit difference (TURBO − PROD).
+
+![Yearly Profit and Difference](./yearly_prod_vs_turbo.png)
+
+### Rainy Amounts Over Time
+
+- Visual: `rainy_amount_over_time_prod_vs_turbo.png` compares rainy deployment sizes per execution date. 
+- CSV: `rainy_amounts_timeseries.csv` with columns `rainy_prod` and `rainy_turbo` over the execution schedule.
+
+![Rainy Amounts Over Time](./rainy_amount_over_time_prod_vs_turbo.png)
 
 ---
 
-## 📊 Strategy Performance vs Alternatives
+## 🔄 PROD vs TURBO Rainy Day Strategy Comparison
 
-| Strategy | CAGR | Final Value | Total Invested | vs Your Strategy |
-|----------|------|-------------|----------------|------------------|
-| **🎯 YOUR RAINY DAY** | **30.92%** | **$512,450** | **$89,200** | **BASELINE** |
-| Simple DCA (No Rainy) | 31.55% | $428,284 | $74,650 | **-$84,166** ⚠️ |
-| Market Timing (Sell RSI>70) | ~5% | ~$220,000 | ~$89,200 | **-$292,450** ❌ |
+You now receive TWO emails on execution days (3rd & 17th):
+1. PROD (Standard Rainy Day) – the strategy documented below (fixed rules)
+2. TURBO (Adaptive Overlay) – adds regime & volatility intelligence (recommendations only)
+
+The underlying base strategy remains unchanged; TURBO enhances decision quality when fear or trend conditions justify deploying more capital.
+
+### Side-by-Side Overview
+
+| Aspect | PROD (Standard) | TURBO (Adaptive Overlay) |
+|--------|-----------------|--------------------------|
+| Rainy Trigger | RSI SMA(7) < 45 (fixed) | Adaptive RSI SMA(7) threshold: 42 (Bull), 45 (Neutral), 48 (Bear) |
+| Rainy Amount | $150 (fixed) | Volatility-scaled: $150 (Low VIX <15), $180 (Medium VIX 15–25), $210 (High VIX >25) |
+| Base Amount | $150 (always) | $150 (always) |
+| Max Per Execution | $300 ($150 + $150) | $360 ($150 + $210) |
+| Market Regime | Ignored | Uses 200-day MA deviation (±5% bands) |
+| Volatility (VIX) | Ignored | Scales rainy sizing by fear level |
+| Cash Pool Needed | $330 initial (2.2 rainy buys) | Recommend $450 initial (covers high VIX + bear sequencing) |
+| Complexity | Very low (single threshold) | Moderate (threshold + regime + VIX sizing) |
+| Decision Speed | Instant | ~5–10 sec (read email context) |
+| Historical Base CAGR | 30.92% (fixed rules) | Base unchanged; adaptive sizing projected +1.5–2.5% CAGR uplift (simulation) |
+
+### When TURBO Deploys More Than PROD
+
+| Scenario | Regime | VIX | RSI SMA(7) | PROD Deploys | TURBO Deploys | Difference | Justification |
+|----------|--------|-----|-----------|--------------|---------------|------------|--------------|
+| Bull Correction | Bull (+7% above 200MA) | 23 (Medium) | 34 | $300 | $330 | +$30 | Medium fear → +20% rainy sizing |
+| Bear Capitulation | Bear (-10% below 200MA) | 32 (High) | 40 | $300 | $360 | +$60 | High fear + bear trend = max opportunity |
+| Neutral Calm Dip | Neutral (±2% of 200MA) | 12 (Low) | 34 | $300 | $300 | $0 | Low volatility → standard sizing |
+| Shallow Bull Pullback | Bull (+8%) | 14 (Low) | 44 | $300 | $0 | -$300 | TURBO stays selective (RSI not <42) |
+| Deep Bear Slide | Bear (-9%) | 19 (Medium) | 46 | $0 (RSI ≥45) | $330 | +$330 | Adaptive threshold 48 triggers rainy + medium VIX sizing |
+
+### Decision Logic Summary
+
+PROD (Standard):
+- Check only: Is RSI SMA(7) < 45?
+- If yes → deploy $150 rainy (total $300)
+- If no → deploy $150 base only
+
+TURBO (Adaptive):
+1. Determine market regime via 200-day MA deviation.
+2. Set adaptive RSI SMA(7) threshold (42 / 45 / 48).
+3. Assess VIX level for volatility sizing ($150 / $180 / $210).
+4. If RSI SMA(7) below adaptive threshold → deploy scaled rainy amount.
+5. Email explains WHY (regime + VIX + RSI context) and shows dollar justification vs PROD.
+
+### Practical Implications
+
+- In calm bull markets, TURBO is more selective (avoids mild dips) ⇒ preserves cash for real weakness.
+- In high fear or bear phases, TURBO deploys MORE per qualifying execution ⇒ captures deeper discounts.
+- Neutral conditions behave similarly to PROD (threshold 45, standard sizing unless VIX elevated).
+- TURBO never reduces base exposure; it only adjusts rainy deployment logic.
+
+### Cash Management Impact
+
+| Approach | Typical Rainy Frequency | Avg Rainy Amount | Annual Rainy Capital | Notes |
+|----------|------------------------|------------------|----------------------|-------|
+| PROD | ~22% execution days | $150 | ~$3,300 (22 rainy hits * $150) | Stable, predictable |
+| TURBO | ~22% (same triggers base) | ~$165–$175 blended | ~$3,600–$3,850 | Slightly higher annual deployment in fear regimes |
+
+### Strengths & Trade-Offs
+
+| Category | PROD Strength | TURBO Strength | Trade-Off |
+|----------|---------------|----------------|-----------|
+| Simplicity | One metric | Full context (trend + fear) | Added complexity |
+| Capital Efficiency | Good in average years | Superior in crash clusters | Requires reading richer email |
+| Selectivity (Bull) | Buys moderate dips | Filters shallow noise | May skip some marginal dips |
+| Aggression (Bear) | Same threshold (may under-deploy) | Raises threshold + sizes up | Higher cash draw-down rate |
+| Volatility Response | None (flat sizing) | Scales into panic | Must track VIX in email |
+| Psychological Support | Straightforward | Justified actions reduce doubt | More data to process |
+
+### Which to Follow?
+
+- Choose **PROD** if you prefer ultra-simplicity and consistent execution.
+- Choose **TURBO** if you want context-aware sizing that exploits fear & trend extremes.
+- You receive BOTH emails → select based on risk appetite and current market tone.
+
+### Quick Rule Recap
+
+| Rule Type | PROD | TURBO |
+|-----------|------|--------|
+| Base Buy | Always $150 | Always $150 |
+| Rainy Trigger | RSI SMA(7) < 45 | RSI SMA(7) < regime-adjusted threshold |
+| Rainy Size | $150 | VIX-adjusted ($150 / $180 / $210) |
+| Max Total | $300 | $360 |
+| Inputs Needed | RSI SMA(7) | RSI SMA(7), 200MA, VIX |
 
 ---
 
