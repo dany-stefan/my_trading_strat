@@ -149,6 +149,29 @@ def convert_to_html(text):
             margin: 15px 0;
             line-height: 1.5;
         }
+        .action-required {
+            background-color: #fff3cd;
+            border: 4px solid #ffc107;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: 900;
+            color: #856404;
+        }
+        .decision-box {
+            background-color: #e7f3ff;
+            border: 3px solid #2196f3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .decision-box strong {
+            font-size: 18px;
+            color: #0d47a1;
+        }
         @media only screen and (max-width: 600px) {
             .container {
                 padding: 12px;
@@ -190,13 +213,13 @@ def convert_to_html(text):
         if '🧪 THIS IS A TEST EMAIL' in line or 'PREVIEW ONLY' in line:
             html += f'<div class="test-notice">{line}</div>\n'
         # Detect main header
-        elif line.startswith('🎯 RSI STRATEGY MONITOR'):
+        elif line.startswith('🎯 RSI STRATEGY MONITOR') or line.startswith('🚀 TURBO v2.0'):
             html += f'<h1>{line}</h1>\n'
-        # Skip ASCII divider lines completely
-        elif line.startswith('════') or line.startswith('═══'):
+        # Skip ASCII divider lines and box characters completely
+        elif line.startswith('════') or line.startswith('═══') or line.startswith('━━━'):
             continue
-        # Detect ASCII table borders (ignore them)
-        elif line.startswith('┌─') or line.startswith('├─') or line.startswith('└─'):
+        # Detect ASCII table borders and box characters (ignore them)
+        elif line.startswith('┌─') or line.startswith('├─') or line.startswith('└─') or line.startswith('╔═') or line.startswith('║') or line.startswith('╚═'):
             continue
         # Detect markdown-style table header row
         elif not in_table and '|' in line and ('Rank' in line or 'Variant' in line or 'Cadence' in line or 'Strategy' in line):
@@ -238,8 +261,16 @@ def convert_to_html(text):
                 html += '<br>\n'
             
             if line.strip():
+                # Action required (star-highlighted)
+                if '⭐⭐⭐' in line and 'ACTION REQUIRED' in line:
+                    # Remove stars and format as action box
+                    clean_line = line.replace('⭐⭐⭐', '').strip()
+                    html += f'<div class="action-required">{clean_line}</div>\n'
+                # Decision box sections
+                elif 'DECISION FROM TABLE' in line or 'DECISION FROM STRATEGY' in line or 'DECISION PATH' in line:
+                    html += f'<div class="decision-box"><strong>{line}</strong></div>\n'
                 # Status boxes
-                if line.startswith('🔥 RECOMMENDATION') or line.startswith('✅ RAINY'):
+                elif line.startswith('🔥 RECOMMENDATION') or line.startswith('✅ RAINY'):
                     html += f'<div class="status-box"><strong>{line}</strong></div>\n'
                 elif line.startswith('⚠️') or line.startswith('💰 RECOMMENDATION'):
                     html += f'<div class="warning-box"><strong>{line}</strong></div>\n'
