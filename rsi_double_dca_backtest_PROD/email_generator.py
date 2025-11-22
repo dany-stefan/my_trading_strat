@@ -10,6 +10,7 @@ Shared by both simulation and production email scripts to ensure consistency.
 
 from datetime import datetime, timedelta
 from market_metrics import calculate_market_metrics
+from strategy_comparison import calculate_strategy_comparison
 
 # =============================================================================
 # STRATEGY PARAMETERS
@@ -57,6 +58,10 @@ def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy
         cash_accumulation=CASH_ACCUMULATION,
         payday_day_of_month_2=PAYDAY_DAY_OF_MONTH_2
     )
+    
+    # Calculate strategy comparisons using centralized module
+    comparison = calculate_strategy_comparison()
+    comp_metrics = comparison.get_all_metrics()
     
     # Extract all computed values from metrics module
     all_metrics = metrics.get_all_metrics()
@@ -185,31 +190,29 @@ Rainy Day Rule:
 • Check RSI SMA(7) only on payday (bi-weekly)
 • If RSI SMA(7) < 45: Deploy extra $150 from cash pool
 • If RSI SMA(7) ≥ 45: Only invest base $150, save the $30
-• Expected hit rate: ~24% rainy deployments (smoothed indicator reduces noise)
 
 💰 PERFORMANCE VS OTHER STRATEGIES
 
-Your Strategy vs Alternatives (22 years: 2003-2025):
+Your Strategy vs Alternatives ({comp_metrics['backtest_years']} years: {comp_metrics['backtest_period']}):
 
 | Strategy | CAGR | Final Value | Total Invested | Profit | vs Your Strategy |
 |----------|------|-------------|----------------|--------|------------------|
-| YOUR RAINY DAY (Variant #2) | 33.54% | $600,907 | $104,350 | $496,557 | BASELINE |
-| Simple DCA (No Rainy) | 32.48% | $503,343 | $87,550 | $415,793 | -$97,564 ⚠️ |
-| Buy & Hold (Lump Sum) | 31.12% | $450,234 | $87,550 | $362,684 | -$133,873 ⚠️ |
+| YOUR RAINY DAY (Variant #2) | {comp_metrics['rainy_cagr']} | {comp_metrics['rainy_final']} | {comp_metrics['rainy_invested']} | {comp_metrics['rainy_profit']} | {comp_metrics['rainy_vs_baseline']} |
+| Simple DCA (No Rainy) | {comp_metrics['dca_cagr']} | {comp_metrics['dca_final']} | {comp_metrics['dca_invested']} | {comp_metrics['dca_profit']} | {comp_metrics['dca_vs_baseline']} ⚠️ |
+| Buy & Hold (${comp_metrics['buy_hold_initial_display']} Lump Sum) | {comp_metrics['buy_hold_cagr']} | {comp_metrics['buy_hold_final']} | {comp_metrics['buy_hold_invested']} | {comp_metrics['buy_hold_profit']} | {comp_metrics['buy_hold_vs_baseline']} ⚠️ |
 
 📈 WHAT YOU GAINED BY CHOOSING THIS STRATEGY:
 
-• vs Simple DCA: You gained an extra $97,564 (+19.4% more wealth!)
-  - Cost: Only $16,800 extra deployed during crashes
-  - Return on rainy capital: 581% (every rainy $1 became $6.81)
+• vs Simple DCA: You gained an extra {comp_metrics['gain_vs_dca']} (+{comp_metrics['gain_vs_dca_pct']} more wealth!)
+  - Cost: Only {comp_metrics['extra_deployed']} extra deployed during crashes
+  - Return on rainy capital: {comp_metrics['rainy_roi']} (every rainy $1 became {comp_metrics['rainy_roi_multiplier']})
   
-• vs Buy & Hold: You gained an extra $133,873 (+26.5% more wealth!)
-  - DCA smoothed your entry prices over 22 years
+• vs Buy & Hold: You gained an extra {comp_metrics['gain_vs_buy_hold']} (+{comp_metrics['gain_vs_buy_hold_pct']} more wealth!)
+  - DCA smoothed your entry prices over {comp_metrics['backtest_years']} years
   - Rainy buys captured crash discounts (2008, 2020, etc.)
   
 • Key Advantage: Same contributions as simple DCA ($150 bi-weekly)
   - You just deployed the $30 savings SMARTER (during RSI < 45)
-  - Hit rate: 80% success rate on rainy deployments
   - No timing skill needed - just follow RSI on payday
 
 📊 See attached charts:
