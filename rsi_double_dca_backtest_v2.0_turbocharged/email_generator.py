@@ -154,7 +154,7 @@ TODAY'S ACTION PLAN:
 ✅ STEP 1: Base DCA → Invest $150 CAD (always)
 🔥 STEP 2: RAINY BUY → Deploy $150 CAD from cash pool
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-💰 TOTAL TODAY: ${total_investment_today:.0f} CAD
+⭐⭐⭐ ACTION REQUIRED: BUY ${total_investment_today:.0f} CAD TOTAL ⭐⭐⭐
 
 WHY RAINY? RSI SMA(7) = {rsi_sma:.2f} < {RSI_THRESHOLD} (bearish)
 CASH STATUS: ${cash_pool:.2f} → ${new_cash_pool:.2f} (after buy & save)
@@ -170,7 +170,7 @@ TODAY'S ACTION PLAN:
 ✅ STEP 1: Base DCA → Invest $150 CAD (always)
 ❌ STEP 2: NO RAINY BUY (need ${RAINY_AMOUNT:.0f}, have ${cash_pool:.2f})
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-💰 TOTAL TODAY: ${total_investment_today:.0f} CAD
+⭐⭐⭐ ACTION REQUIRED: BUY ${total_investment_today:.0f} CAD TOTAL ⭐⭐⭐
 
 WHY RAINY? RSI SMA(7) = {rsi_sma:.2f} < {RSI_THRESHOLD} (bearish)
 CASH STATUS: ${cash_pool:.2f} → ${new_cash_pool:.2f} (after save)
@@ -187,7 +187,7 @@ TODAY'S ACTION PLAN:
 ✅ STEP 1: Base DCA → Invest $150 CAD (always)
 💾 STEP 2: SAVE → Add $30 to cash pool for next rainy day
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-💰 TOTAL TODAY: ${total_investment_today:.0f} CAD
+⭐⭐⭐ ACTION REQUIRED: BUY ${total_investment_today:.0f} CAD TOTAL ⭐⭐⭐
 
 MARKET STATUS: RSI SMA(7) = {rsi_sma:.2f} ≥ {RSI_THRESHOLD} (healthy)
 CASH STATUS: ${cash_pool:.2f} → ${new_cash_pool:.2f} (after save)
@@ -209,6 +209,29 @@ CASH STATUS: ${cash_pool:.2f} → ${new_cash_pool:.2f} (after save)
 ════════════════════════════════════════════════════════════════
 ⚡ STRATEGY COMPARISON - CHOOSE YOUR ACTION
 ════════════════════════════════════════════════════════════════
+
+🎯 TURBO DECISION FROM TABLE (See TURBO_RAINY_BUY_DECISION_TABLE.md)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DECISION FACTORS:
+• Regime: {regime_emoji} {market_regime} (SPY vs 200-day MA: {((price - spy_200ma) / spy_200ma * 100):+.1f}%)
+• VIX Level: {vix:.1f} ({vix_level} volatility)
+• RSI SMA(7): {rsi_sma:.2f}
+
+TABLE DECISION:
+• Adaptive Threshold: RSI < {adaptive_threshold:.0f} {
+    "(selective in bull)" if market_regime == "BULL"
+    else "(aggressive in bear)" if market_regime == "BEAR"
+    else "(standard)"
+  }
+• Volatility Sizing: ${volatility_sizing:.0f} CAD {
+    "(standard)" if vix < 15
+    else "(+20%)" if vix < 25
+    else "(+40% - HIGH FEAR!)"
+  }
+
+RESULT: {"✅ RAINY - Deploy $" + f"{int(volatility_sizing)}" if is_rainy_adaptive and cash_pool >= volatility_sizing else "❌ NOT RAINY" if not is_rainy_adaptive else "⚠️ RAINY BUT INSUFFICIENT CASH"} 
+⭐⭐⭐ TURBO ACTION: BUY ${advanced_total:.0f} CAD TOTAL ⭐⭐⭐
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 📊 MARKET CONTEXT & BUYING JUSTIFICATION:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -356,15 +379,54 @@ DIFFERENCE: ${abs(advanced_total - (DCA_BASE_AMOUNT + (RAINY_AMOUNT if is_rainy 
 → You have BOTH emails - pick what feels right for YOUR risk tolerance!
 """
     
+    # Create decision table values display
+    if spy_200ma and vix:
+        regime_emoji = "🐂" if market_regime == "BULL" else "🐻" if market_regime == "BEAR" else "⚖️"
+        vix_level = "Low" if vix < 15 else "Medium" if vix < 25 else "High"
+        decision_values = f"""
+╔══════════════════════════════════════════════════════════════╗
+║  📊 DECISION TABLE VALUES - TURBO STRATEGY                  ║
+╚══════════════════════════════════════════════════════════════╝
+
+⭐⭐⭐ KEY DECISION FACTORS ⭐⭐⭐
+
+1️⃣ MARKET REGIME (200-day MA):
+   • SPY Price: ${price:.2f} USD
+   • 200-day MA: ${spy_200ma:.2f} USD
+   • Deviation: {((price - spy_200ma) / spy_200ma * 100):+.1f}%
+   • Regime: {regime_emoji} {market_regime}
+
+2️⃣ VOLATILITY (VIX Fear Index):
+   • Current VIX: {vix:.1f}
+   • Level: {vix_level} volatility
+   • Sizing: ${volatility_sizing:.0f} CAD {
+    "(standard)" if vix < 15
+    else "(+20% more)" if vix < 25
+    else "(+40% more - HIGH FEAR!)"
+  }
+
+3️⃣ OVERSOLD INDICATOR (RSI):
+   • RSI SMA(7): {rsi_sma:.2f}
+   • Adaptive Threshold: < {adaptive_threshold:.0f} {
+    "(selective in bull)" if market_regime == "BULL"
+    else "(aggressive in bear)" if market_regime == "BEAR"
+    else "(standard)"
+  }
+   • Status: {"✅ RAINY DAY" if rsi_sma < adaptive_threshold else "❌ NOT RAINY"}
+
+══════════════════════════════════════════════════════════════
+"""
+    else:
+        decision_values = ""
+
     body = f"""
 🚀 TURBO v2.0 - RSI STRATEGY MONITOR{header_suffix}
 {test_notice}
 ════════════════════════════════════════════════════════════════
 📅 DATE: {today.strftime('%B %d, %Y')}{date_suffix}
-📈 SPY PRICE: ${price:.2f} USD
-📊 RSI SMA(7): {rsi_sma:.2f} | THRESHOLD: < {RSI_THRESHOLD}
 ════════════════════════════════════════════════════════════════
 
+{decision_values}
 {action_box}
 {advanced_comparison}
 

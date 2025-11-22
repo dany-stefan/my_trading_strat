@@ -66,7 +66,7 @@ def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy
         total_investment_today = DCA_BASE_AMOUNT + RAINY_AMOUNT
         cash_after_deploy = cash_pool - RAINY_AMOUNT
         new_cash_pool = cash_pool - RAINY_AMOUNT + CASH_ACCUMULATION
-        action_text = f"Total investment today: ${total_investment_today:.0f} (${DCA_BASE_AMOUNT:.0f} base + ${RAINY_AMOUNT:.0f} rainy)"
+        action_text = f"⭐⭐⭐ ACTION REQUIRED: BUY ${total_investment_today:.0f} CAD TOTAL ⭐⭐⭐\n   (${DCA_BASE_AMOUNT:.0f} base + ${RAINY_AMOUNT:.0f} rainy)"
         cash_after_text = f"Cash pool after rainy buy: ${cash_after_deploy:.2f}\n   Add today's savings: +${CASH_ACCUMULATION:.0f}\n   Final cash pool: ${new_cash_pool:.2f}"
     
     # Case 2: Rainy day BUT insufficient cash → Can't deploy (missed opportunity)
@@ -74,7 +74,7 @@ def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy
         recommendation = f"⚠️  Rainy day but insufficient cash (need ${RAINY_AMOUNT:.0f}, have ${cash_pool:.2f})"
         total_investment_today = DCA_BASE_AMOUNT
         new_cash_pool = cash_pool + CASH_ACCUMULATION
-        action_text = f"Total investment today: ${total_investment_today:.0f} (base only)"
+        action_text = f"⭐⭐⭐ ACTION REQUIRED: BUY ${total_investment_today:.0f} CAD TOTAL ⭐⭐⭐\n   (base only - insufficient cash for rainy)"
         cash_after_text = f"Cash pool after saving: ${new_cash_pool:.2f}"
     
     # Case 3: Not rainy → Save cash for future rainy days
@@ -82,7 +82,7 @@ def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy
         recommendation = f"💰 RECOMMENDATION: Save your cash for next rainy day"
         total_investment_today = DCA_BASE_AMOUNT
         new_cash_pool = cash_pool + CASH_ACCUMULATION
-        action_text = f"Total investment today: ${total_investment_today:.0f} (base only)"
+        action_text = f"⭐⭐⭐ ACTION REQUIRED: BUY ${total_investment_today:.0f} CAD TOTAL ⭐⭐⭐\n   (base only - not rainy today)"
         cash_after_text = f"Cash pool after saving: ${new_cash_pool:.2f}"
     
     # Display rainy status clearly (using RSI SMA(7) terminology)
@@ -119,6 +119,20 @@ Date: {today.strftime('%B %d, %Y')}{date_suffix}
 Current SPY Price: ${price:.2f} USD
 RSI SMA(7): {rsi_sma:.2f}
 
+═══════════════════════════════════════════════════════════════
+📋 DECISION FROM STRATEGY RULES
+═══════════════════════════════════════════════════════════════
+
+DECISION PATH:
+• RSI SMA(7) = {rsi_sma:.2f}
+• Threshold = {RSI_THRESHOLD}
+• Result: {"RSI < 45 → RAINY DAY ✅" if is_rainy else "RSI ≥ 45 → NOT RAINY ❌"}
+{"• Cash Available: $" + f"{cash_pool:.2f}" if is_rainy else ""}
+
+{action_text}
+
+═══════════════════════════════════════════════════════════════
+
 📊 TODAY'S PAYDAY ACTIONS
 
 1️⃣ BASE INVESTMENT (always):
@@ -132,7 +146,6 @@ RSI SMA(7): {rsi_sma:.2f}
    
    {recommendation}
    
-   {action_text}
    {cash_after_text}
 
 Next payday: {next_payday_text}
