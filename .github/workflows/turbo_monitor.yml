@@ -1,0 +1,50 @@
+name: 🚀 TURBO v2.0 Strategy Monitor
+
+on:
+  schedule:
+    # Runs at 2:00 PM EST (19:00 UTC) on 3rd and 17th (execution days)
+    # Note: Payday is 1st and 15th, but execution occurs 2 days later to sync with Wealthsimple recurring buys
+    # Runs 1 hour after PROD to avoid conflicts
+    - cron: '0 19 3,17 * *'
+  workflow_dispatch:  # Allows manual trigger from GitHub UI (sends TEST email)
+
+jobs:
+  turbo-monitor:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        pip install yfinance pandas numpy matplotlib seaborn scipy
+    
+    - name: Run TURBO v2.0 Strategy Monitor (Enhanced Visualizations)
+      env:
+        SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
+        SMTP_PORT: ${{ secrets.SMTP_PORT }}
+        SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+        SENDER_PASSWORD: ${{ secrets.SENDER_PASSWORD }}
+        RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
+        # Set FORCE_EMAIL=true for manual triggers (test emails)
+        # Set FORCE_EMAIL=false for scheduled runs (official emails)
+        FORCE_EMAIL: ${{ github.event_name == 'workflow_dispatch' && 'true' || 'false' }}
+      run: |
+        python rsi_double_dca_backtest_v2.0_turbocharged/monitor_strategy.py
+    
+    - name: Upload enhanced visualizations
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: turbo-visualizations
+        path: |
+          rsi_double_dca_backtest_v2.0_turbocharged/*_turbo.png
+          rsi_double_dca_backtest_v2.0_turbocharged/*.log
+        retention-days: 30
+        if-no-files-found: ignore
