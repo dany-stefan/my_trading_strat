@@ -233,7 +233,7 @@ def convert_to_html(text):
         elif line.startswith('┌─') or line.startswith('├─') or line.startswith('└─') or line.startswith('╔═') or line.startswith('║') or line.startswith('╚═'):
             continue
         # Detect markdown-style table header row
-        elif not in_table and '|' in line and ('Rank' in line or 'Variant' in line or 'Cadence' in line or 'Strategy' in line):
+        elif not in_table and '|' in line and ('Rank' in line or 'Variant' in line or 'Cadence' in line or 'Strategy' in line or 'Metric' in line):
             in_table = True
             cells = [cell.strip() for cell in line.split('|')[1:-1]]
             table_headers = cells
