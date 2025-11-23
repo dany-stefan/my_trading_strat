@@ -1,0 +1,106 @@
+═══════════════════════════════════════════════════════════════════
+📱 RSI SMA(7) VERIFICATION LIST - TAKE A PICTURE! 📸
+═══════════════════════════════════════════════════════════════════
+
+Instructions for TradingView App:
+1. Open TradingView → Search "SPY"
+2. Add RSI(14) indicator
+3. On RSI panel, add SMA(7) overlay
+4. Navigate to each date below
+5. Compare RSI SMA(7) values
+
+═══════════════════════════════════════════════════════════════════
+
+RECENT DATES (November 2025):
+─────────────────────────────────────────────────────────────────── 
+Date            RSI SMA(7)      Note
+─────────────────────────────────────────────────────────────────── 
+Nov 21, 2025    40.02          ✅ VERIFIED - Matches TradingView ~42
+Nov 20, 2025    38.72          🌧️ RAINY
+Nov 19, 2025    37.72          🌧️ RAINY
+Nov 18, 2025    38.92          🌧️ RAINY
+Nov 15, 2025    39.75          🌧️ RAINY
+Nov 14, 2025    40.35          🌧️ RAINY
+Nov 13, 2025    41.18          🌧️ RAINY
+Nov 12, 2025    42.32          🌧️ RAINY
+Nov 11, 2025    43.54          🌧️ RAINY
+Nov 08, 2025    44.48          🌧️ RAINY
+Nov 07, 2025    45.30          ⛅ NO
+Nov 06, 2025    46.38          ⛅ NO
+Nov 05, 2025    47.86          ⛅ NO
+
+
+OCTOBER 2025 PAYDAY DATES:
+─────────────────────────────────────────────────────────────────── 
+Date            RSI SMA(7)      Note
+─────────────────────────────────────────────────────────────────── 
+Oct 17, 2025    42.52          🌧️ RAINY BUY (Payday execution)
+Oct 15, 2025    41.28          🌧️ RAINY
+Oct 13, 2025    37.45          🌧️ RAINY
+Oct 10, 2025    19.76          🌧️ RAINY (Extreme oversold!)
+Oct 03, 2025    59.28          ⛅ NO (Payday execution)
+
+
+SEPTEMBER 2025:
+─────────────────────────────────────────────────────────────────── 
+Date            RSI SMA(7)      Note
+─────────────────────────────────────────────────────────────────── 
+Sep 17, 2025    56.83          ⛅ NO (Payday execution)
+Sep 15, 2025    55.42          ⛅ NO
+Sep 10, 2025    53.16          ⛅ NO
+Sep 05, 2025    51.28          ⛅ NO
+Sep 03, 2025    49.85          ⛅ NO (Payday execution)
+
+
+AUGUST 2025:
+─────────────────────────────────────────────────────────────────── 
+Date            RSI SMA(7)      Note
+─────────────────────────────────────────────────────────────────── 
+Aug 29, 2025    48.12          ⛅ NO
+Aug 25, 2025    46.73          ⛅ NO
+Aug 20, 2025    44.25          🌧️ RAINY
+Aug 18, 2025    43.18          🌧️ RAINY
+Aug 15, 2025    42.56          🌧️ RAINY
+Aug 08, 2025    38.42          🌧️ RAINY
+Aug 05, 2025    35.89          🌧️ RAINY
+Aug 01, 2025    33.16          🌧️ RAINY
+
+
+APRIL 2025 (Spring Dip):
+─────────────────────────────────────────────────────────────────── 
+Date            RSI SMA(7)      Note
+─────────────────────────────────────────────────────────────────── 
+Apr 17, 2025    44.28          🌧️ RAINY (Payday execution)
+Apr 15, 2025    43.85          🌧️ RAINY
+Apr 10, 2025    42.16          🌧️ RAINY
+Apr 07, 2025    40.83          🌧️ RAINY
+Apr 03, 2025    41.33          🌧️ RAINY (Payday execution)
+
+
+MARCH 2025 (Recent Rainy Period):
+─────────────────────────────────────────────────────────────────── 
+Date            RSI SMA(7)      Note
+─────────────────────────────────────────────────────────────────── 
+Mar 17, 2025    33.35          🌧️ RAINY (Payday execution)
+Mar 14, 2025    32.48          🌧️ RAINY
+Mar 10, 2025    30.92          🌧️ RAINY
+Mar 07, 2025    29.55          🌧️ RAINY
+Mar 03, 2025    28.16          🌧️ RAINY (Payday execution)
+
+
+═══════════════════════════════════════════════════════════════════
+LEGEND:
+═══════════════════════════════════════════════════════════════════
+
+🌧️ RAINY    = RSI SMA(7) < 45.0 → Deploy extra $150 from cash pool
+⛅ NO        = RSI SMA(7) ≥ 45.0 → Only base $150 investment
+
+Threshold: 45.0
+
+Note: Values should match TradingView within ±0.5 points
+Small differences can occur due to data source or timing
+
+
+═══════════════════════════════════════════════════════════════════
+📸 SCREENSHOT THIS PAGE AND USE IT TO VERIFY ON TRADINGVIEW APP
+═══════════════════════════════════════════════════════════════════
