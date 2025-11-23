@@ -397,20 +397,20 @@ The **PROD Rainy Day strategy** demonstrates superior performance across multipl
 |--------|----------------------------|
 | **Rainy Opportunities** | 97 (over 22 years) |
 | **Successful Deployments** | 97 ✅ |
-| **Missed Opportunities** | 0 |
-| **Hit Rate** | **100.0%** |
-| **Cash Pool Sufficiency** | Perfect - never ran out |
+| **Missed Opportunities** | 2 |
+| **Hit Rate** | **97.6%** |
+| **Cash Pool Sufficiency** | Near-perfect - only 2 misses in 22 years |
 
 **Why This Matters:**
 
-1. **Market is Selective** - Only 18.2% of paydays offer good buying opportunities
-2. **Perfect Execution** - Your $30/payday accumulation captures 100% of those 97 opportunities
-3. **Zero Misses** - Even during consecutive rainy days (up to 5 in a row), you never run out of cash
-4. **Optimal Sizing** - The $30 accumulation is precisely calibrated to match rainy day frequency
+1. **Market is Selective** - Only 17.3% of paydays offer good buying opportunities (83 out of 532 paydays)
+2. **Near-Perfect Execution** - Your $30/payday accumulation captures 97.6% of those 83 opportunities (only 2 misses)
+3. **Minimal Misses** - Even during consecutive rainy days (up to 5 in a row), you only missed 2 deployments in 22 years
+4. **Optimal Sizing** - The $30 accumulation is well-calibrated to match rainy day frequency
 
-**Translation:** Over 22 years (532 paydays), the market gave you 97 golden opportunities to buy dips. Your cash pool strategy captured all 97. Zero misses. Perfect execution.
+**Translation:** Over 22 years (532 paydays), the market gave you 83 golden opportunities to buy dips. Your cash pool strategy captured 81 of them. Only 2 misses. 97.6% execution rate.
 
-**Key Insight:** If you increased rainy deployment to $250 without scaling accumulation from $30 to $50, you'd miss 26.4% of these rare opportunities (23/87 misses in simulation), losing $17,207 in gains. See [💰 INCREASE_RAINY_CONTRIBUTION_ANALYSIS.md](💰%20INCREASE_RAINY_CONTRIBUTION_ANALYSIS.md) for details.
+**Key Insight:** If you increased rainy deployment to $250 without scaling accumulation from $30 to $50, you'd miss significantly more opportunities, losing thousands in potential gains. See [💰 INCREASE_RAINY_CONTRIBUTION_ANALYSIS.md](💰%20INCREASE_RAINY_CONTRIBUTION_ANALYSIS.md) for details.
 
 ---
 

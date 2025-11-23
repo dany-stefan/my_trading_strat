@@ -80,12 +80,31 @@ def fetch_data():
 
 
 def compute_rsi(series: pd.Series, period: int = 14) -> pd.Series:
-    """Calculate RSI indicator."""
+    """
+    Calculate RSI using Wilder's smoothing method (industry standard).
+    This matches TradingView and other platforms.
+    
+    Wilder's smoothing formula:
+    - First avg: Simple Moving Average over initial period
+    - Next avg: (Previous avg * (period-1) + Current value) / period
+    """
     delta = series.diff()
     gain = delta.clip(lower=0)
     loss = -delta.clip(upper=0)
-    avg_gain = gain.rolling(period).mean()
-    avg_loss = loss.rolling(period).mean()
+    
+    # Initialize arrays
+    avg_gain = pd.Series(index=series.index, dtype=float)
+    avg_loss = pd.Series(index=series.index, dtype=float)
+    
+    # First value: SMA over initial period
+    avg_gain.iloc[period] = gain.iloc[1:period+1].mean()
+    avg_loss.iloc[period] = loss.iloc[1:period+1].mean()
+    
+    # Subsequent values: Wilder's smoothing
+    for i in range(period + 1, len(series)):
+        avg_gain.iloc[i] = (avg_gain.iloc[i-1] * (period - 1) + gain.iloc[i]) / period
+        avg_loss.iloc[i] = (avg_loss.iloc[i-1] * (period - 1) + loss.iloc[i]) / period
+    
     rs = avg_gain / avg_loss
     rsi = 100 - (100 / (1 + rs))
     return rsi

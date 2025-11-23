@@ -3,5 +3,10 @@
 		{
 			"path": "."
 		}
-	]
+	],
+	"settings": {
+		"github-actions.workflows.pinned.workflows": [
+			".github/workflows/rsi_monitor.yml"
+		]
+	}
 }

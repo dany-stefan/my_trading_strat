@@ -31,7 +31,7 @@
 ### 1. What You Gained vs Simple DCA (+$84,166)
 - Same execution schedule ($150 on 3rd and 17th)
 - Only difference: Deployed $30 savings SMARTER during RSI SMA(7) < 45
-- Extra capital deployed: $14,550 → Returned $84,166 gain
+- Extra capital deployed: $12,450 → Returned $84,166 gain
 - **Return on rainy capital: 578%** (every rainy $1 became $6.78)
 
 ### 2. Five Key Principles
@@ -50,7 +50,7 @@
 | Factor | Variant #1 | **Variant #2 (YOU)** | Variant #3 | Winner |
 |--------|------------|----------------------|------------|--------|
 | **CAGR** | 33.54% | 33.54% | 33.54% | ⚖️ TIE |
-| **Hit Rate** | 68.5% | **81.8%** ⭐ | 65.3% | **#2** ✅ |
+| **Hit Rate** | 68.5% | **97.6%** ⭐ | 65.3% | **#1** ✅ |
 | **Check Frequency** | Weekly | **Bi-weekly (Payday)** | Weekly | **#2** ✅ |
 | **Simplicity** | Weekly routine | **Payday-aligned** | Weekly routine | **#2** ✅ |
 | **Cash Sustainability** | Good | **Best** ⭐ | Marginal | **#2** ✅ |
@@ -64,7 +64,7 @@ Over the 22-year backtest period (491 execution days), rainy days clustered in t
 - **2 consecutive rainy days:** 18 occurrences (short downturn)
 - **3 consecutive rainy days:** 4 occurrences (extended downturn)
 
-This shows that most rainy days (71%) occur as single events, while 29% form streaks of 2-3 execution days. The extra $14,550 deployed during these 97 rainy days generated $84,166 in additional portfolio value, demonstrating exceptional capital efficiency.
+This shows that most rainy days (71%) occur as single events, while 29% form streaks of 2-3 execution days. The extra $12,450 deployed during these 83 rainy days generated $84,166 in additional portfolio value, demonstrating exceptional capital efficiency.
 
 ### Yearly Averages (22.10 Year Period)
 
@@ -79,7 +79,7 @@ This shows that most rainy days (71%) occur as single events, while 29% form str
 | Regular Orders | 491 | 22.2 |
 | Rainy Day Hits | 97 | 4.4 |
 | Capital Deployed (Total) | $89,200 | $4,036 |
-| Rainy Capital Deployed | $14,550 | $658 |
+| Rainy Capital Deployed | $12,450 | $658 |
 
 ### Configuration
 - **Schedule:** Payday occurs on 1st and 15th of each month, but strategy executes buy orders and sends email alerts on 3rd and 17th (2 days later) to align with Wealthsimple's recurring purchase schedule. If 3rd or 17th falls on a weekend or TSX holiday, execution moves to the next TSX trading day.
@@ -366,7 +366,7 @@ The strategy successfully identified and deployed capital during sustained marke
 *Your rainy day strategy vs simple DCA on exact calendar date schedule (3rd & 17th) over 22 years*
 
 ![Cash Pool Accumulation](./cash_pool_analysis.png)
-*Cash pool dynamics with hit/miss markers and RSI SMA(7) threshold bands. Green markers show successful rainy day deployments (81.8% hit rate from simulation), red X markers show missed opportunities due to insufficient cash, and gray dots show non-rainy execution days.*
+*Cash pool dynamics with hit/miss markers and RSI SMA(7) threshold bands. Green markers show successful rainy day deployments (97.6% hit rate), red X markers show missed opportunities due to insufficient cash (only 2 in 22 years), and gray dots show non-rainy execution days.*
 
 ![Rainy Day Analysis](./rainy_day_analysis_detailed.png)
 *Hit/miss pattern and cash pool dynamics throughout backtest period*

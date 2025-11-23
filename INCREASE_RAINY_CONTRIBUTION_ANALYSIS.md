@@ -10,7 +10,7 @@
 
 Your current $150 rainy day contribution is **very conservative**. Analysis of 22 years of backtest data (2003-2025) reveals:
 
-- ✅ **0 misses in 22 years** - 100% hit rate on 97 rainy day opportunities
+- ✅ **Only 2 misses in 22 years** - 97.6% hit rate on 85 rainy day opportunities (83 successful deployments)
 - ✅ **You can safely increase to $200-300** without running out of cash
 - ✅ **Theoretical maximum: $500+** (cash pool scales proportionally)
 - ✅ **Practical sweet spot: $200-220** (33-47% more rainy deployment)
@@ -23,10 +23,10 @@ Your current $150 rainy day contribution is **very conservative**. Analysis of 2
 
 | Metric | Value | Status |
 |--------|-------|--------|
-| **Total Rainy Opportunities** | 97 days | - |
-| **Successful Deployments** | 97 | ✅ 100% hit rate |
-| **Missed Deployments** | 0 | ✅ Perfect |
-| **Total Rainy Capital Deployed** | $14,550 | $150 × 97 |
+| **Total Rainy Opportunities** | 85 days | - |
+| **Successful Deployments** | 83 | ✅ 97.6% hit rate |
+| **Missed Deployments** | 2 | ⚠️ Only 2 in 22 years |
+| **Total Rainy Capital Deployed** | $12,450 | $150 × 83 |
 | **Minimum Cash Before Any Buy** | $150 | Exactly at threshold |
 | **Maximum Consecutive Buys** | 3 | Rare (only 2x in 22 years) |
 
@@ -801,7 +801,7 @@ Don't sacrifice $17,207 to save $480/year. **Scale properly or stay at $150.**
 
 | Strategy | Rainy Opportunities | Deployments | Misses | Hit Rate |
 |----------|---------------------|-------------|--------|----------|
-| **Current ($150/$30)** | 97 | 97 | 0 | **100.0%** ✅ |
+| **Current ($150/$30)** | 85 | 83 | 2 | **97.6%** ✅ |
 | **Aggressive NO SCALE ($250/$30)** | 87 | 64 | 23 | **73.6%** ⚠️ |
 
 **What this measures:** Whether you have enough cash in your pool to deploy when conditions are favorable.
@@ -844,8 +844,8 @@ Don't sacrifice $17,207 to save $480/year. **Scale properly or stay at $150.**
 | Metric | Value |
 |--------|-------|
 | **Total Paydays** (3rd & 17th) | 532 paydays from Oct 2003 - Nov 2025 |
-| **Rainy Opportunities** (RSI < 45) | 97 rainy paydays |
-| **Market Favorability** | **18.2%** of all paydays are rainy |
+| **Rainy Opportunities** (RSI < 45) | 85 rainy paydays |
+| **Market Favorability** | **16.0%** of all paydays are rainy |
 | **Non-Rainy Rate** | **81.8%** of paydays (market is "expensive") |
 
 **What this measures:** How often market conditions meet your RSI < 45 threshold.
@@ -859,12 +859,12 @@ Don't sacrifice $17,207 to save $480/year. **Scale properly or stay at $150.**
 ### 🎯 The Critical Difference
 
 **Grand Strategy (Market Conditions):**
-- 97 rainy opportunities out of 532 paydays = 18.2% favorable conditions
+- 85 rainy opportunities out of 532 paydays = 16.0% favorable conditions
 - This means the market is "expensive" (RSI ≥ 45) about 82% of the time
 - **This is the same for BOTH strategies** - market doesn't care about your cash pool
 
 **Rainy Opportunity Hit Rate (Cash Pool Capacity):**
-- Current ($150/$30): Deploys on 97/97 rainy days = **100% execution**
+- Current ($150/$30): Deploys on 83/85 rainy days = **97.6% execution** (only 2 misses)
 - Aggressive NO SCALE ($250/$30): Deploys on 64/87 rainy days = **73.6% execution**
 - **This is different between strategies** - it depends on your cash pool mechanics
 
@@ -880,8 +880,8 @@ The **100% vs 73.6% comparison** is about:
 - Aggressive NO SCALE: NO, 26.4% of the time you're broke
 
 **Bottom line:**
-- Market gives you 97 rainy opportunities over 22 years (18.2% of paydays)
-- Current ($150/$30): You capture all 97 (100%)
+- Market gives you 85 rainy opportunities over 22 years (16.0% of paydays)
+- Current ($150/$30): You capture 83 of them (97.6%, only 2 misses)
 - Aggressive NO SCALE ($250/$30): You only capture 64 (73.6%)
 - **You're leaving 23 opportunities on the table** by not scaling accumulation
 

@@ -65,8 +65,18 @@ def get_rsi(ticker="SPY", period=14, lookback_days=100):
     gain = delta.clip(lower=0)
     loss = -delta.clip(upper=0)
     
-    avg_gain = gain.rolling(period).mean()
-    avg_loss = loss.rolling(period).mean()
+    # Wilder's smoothing for RSI
+    avg_gain = pd.Series(index=prices.index, dtype=float)
+    avg_loss = pd.Series(index=prices.index, dtype=float)
+    
+    # First value: SMA over initial period
+    avg_gain.iloc[period] = gain.iloc[1:period+1].mean()
+    avg_loss.iloc[period] = loss.iloc[1:period+1].mean()
+    
+    # Subsequent values: Wilder's smoothing
+    for i in range(period + 1, len(prices)):
+        avg_gain.iloc[i] = (avg_gain.iloc[i-1] * (period - 1) + gain.iloc[i]) / period
+        avg_loss.iloc[i] = (avg_loss.iloc[i-1] * (period - 1) + loss.iloc[i]) / period
     
     rs = avg_gain / avg_loss
     rsi = 100 - (100 / (1 + rs))
