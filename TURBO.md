@@ -1,4 +1,4 @@
-# TURBO v2.0 Strategy - Enhanced Performance Report
+# 🚀 TURBO v2.0 Strategy - Enhanced Performance Report
 
 **Backtest Period:** October 2003 – November 2025 (22.10 years)  
 **Strategy:** Adaptive 3-Factor RSI DCA System  

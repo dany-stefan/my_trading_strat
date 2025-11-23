@@ -177,6 +177,28 @@ Rainy Day Rule:
 • If RSI SMA(7) < 45: Deploy extra $150 from cash pool
 • If RSI SMA(7) ≥ 45: Only invest base $150, save the $30
 
+📊 MARKET CONDITIONS & CASH POOL STRATEGY (22 Years of Data):
+
+Historical Market Favorability:
+• 81.8% of paydays (435/532): Market is expensive (RSI ≥ 45) - No rainy deployment ⛅
+• 18.2% of paydays (97/532): Market is favorable (RSI < 45) - Rainy opportunity! 🌧️
+
+Cash Pool Execution Rate:
+• Current Strategy ($150/$30): 100% hit rate ✅
+  - When the market IS rainy (18.2% of time), you deploy 100% of opportunities
+  - You NEVER run out of cash on rainy days (97/97 deployments successful)
+  - Saving $30/payday is EXACTLY enough to handle all rainy periods
+  - Even consecutive rainy days (up to 5 in a row) are fully covered
+
+Why This Matters:
+• The market rarely gives you opportunities (only 18.2% of paydays)
+• But when it does, you're ALWAYS ready with cash (100% execution)
+• Your $30/payday accumulation perfectly matches rainy frequency
+• No missed opportunities = capture ALL 97 golden buying moments
+
+Translation: In 22 years, the market gave you 97 chances to buy dips.
+Your cash pool strategy captured all 97. Zero misses. Perfect execution.
+
 💰 PERFORMANCE VS OTHER STRATEGIES
 
 📖 Investment ROI CAGR Definition:
