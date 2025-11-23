@@ -104,6 +104,71 @@ The ROI CAGRs are nearly identical because both strategies compound efficiently.
 
 ---
 
+## 🌧️ Isolated Rainy Day Performance Analysis
+
+**Analyzing ONLY the $14,550 deployed during rainy days (97 buys when RSI < 45)**
+
+### Overall Rainy Money Performance
+
+| Metric | Value |
+|--------|-------|
+| **Total Rainy Contributions** | $14,550 (97 buys) |
+| **Average SPY Price on Rainy Days** | $210.14 |
+| **Current SPY Price (Nov 21, 2025)** | $659.03 |
+| **Price Appreciation** | **3.14x** |
+| **Total Shares from Rainy Money** | 105.05 shares |
+| **Current Value of Rainy Shares** | **$69,234** |
+| **Dollar Gain** | **$54,684** |
+| **Percent Return** | **375.8%** |
+
+**💡 You bought SPY at an average 68% discount during rainy periods vs today's price!**
+
+### Top 10 Rainy Periods (by Return)
+
+| Period | Duration (Days) | Buys | Invested | Avg Price | Current Value | Return |
+|--------|-----------------|------|----------|-----------|---------------|--------|
+| **2009** | Mar-Nov (245d) | 2 | $300 | $64.93 | $3,180 | **960%** 🏆 |
+| **2004** | Mar-Aug (139d) | 5 | $750 | $74.38 | $6,646 | **786%** |
+| **2005** | Apr-Oct (196d) | 4 | $600 | $81.61 | $4,847 | **708%** |
+| **2008** | Jan-Dec (321d) | 5 | $750 | $86.71 | $5,841 | **679%** |
+| **2010** | Feb-Dec (303d) | 6 | $900 | $85.56 | $6,946 | **672%** |
+| **2006** | Feb-Jun (136d) | 4 | $600 | $87.89 | $4,500 | **650%** |
+| **2011** | Mar-Dec (263d) | 5 | $750 | $96.16 | $5,157 | **588%** |
+| **2007** | Mar-Dec (273d) | 7 | $1,050 | $102.38 | $6,766 | **544%** |
+| **2012** | Apr-Nov (216d) | 4 | $600 | $108.95 | $3,634 | **506%** |
+| **2013** | Jun-Sep (78d) | 3 | $450 | $132.80 | $2,233 | **396%** |
+
+**Key Insights:**
+- ✅ **2009 Financial Crisis Recovery**: 960% return - bought at $64.93 avg (absolute bottom!)
+- ✅ **2004-2008 Early Deployments**: Highest returns (bought cheap, held longest)
+- ✅ **2008 Great Financial Crisis**: 321-day rainy period, 5 buys, 679% return
+- ✅ **2022 Bear Market**: $1,350 deployed (9 buys) already up 72% in 3 years
+- ✅ **2025 Recent Period**: $600 deployed, 14% return (just getting started!)
+
+### Rainy Period Characteristics
+
+**Longest Rainy Periods:**
+- 2008: 321 days (5 buys) - Great Financial Crisis
+- 2014: 317 days (5 buys) - European debt crisis concerns
+- 2010: 303 days (6 buys) - Flash crash recovery
+- 2015: 275 days (5 buys) - China slowdown fears
+
+**Most Aggressive Deployment:**
+- 2022: 9 buys, $1,350 total - Bear market opportunity
+- 2007: 7 buys, $1,050 total - Pre-crisis weakness
+- 2010: 6 buys, $900 total - Post-crisis volatility
+
+**Best Single Buy:**
+- March 3, 2009: $150 @ $51.53/share → Now worth $1,913 (**1,175% return!**)
+
+**The Power of Rainy Periods:**
+- Each rainy period = cluster of market weakness (RSI < 45)
+- Early periods (2004-2010) have 500-900%+ returns (held longest)
+- Recent periods (2022-2025) still compounding (14-72% returns)
+- Average rainy buy price ($210.14) = 68% discount vs current price ($659.03)
+
+---
+
 ## 💡 Why RAINY DAY Outperforms
 
 ### Value Breakdown vs Simple DCA
