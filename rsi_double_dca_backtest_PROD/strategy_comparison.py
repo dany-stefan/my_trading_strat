@@ -110,6 +110,7 @@ class StrategyComparison:
             self.rainy_total_invested = base_contributions + rainy_extra_deployments
             self.rainy_num_rainy_buys = num_rainy_buys
             self.rainy_profit = self.rainy_final_value - self.rainy_total_invested
+            self.rainy_profit_pct = (self.rainy_profit / self.rainy_total_invested) * 100
             self.rainy_cagr = self._calculate_cagr(
                 self.rainy_total_invested, 
                 self.rainy_final_value, 
@@ -118,6 +119,8 @@ class StrategyComparison:
         else:
             self.rainy_final_value = 512450
             self.rainy_total_invested = 104350
+            self.rainy_profit = self.rainy_final_value - self.rainy_total_invested
+            self.rainy_profit_pct = 391.0
             self.rainy_profit = self.rainy_final_value - self.rainy_total_invested
             self.rainy_cagr = self._calculate_cagr(
                 self.rainy_total_invested,
@@ -130,9 +133,11 @@ class StrategyComparison:
         # ===================================================================
         if self.baseline_df is not None and len(self.baseline_df) > 0:
             self.dca_final_value = float(self.baseline_df['equity'].iloc[-1])
-            num_paydays = len(self.baseline_df[self.baseline_df.index % 14 == 0])
+            # Use same calculation as rainy strategy for fair comparison
+            num_paydays = len(self.baseline_df) // 14
             self.dca_total_invested = num_paydays * 150.0
             self.dca_profit = self.dca_final_value - self.dca_total_invested
+            self.dca_profit_pct = (self.dca_profit / self.dca_total_invested) * 100
             self.dca_cagr = self._calculate_cagr(
                 self.dca_total_invested,
                 self.dca_final_value,
@@ -142,6 +147,7 @@ class StrategyComparison:
             self.dca_final_value = 503343
             self.dca_total_invested = 87550
             self.dca_profit = 415793
+            self.dca_profit_pct = 474.9
             self.dca_cagr = 32.48
         
         # ===================================================================
@@ -154,6 +160,7 @@ class StrategyComparison:
         self.buy_hold_shares = self.buy_hold_initial / spy_start
         self.buy_hold_final_value = self.buy_hold_shares * spy_end
         self.buy_hold_profit = self.buy_hold_final_value - self.buy_hold_initial
+        self.buy_hold_profit_pct = (self.buy_hold_profit / self.buy_hold_initial) * 100
         self.buy_hold_cagr = self._calculate_cagr(
             self.buy_hold_initial,
             self.buy_hold_final_value,
@@ -241,24 +248,37 @@ class StrategyComparison:
         Returns:
             Dictionary with all strategies' metrics formatted for display
         """
+        # Calculate total return percentages
+        rainy_total_return = ((self.rainy_final_value - self.rainy_total_invested) / self.rainy_total_invested) * 100
+        dca_total_return = ((self.dca_final_value - self.dca_total_invested) / self.dca_total_invested) * 100
+        buy_hold_total_return = ((self.buy_hold_final_value - self.buy_hold_initial) / self.buy_hold_initial) * 100
+        
         result = {
-            # Basic metrics
+            # Basic metrics - RAINY STRATEGY (YOUR WINNER)
             "rainy_cagr": f"{self.rainy_cagr:.2f}%",
             "rainy_final": f"${self.rainy_final_value:,.0f}",
             "rainy_invested": f"${self.rainy_total_invested:,.0f}",
             "rainy_profit": f"${self.rainy_profit:,.0f}",
+            "rainy_profit_pct": f"{self.rainy_profit_pct:.1f}%",
+            "rainy_total_return": f"{rainy_total_return:.1f}%",
             "rainy_vs_baseline": "BASELINE",
             
+            # Simple DCA (comparison)
             "dca_cagr": f"{self.dca_cagr:.2f}%",
             "dca_final": f"${self.dca_final_value:,.0f}",
             "dca_invested": f"${self.dca_total_invested:,.0f}",
             "dca_profit": f"${self.dca_profit:,.0f}",
+            "dca_profit_pct": f"{self.dca_profit_pct:.1f}%",
+            "dca_total_return": f"{dca_total_return:.1f}%",
             "dca_vs_baseline": f"-${abs(self.gain_vs_dca):,.0f}",
             
+            # Buy & Hold (comparison)
             "buy_hold_cagr": f"{self.buy_hold_cagr:.2f}%",
             "buy_hold_final": f"${self.buy_hold_final_value:,.0f}",
             "buy_hold_invested": f"${self.buy_hold_initial:,.0f}",
             "buy_hold_profit": f"${self.buy_hold_profit:,.0f}",
+            "buy_hold_profit_pct": f"{self.buy_hold_profit_pct:.1f}%",
+            "buy_hold_total_return": f"{buy_hold_total_return:.1f}%",
             "buy_hold_vs_baseline": f"-${abs(self.gain_vs_buy_hold):,.0f}",
         }
         

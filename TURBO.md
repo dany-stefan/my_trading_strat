@@ -79,20 +79,28 @@ Same as PROD - smoothed 7-day average of RSI(14):
 
 ## 📊 Complete Performance Metrics
 
-### TURBO Strategy Performance
+### TURBO Strategy Performance 🏆
 
 | Metric | Value | Rating/Context |
 |--------|-------|----------------|
 | **Terminal Value** | $519,236 | -$107 vs PROD (0.02% difference) |
 | **Total Invested** | $74,010 | +$60 more than PROD |
-| **Total Profit** | $445,226 | - |
-| **CAGR** | **8.84%** | Slightly lower than PROD's 9.26% |
+| **Total Profit** | $445,226 (601.5%) | - |
+| **Investment ROI CAGR** | **9.20%** | Annualized return on contributions |
 | **Max Drawdown** | 27.52% | Similar to PROD's 27.49% |
 | **Volatility (Annual)** | 19.94% | Slightly lower than PROD's 20.10% |
 | **Sharpe Ratio** | 1.24 | Good (vs PROD's 1.25) |
 | **SQN (System Quality)** | 6.75 | Excellent (vs PROD's 6.80) |
 | **R² (Stability)** | 0.844 | Very stable growth |
 | **Win Rate** | 54.9% | % of positive days |
+
+**💡 Don't chase CAGR percentage. Chase absolute wealth.**
+
+**TURBO vs Simple DCA:**
+- Extra deployed in adaptive rainy buys: $14,610
+- VIX-based sizing: $150-$210 depending on volatility
+- **Every rainy $1 → $5.80** after 22 years (580% ROI on rainy capital!)
+- Adaptive thresholds (42/45/48) + variable sizing = smarter deployment
 
 ### Rainy Day Statistics
 

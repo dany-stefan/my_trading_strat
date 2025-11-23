@@ -20,14 +20,14 @@ This analysis presents the **PROD (Production) strategy** - a disciplined, bi-we
 
 ## 📊 Complete Performance Metrics
 
-### YOUR RAINY DAY Strategy (PROD)
+### YOUR RAINY DAY Strategy (PROD) 🏆
 
 | Metric | Value | Rating/Context |
 |--------|-------|----------------|
 | **Terminal Value** | $519,343 | BASELINE |
 | **Total Invested** | $73,950 | - |
-| **Total Profit** | $445,393 | - |
-| **CAGR** | **9.26%** | - |
+| **Total Profit** | $445,393 (602.3%) | - |
+| **Investment ROI CAGR** | **9.26%** | Annualized return on contributions |
 | **Max Drawdown** | 27.49% | Lower is better |
 | **Volatility (Annual)** | 20.10% | Risk measure |
 | **Sharpe Ratio** | 1.25 | Good |
@@ -36,6 +36,8 @@ This analysis presents the **PROD (Production) strategy** - a disciplined, bi-we
 | **Profit Factor** | 1.32 | Wins/Losses ratio |
 | **Win Rate** | 54.9% | % of positive days |
 | **Exposure** | 100.0% | Capital at risk |
+
+**💡 Don't chase CAGR percentage. Chase absolute wealth.**
 
 ### Rainy Day Statistics
 
@@ -55,20 +57,32 @@ This analysis presents the **PROD (Production) strategy** - a disciplined, bi-we
 | Metric | Value | vs Rainy Day |
 |--------|-------|--------------|
 | **Terminal Value** | $434,051 | -$85,292 |
-| **Total Invested** | $59,550 | Less capital deployed |
-| **Total Profit** | $374,501 | Lower profit |
-| **CAGR** | 9.45% | - |
+| **Total Invested** | $59,400 | Less capital deployed |
+| **Total Profit** | $374,651 (630.7%) | Lower absolute profit |
+| **Investment ROI CAGR** | 9.46% | Slightly higher % |
 | **Max Drawdown** | 27.55% | - |
 | **Volatility (Annual)** | 20.44% | - |
 | **Sharpe Ratio** | 1.26 | Good |
 | **SQN (System Quality)** | 6.81 | Excellent |
 | **R² (Stability)** | 0.845 | - |
 
-**Key Insights:**
-- ✅ Rainy Day strategy OUTPERFORMS by **$85,292** (22.8% more wealth)
-- ✅ Extra capital deployed: Only **$14,550** over 22 years
-- ✅ ROI on rainy capital: **586%** (every rainy $1 → $6.86)
-- ✅ Same base contributions ($150 bi-weekly) - only difference is tactical deployment
+**🔍 Why Similar CAGR (9.26% vs 9.46%) But You Win By $85,292:**
+
+The ROI CAGRs are nearly identical because both strategies compound efficiently. BUT:
+- **You deployed MORE capital** ($73,950 vs $59,400) at OPTIMAL times (RSI < 45)
+- **Every rainy $1 → $5.86** after 22 years (586% ROI on rainy capital!)
+- Lower percentage return × Larger invested base = **BIGGER absolute wealth**
+
+**The Math:**
+- Simple DCA: 630.7% profit on $59,400 = $374,651
+- Your Rainy: 602.3% profit on $73,950 = $445,393 ✅ **$70,742 MORE!**
+
+**Investment Efficiency:**
+- Extra deployed in rainy buys: $14,550
+- Extra equity gained: $85,292
+- Return ratio: **5.86x your rainy money**
+
+**💡 Every rainy dollar becomes $5.86. That's what makes it worth it!** 🎯
 
 ### Buy & Hold ($1,000 Lump Sum)
 
