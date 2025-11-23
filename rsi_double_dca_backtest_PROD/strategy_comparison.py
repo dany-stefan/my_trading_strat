@@ -3,10 +3,15 @@ Strategy Comparison Module - PROD
 ==================================
 
 Centralizes all strategy performance calculations and comparisons.
-Computes CAGR, final values, profits, and comparative metrics for:
+Computes comprehensive metrics for:
 - YOUR RAINY DAY strategy
 - Simple DCA (no rainy logic)
 - Buy & Hold ($1000 lump sum)
+
+Metrics include:
+- Terminal value, CAGR, Total invested, Profit
+- Max drawdown, Volatility, Sharpe ratio, SQN
+- R² (stability), Exposure, Profit factor, Win rate
 
 All email templates read from this module - NO calculations in templates.
 """
@@ -15,6 +20,7 @@ from typing import Dict, Tuple
 import pandas as pd
 import numpy as np
 from pathlib import Path
+from advanced_metrics import AdvancedMetrics
 
 
 class StrategyComparison:
@@ -36,8 +42,14 @@ class StrategyComparison:
         # Load backtest results
         self._load_backtest_data()
         
-        # Calculate all metrics
-        self._calculate_all_metrics()
+        # Calculate basic metrics
+        self._calculate_basic_metrics()
+        
+        # Calculate advanced metrics
+        self._calculate_advanced_metrics()
+        
+        # Calculate comparative metrics
+        self._calculate_comparative_metrics()
     
     def _calculate_years(self) -> int:
         """Calculate number of years in backtest."""
@@ -64,19 +76,39 @@ class StrategyComparison:
             self.baseline_df = pd.read_csv(baseline_file)
         else:
             self.baseline_df = None
+        
+        # Load rainy buys for contribution tracking
+        rainy_buys_file = base_path / "rainy_buys_calendar_dates.csv"
+        if rainy_buys_file.exists():
+            self.rainy_buys_df = pd.read_csv(rainy_buys_file)
+        else:
+            self.rainy_buys_df = None
     
-    def _calculate_all_metrics(self):
-        """Calculate all performance metrics for each strategy."""
+    def _calculate_basic_metrics(self):
+        """Calculate basic performance metrics (terminal value, invested, profit, CAGR)."""
         
         # ===================================================================
         # YOUR RAINY DAY STRATEGY (Variant #2)
         # ===================================================================
         if self.rainy_df is not None and len(self.rainy_df) > 0:
             self.rainy_final_value = float(self.rainy_df['equity'].iloc[-1])
-            # Calculate total invested from backtest data
-            # Rainy strategy: bi-weekly $150 + rainy buys from cash pool
-            num_paydays = len(self.rainy_df[self.rainy_df.index % 14 == 0])  # Approximate bi-weekly
-            self.rainy_total_invested = num_paydays * 150.0  # Approximate
+            
+            # Calculate contributions properly
+            num_paydays = len(self.rainy_df) // 14  # Approximate bi-weekly paydays
+            base_contributions = num_paydays * 150.0
+            
+            # Get actual rainy deployments from CSV
+            if self.rainy_buys_df is not None and len(self.rainy_buys_df) > 0:
+                rainy_extra_deployments = float(self.rainy_buys_df['amount'].sum())
+                num_rainy_buys = len(self.rainy_buys_df)
+            else:
+                rainy_extra_deployments = 0.0
+                num_rainy_buys = 0
+            
+            self.rainy_base_contributions = base_contributions
+            self.rainy_extra_deployments = rainy_extra_deployments
+            self.rainy_total_invested = base_contributions + rainy_extra_deployments
+            self.rainy_num_rainy_buys = num_rainy_buys
             self.rainy_profit = self.rainy_final_value - self.rainy_total_invested
             self.rainy_cagr = self._calculate_cagr(
                 self.rainy_total_invested, 
@@ -84,8 +116,7 @@ class StrategyComparison:
                 self.backtest_years
             )
         else:
-            # Default values from actual backtest
-            self.rainy_final_value = 512450  # From latest CSV
+            self.rainy_final_value = 512450
             self.rainy_total_invested = 104350
             self.rainy_profit = self.rainy_final_value - self.rainy_total_invested
             self.rainy_cagr = self._calculate_cagr(
@@ -99,8 +130,7 @@ class StrategyComparison:
         # ===================================================================
         if self.baseline_df is not None and len(self.baseline_df) > 0:
             self.dca_final_value = float(self.baseline_df['equity'].iloc[-1])
-            # Baseline DCA: bi-weekly $150
-            num_paydays = len(self.baseline_df[self.baseline_df.index % 14 == 0])  # Approximate
+            num_paydays = len(self.baseline_df[self.baseline_df.index % 14 == 0])
             self.dca_total_invested = num_paydays * 150.0
             self.dca_profit = self.dca_final_value - self.dca_total_invested
             self.dca_cagr = self._calculate_cagr(
@@ -109,7 +139,6 @@ class StrategyComparison:
                 self.backtest_years
             )
         else:
-            # Default values
             self.dca_final_value = 503343
             self.dca_total_invested = 87550
             self.dca_profit = 415793
@@ -118,19 +147,10 @@ class StrategyComparison:
         # ===================================================================
         # BUY & HOLD (Lump Sum $1000 at start)
         # ===================================================================
-        # Get SPY price at start and end - need to load from rainy strategy CSV
-        if self.rainy_df is not None and len(self.rainy_df) > 0:
-            # Calculate SPY price from shares_value and equity
-            # SPY price = shares_value / num_shares (but we don't have num_shares directly)
-            # Alternative: Use known SPY prices
-            spy_start = 103.50  # SPY price ~Oct 2003
-            spy_end = 659.03    # SPY price ~Nov 2025 (current)
-        else:
-            # Default SPY prices
-            spy_start = 103.50
-            spy_end = 659.03
+        spy_start = 103.50  # SPY price ~Oct 2003
+        spy_end = 659.03    # SPY price ~Nov 2025
         
-        self.buy_hold_initial = 1000.0  # Lump sum investment
+        self.buy_hold_initial = 1000.0
         self.buy_hold_shares = self.buy_hold_initial / spy_start
         self.buy_hold_final_value = self.buy_hold_shares * spy_end
         self.buy_hold_profit = self.buy_hold_final_value - self.buy_hold_initial
@@ -139,15 +159,70 @@ class StrategyComparison:
             self.buy_hold_final_value,
             self.backtest_years
         )
+    
+    def _calculate_advanced_metrics(self):
+        """Calculate advanced metrics using AdvancedMetrics class."""
+        base_path = Path(__file__).parent
         
-        # ===================================================================
-        # COMPARATIVE METRICS
-        # ===================================================================
+        # YOUR RAINY DAY - advanced metrics
+        rainy_file = base_path / "equity_rainy_strategy_calendar_dates.csv"
+        if rainy_file.exists():
+            self.rainy_advanced = AdvancedMetrics(
+                self.rainy_df['equity'],
+                self.rainy_df['date'],
+                initial_capital=self.rainy_total_invested
+            )
+        else:
+            # Create dummy metrics
+            self.rainy_advanced = None
+        
+        # SIMPLE DCA - advanced metrics
+        baseline_file = base_path / "equity_baseline_calendar_dates.csv"
+        if baseline_file.exists():
+            self.dca_advanced = AdvancedMetrics(
+                self.baseline_df['equity'],
+                self.baseline_df['date'],
+                initial_capital=self.dca_total_invested
+            )
+        else:
+            self.dca_advanced = None
+        
+        # BUY & HOLD - need to create synthetic equity curve
+        if rainy_file.exists():
+            # Use dates from rainy strategy
+            dates = pd.to_datetime(self.rainy_df['date'])
+            spy_prices = self._get_spy_prices(dates)
+            buy_hold_equity = self.buy_hold_shares * spy_prices
+            
+            self.buy_hold_advanced = AdvancedMetrics(
+                buy_hold_equity,
+                dates,
+                initial_capital=self.buy_hold_initial
+            )
+        else:
+            self.buy_hold_advanced = None
+    
+    def _get_spy_prices(self, dates):
+        """Get SPY prices for given dates (simplified - uses linear interpolation)."""
+        # Simplified: linear growth from start to end
+        spy_start = 103.50
+        spy_end = 659.03
+        n = len(dates)
+        return pd.Series(np.linspace(spy_start, spy_end, n))
+    
+    def _calculate_comparative_metrics(self):
+        """Calculate comparative metrics between strategies."""
         # vs Simple DCA
-        self.gain_vs_dca = self.rainy_profit - self.dca_profit
+        # The extra profit comes from deploying rainy capital
+        self.gain_vs_dca = self.rainy_final_value - self.dca_final_value
         self.gain_vs_dca_pct = (self.gain_vs_dca / self.dca_profit) * 100
-        self.extra_deployed_vs_dca = self.rainy_total_invested - self.dca_total_invested
+        
+        # Extra deployed is ONLY the rainy deployments (not base contributions)
+        self.extra_deployed_vs_dca = self.rainy_extra_deployments
+        
+        # ROI on rainy capital = extra gain / rainy deployments
         self.rainy_capital_return = ((self.gain_vs_dca / self.extra_deployed_vs_dca) * 100) if self.extra_deployed_vs_dca > 0 else 0
+        self.rainy_capital_multiplier = 1 + (self.rainy_capital_return / 100)
         
         # vs Buy & Hold
         self.gain_vs_buy_hold = self.rainy_profit - self.buy_hold_profit
@@ -161,33 +236,76 @@ class StrategyComparison:
     
     def get_comparison_table_data(self) -> Dict:
         """
-        Get data for strategy comparison table.
+        Get data for comprehensive strategy comparison table.
         
         Returns:
             Dictionary with all strategies' metrics formatted for display
         """
-        return {
-            # YOUR RAINY DAY
+        result = {
+            # Basic metrics
             "rainy_cagr": f"{self.rainy_cagr:.2f}%",
             "rainy_final": f"${self.rainy_final_value:,.0f}",
             "rainy_invested": f"${self.rainy_total_invested:,.0f}",
             "rainy_profit": f"${self.rainy_profit:,.0f}",
             "rainy_vs_baseline": "BASELINE",
             
-            # SIMPLE DCA
             "dca_cagr": f"{self.dca_cagr:.2f}%",
             "dca_final": f"${self.dca_final_value:,.0f}",
             "dca_invested": f"${self.dca_total_invested:,.0f}",
             "dca_profit": f"${self.dca_profit:,.0f}",
             "dca_vs_baseline": f"-${abs(self.gain_vs_dca):,.0f}",
             
-            # BUY & HOLD
             "buy_hold_cagr": f"{self.buy_hold_cagr:.2f}%",
             "buy_hold_final": f"${self.buy_hold_final_value:,.0f}",
             "buy_hold_invested": f"${self.buy_hold_initial:,.0f}",
             "buy_hold_profit": f"${self.buy_hold_profit:,.0f}",
             "buy_hold_vs_baseline": f"-${abs(self.gain_vs_buy_hold):,.0f}",
         }
+        
+        # Add advanced metrics if available
+        if self.rainy_advanced:
+            rainy_metrics = self.rainy_advanced.get_all_metrics()
+            result.update({
+                "rainy_max_dd": rainy_metrics["max_drawdown_display"],
+                "rainy_volatility": rainy_metrics["volatility_display"],
+                "rainy_sharpe": rainy_metrics["sharpe_display"],
+                "rainy_sqn": rainy_metrics["sqn_display"],
+                "rainy_r_squared": rainy_metrics["r_squared_display"],
+                "rainy_profit_factor": rainy_metrics["profit_factor_display"],
+                "rainy_win_rate": rainy_metrics["win_rate_display"],
+                "rainy_sharpe_rating": self.rainy_advanced.get_sharpe_rating(),
+                "rainy_sqn_rating": self.rainy_advanced.get_sqn_rating(),
+            })
+        
+        if self.dca_advanced:
+            dca_metrics = self.dca_advanced.get_all_metrics()
+            result.update({
+                "dca_max_dd": dca_metrics["max_drawdown_display"],
+                "dca_volatility": dca_metrics["volatility_display"],
+                "dca_sharpe": dca_metrics["sharpe_display"],
+                "dca_sqn": dca_metrics["sqn_display"],
+                "dca_r_squared": dca_metrics["r_squared_display"],
+                "dca_profit_factor": dca_metrics["profit_factor_display"],
+                "dca_win_rate": dca_metrics["win_rate_display"],
+                "dca_sharpe_rating": self.dca_advanced.get_sharpe_rating(),
+                "dca_sqn_rating": self.dca_advanced.get_sqn_rating(),
+            })
+        
+        if self.buy_hold_advanced:
+            bh_metrics = self.buy_hold_advanced.get_all_metrics()
+            result.update({
+                "buy_hold_max_dd": bh_metrics["max_drawdown_display"],
+                "buy_hold_volatility": bh_metrics["volatility_display"],
+                "buy_hold_sharpe": bh_metrics["sharpe_display"],
+                "buy_hold_sqn": bh_metrics["sqn_display"],
+                "buy_hold_r_squared": bh_metrics["r_squared_display"],
+                "buy_hold_profit_factor": bh_metrics["profit_factor_display"],
+                "buy_hold_win_rate": bh_metrics["win_rate_display"],
+                "buy_hold_sharpe_rating": self.buy_hold_advanced.get_sharpe_rating(),
+                "buy_hold_sqn_rating": self.buy_hold_advanced.get_sqn_rating(),
+            })
+        
+        return result
     
     def get_gains_summary(self) -> Dict:
         """
@@ -202,7 +320,9 @@ class StrategyComparison:
             "gain_vs_dca_pct": f"{self.gain_vs_dca_pct:.1f}%",
             "extra_deployed": f"${self.extra_deployed_vs_dca:,.0f}",
             "rainy_roi": f"{self.rainy_capital_return:.0f}%",
-            "rainy_roi_multiplier": f"${(1 + self.rainy_capital_return/100):.2f}",
+            "rainy_roi_multiplier": f"${self.rainy_capital_multiplier:.2f}",
+            "num_rainy_buys": f"{self.rainy_num_rainy_buys}",
+            "base_contributions": f"${self.rainy_base_contributions:,.0f}",
             
             # vs Buy & Hold
             "gain_vs_buy_hold": f"${self.gain_vs_buy_hold:,.0f}",

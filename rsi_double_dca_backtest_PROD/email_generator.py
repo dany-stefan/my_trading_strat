@@ -201,11 +201,25 @@ Your Strategy vs Alternatives ({comp_metrics['backtest_years']} years: {comp_met
 | Simple DCA (No Rainy) | {comp_metrics['dca_cagr']} | {comp_metrics['dca_final']} | {comp_metrics['dca_invested']} | {comp_metrics['dca_profit']} | {comp_metrics['dca_vs_baseline']} ⚠️ |
 | Buy & Hold (${comp_metrics['buy_hold_initial_display']} Lump Sum) | {comp_metrics['buy_hold_cagr']} | {comp_metrics['buy_hold_final']} | {comp_metrics['buy_hold_invested']} | {comp_metrics['buy_hold_profit']} | {comp_metrics['buy_hold_vs_baseline']} ⚠️ |
 
+📊 ADVANCED METRICS (Risk & Quality):
+
+| Strategy | Sharpe Ratio | SQN | Max Drawdown | Volatility | R² (Stability) |
+|----------|--------------|-----|--------------|------------|----------------|
+| YOUR RAINY DAY | {comp_metrics['rainy_sharpe']} | {comp_metrics['rainy_sqn']} | {comp_metrics['rainy_max_dd']} | {comp_metrics['rainy_volatility']} | {comp_metrics['rainy_r_squared']} |
+| Simple DCA | {comp_metrics['dca_sharpe']} | {comp_metrics['dca_sqn']} | {comp_metrics['dca_max_dd']} | {comp_metrics['dca_volatility']} | {comp_metrics['dca_r_squared']} |
+| Buy & Hold | {comp_metrics['buy_hold_sharpe']} | {comp_metrics['buy_hold_sqn']} | {comp_metrics['buy_hold_max_dd']} | {comp_metrics['buy_hold_volatility']} | {comp_metrics['buy_hold_r_squared']} |
+
+*Sharpe: {comp_metrics['rainy_sharpe_rating']} | SQN: {comp_metrics['rainy_sqn_rating']}*
+*Lower drawdown = less risk | Higher R² = more stable growth*
+
 📈 WHAT YOU GAINED BY CHOOSING THIS STRATEGY:
 
 • vs Simple DCA: You gained an extra {comp_metrics['gain_vs_dca']} (+{comp_metrics['gain_vs_dca_pct']} more wealth!)
-  - Cost: Only {comp_metrics['extra_deployed']} extra deployed during crashes
+  - Base contributions (bi-weekly DCA): {comp_metrics['base_contributions']}
+  - Extra rainy deployments ({comp_metrics['num_rainy_buys']} crash buys): {comp_metrics['extra_deployed']}
+  - Total invested: {comp_metrics['rainy_invested']}
   - Return on rainy capital: {comp_metrics['rainy_roi']} (every rainy $1 became {comp_metrics['rainy_roi_multiplier']})
+  - *Your rainy buys during crashes generated the extra {comp_metrics['gain_vs_dca']} profit vs simple DCA!*
   
 • vs Buy & Hold: You gained an extra {comp_metrics['gain_vs_buy_hold']} (+{comp_metrics['gain_vs_buy_hold_pct']} more wealth!)
   - DCA smoothed your entry prices over {comp_metrics['backtest_years']} years

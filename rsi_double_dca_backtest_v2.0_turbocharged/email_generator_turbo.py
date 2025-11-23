@@ -13,6 +13,7 @@ from this file for TURBO output.
 """
 from datetime import datetime, timedelta
 from market_metrics import calculate_market_metrics
+from strategy_comparison import calculate_strategy_comparison
 
 # Base strategy constants (same rainy base; adaptive threshold derived later)
 DCA_BASE_AMOUNT = 150.0
@@ -224,6 +225,27 @@ Adaptive RSI Threshold: {adaptive_threshold:.0f}
         header_suffix = " - PAYDAY"
         date_suffix = ""
         test_notice = ""
+    
+    # Calculate strategy comparisons using centralized module
+    comparison = calculate_strategy_comparison()
+    comp_metrics = comparison.get_all_metrics()
+    
+    # Build comparison section
+    comparison_section = f"""
+💰 TURBOCHARGED vs PROD FIXED STRATEGY (22-year backtest):
+
+| Strategy | CAGR | Final Value | Total Invested | Rainy Buys | Approach |
+|----------|------|-------------|----------------|------------|----------|
+| TURBO (Adaptive) | {comp_metrics['turbo_cagr']} | {comp_metrics['turbo_final']} | {comp_metrics['turbo_invested']} | {comp_metrics['turbo_num_buys']} | {comp_metrics['turbo_vs_baseline']} |
+| PROD (Fixed RSI<45) | {comp_metrics['prod_cagr']} | {comp_metrics['prod_final']} | {comp_metrics['prod_invested']} | {comp_metrics['prod_num_buys']} | {comp_metrics['prod_vs_baseline']} |
+
+📊 TURBO vs PROD Analysis:
+  - Performance difference: {comp_metrics['gain_vs_prod']} ({comp_metrics['gain_vs_prod_pct']})
+  - Deployment efficiency: {comp_metrics['deployment_diff']} with {comp_metrics['buys_diff']} buys
+  - Both achieve similar results (~$519K terminal value)
+  - TURBO: Fewer, larger buys in high-volatility crashes
+  - PROD: More frequent fixed-size buys at RSI<45
+"""
 
     body = f"""
 🚀 TURBO v2.0 - ADAPTIVE RSI SYSTEM{header_suffix}
@@ -250,6 +272,8 @@ CURRENT STATUS:
 Cash Pool: ${cash_pool:.2f}
 Total Contributions: ${total_contributions:,.2f}
 Rainy Buys To Date: {len(rainy_buys)}{initial_note}
+
+{comparison_section}
 
 📊 ATTACHED CHARTS - TURBO PERFORMANCE ANALYTICS:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

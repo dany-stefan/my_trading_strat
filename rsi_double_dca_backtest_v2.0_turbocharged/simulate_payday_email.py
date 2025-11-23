@@ -15,7 +15,7 @@ import pandas as pd
 from email.mime.image import MIMEImage
 from pathlib import Path
 from email_formatter import convert_to_html
-from email_generator import generate_email_content
+from email_generator_turbo import generate_email_content
 from payday_scheduler import get_scheduler
 
 # =============================================================================

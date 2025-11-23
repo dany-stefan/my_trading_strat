@@ -143,6 +143,40 @@
             margin: 15px 0;
             line-height: 1.5;
         }
+        .action-required {
+            background-color: #fff3cd;
+            border: 4px solid #ffc107;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: 900;
+            color: #856404;
+        }
+        .decision-box {
+            background-color: #e7f3ff;
+            border: 3px solid #2196f3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .decision-box strong {
+            font-size: 18px;
+            color: #0d47a1;
+        }
+        /* Decision / scenario table highlight classes (parity with TURBO) */
+        table.decision-table thead th {
+            background-color: #22313f;
+            border-color: #1a252f;
+        }
+        .highlight-cell {
+            background-color: #fff3cd !important;
+            border: 2px solid #ffc107 !important;
+            font-weight: 700;
+            color: #8a6d3b !important;
+        }
         @media only screen and (max-width: 600px) {
             .container {
                 padding: 12px;
@@ -173,14 +207,29 @@
 <body>
     <div class="container">
 <br>
-<h1>🎯 RSI STRATEGY MONITOR - TEST EMAIL (LOCAL RUN)</h1>
+<h1>🎯 RSI STRATEGY MONITOR - PROD - TEST EMAIL (LOCAL RUN)</h1>
 <br>
 <div class="test-notice">🧪 THIS IS A TEST EMAIL FROM LOCAL RUN</div>
 <p>This email was manually triggered for testing purposes.</p>
 <br>
-<p>Date: November 21, 2025 🧪 LOCAL TEST</p>
-<p>Current SPY Price: $652.53 USD</p>
-<p>RSI SMA(7): 38.45</p>
+<p>📅 DATE: November 22, 2025 🧪 LOCAL TEST</p>
+<h2>📈 SPY PRICE: $659.03 USD</h2>
+<h2>📊 RSI SMA(7): 34.64</h2>
+<br>
+<p>📌 EVALUATION TIMING: This email is sent on the 3rd and 17th of each month</p>
+<p>   (2 days after payday on 1st/15th) when RSI is evaluated for rainy day.</p>
+<br>
+<div class="decision-box"><strong>📋 DECISION FROM STRATEGY RULES</strong></div>
+<br>
+<div class="decision-box"><strong>DECISION PATH:</strong></div>
+<div class="info-section">• RSI SMA(7) = 34.64</div>
+<div class="info-section">• Threshold = 45.0</div>
+<div class="info-section"><strong>• Result:</strong>  RSI < 45 → RAINY DAY ✅</div>
+<div class="info-section"><strong>• Cash Available:</strong>  $330.00</div>
+<br>
+<div class="action-required">ACTION REQUIRED: RAINY BUY $150 CAD</div>
+<p>   (Plus your regular $150 base = $300 total today)</p>
+<br>
 <br>
 <h2>📊 TODAY'S PAYDAY ACTIONS</h2>
 <br>
@@ -188,19 +237,34 @@
 <p>   Invest: $150 CAD into SPY</p>
 <br>
 <p class="number-step">2️⃣ RAINY DAY CHECK:</p>
-<p>   RSI SMA(7): 38.45</p>
+<p>   RSI SMA(7): 34.64</p>
 <p>   Rainy threshold: RSI SMA(7) < 45.0</p>
 <br>
 <p>   ✅ RAINY DAY - RSI SMA(7) < 45!</p>
 <br>
 <p>   🔥 RECOMMENDATION: Buy extra $150 from cash pool</p>
 <br>
-<p>   Total investment today: $300 ($150 base + $150 rainy)</p>
 <p>   Cash pool after rainy buy: $180.00</p>
 <p>   Add today's savings: +$30</p>
 <p>   Final cash pool: $210.00</p>
 <br>
 <p>Next payday: 1st of December</p>
+<br>
+<br>
+<p>📌 METRICS SNAPSHOT (Markdown)</p>
+<table>
+<thead>
+<tr><th>Metric</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>SPY Price</td><td>$659.03</td></tr>
+<tr><td>RSI SMA(7)</td><td>34.64</td></tr>
+<tr><td>Cash Pool</td><td>$330.00</td></tr>
+<tr><td>Threshold</td><td>45</td></tr>
+<tr><td>Rainy Today?</td><td>Yes</td></tr>
+</tbody>
+</table>
+<br>
 <br>
 <p>VARIANT PERFORMANCE SUMMARY (22-year backtest)</p>
 <br>
@@ -233,7 +297,6 @@
 <div class="info-section">• Check RSI SMA(7) only on payday (bi-weekly)</div>
 <div class="info-section"><strong>• If RSI SMA(7) < 45:</strong>  Deploy extra $150 from cash pool</div>
 <div class="info-section"><strong>• If RSI SMA(7) ≥ 45:</strong>  Only invest base $150, save the $30</div>
-<div class="info-section"><strong>• Expected hit rate:</strong>  ~24% rainy deployments (smoothed indicator reduces noise)</div>
 <br>
 <p>💰 PERFORMANCE VS OTHER STRATEGIES</p>
 <br>
@@ -244,31 +307,52 @@
 <tr><th>Strategy</th><th>CAGR</th><th>Final Value</th><th>Total Invested</th><th>Profit</th><th>vs Your Strategy</th></tr>
 </thead>
 <tbody>
-<tr><td>YOUR RAINY DAY (Variant #2)</td><td>33.54%</td><td>$600,907</td><td>$104,350</td><td>$496,557</td><td>BASELINE</td></tr>
-<tr><td>Simple DCA (No Rainy)</td><td>32.48%</td><td>$503,343</td><td>$87,550</td><td>$415,793</td><td>-$97,564 ⚠️</td></tr>
-<tr><td>Buy & Hold (Lump Sum)</td><td>31.12%</td><td>$450,234</td><td>$87,550</td><td>$362,684</td><td>-$133,873 ⚠️</td></tr>
+<tr><td>YOUR RAINY DAY (Variant #2)</td><td>9.26%</td><td>$519,343</td><td>$73,950</td><td>$445,393</td><td>BASELINE</td></tr>
+<tr><td>Simple DCA (No Rainy)</td><td>9.45%</td><td>$434,051</td><td>$59,550</td><td>$374,501</td><td>-$85,292 ⚠️</td></tr>
+<tr><td>Buy & Hold ($$1,000 Lump Sum)</td><td>8.78%</td><td>$6,367</td><td>$1,000</td><td>$5,367</td><td>-$440,025 ⚠️</td></tr>
 </tbody>
 </table>
 <br>
+<h2>📊 ADVANCED METRICS (Risk & Quality):</h2>
+<br>
+<table>
+<thead>
+<tr><th>Strategy</th><th>Sharpe Ratio</th><th>SQN</th><th>Max Drawdown</th><th>Volatility</th><th>R² (Stability)</th></tr>
+</thead>
+<tbody>
+<tr><td>YOUR RAINY DAY</td><td>1.25</td><td>6.80</td><td>27.49%</td><td>20.10%</td><td>0.845</td></tr>
+<tr><td>Simple DCA</td><td>1.26</td><td>6.81</td><td>27.55%</td><td>20.44%</td><td>0.845</td></tr>
+<tr><td>Buy & Hold</td><td>14.97</td><td>131.56</td><td>0.00%</td><td>0.30%</td><td>1.000</td></tr>
+</tbody>
+</table>
+<br>
+<p><em>Sharpe: Good | SQN: Excellent</em></p>
+<p><em>Lower drawdown = less risk | Higher R² = more stable growth</em></p>
+<br>
 <h2>📈 WHAT YOU GAINED BY CHOOSING THIS STRATEGY:</h2>
 <br>
-<div class="info-section"><strong>• vs Simple DCA:</strong>  You gained an extra $97,564 (+19.4% more wealth!)</div>
-<p>  - Cost: Only $16,800 extra deployed during crashes</p>
-<p>  - Return on rainy capital: 581% (every rainy $1 became $6.81)</p>
+<div class="info-section"><strong>• vs Simple DCA:</strong>  You gained an extra $85,292 (+22.8% more wealth!)</div>
+<p>  - Base contributions (bi-weekly DCA): $59,400</p>
+<p>  - Extra rainy deployments (97 crash buys): $14,550</p>
+<p>  - Total invested: $73,950</p>
+<p>  - Return on rainy capital: 586% (every rainy $1 became $6.86)</p>
+<p>  - <em>Your rainy buys during crashes generated the extra $85,292 profit vs simple DCA!</em></p>
 <br>
-<div class="info-section"><strong>• vs Buy & Hold:</strong>  You gained an extra $133,873 (+26.5% more wealth!)</div>
+<div class="info-section"><strong>• vs Buy & Hold:</strong>  You gained an extra $440,025 (+8198.0% more wealth!)</div>
 <p>  - DCA smoothed your entry prices over 22 years</p>
 <p>  - Rainy buys captured crash discounts (2008, 2020, etc.)</p>
 <br>
 <div class="info-section"><strong>• Key Advantage:</strong>  Same contributions as simple DCA ($150 bi-weekly)</div>
 <p>  - You just deployed the $30 savings SMARTER (during RSI < 45)</p>
-<p>  - Hit rate: 80% success rate on rainy deployments</p>
 <p>  - No timing skill needed - just follow RSI on payday</p>
 <br>
 <h2>📊 See attached charts:</h2>
 <p>- strategy_comparison_with_baseline.png - Growth curves comparison</p>
 <p>- rainy_day_analysis_detailed.png - Hit/miss pattern & cash pool</p>
 <p>- spy_price_rainy_periods_drawdown.png - When you bought during crashes</p>
+<p>- cash_pool_hit_miss.png - Cash pool evolution with rainy buy markers</p>
+<p>- spy_price_hit_miss.png - SPY price with successful/missed buy markers</p>
+<p>- rsi_hit_miss.png - RSI indicator with rainy day trigger points</p>
 <br>
 <p>WHY YOU CHOSE VARIANT #2 (Reminder)</p>
 <br>
