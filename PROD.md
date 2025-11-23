@@ -378,6 +378,89 @@ The **PROD Rainy Day strategy** demonstrates superior performance across multipl
 
 ---
 
+## 📊 Rainy Period Visual Analysis
+
+### 1. Deployment Frequency & Duration Timeline
+
+Shows how rainy periods cluster over time, with number of deployments and period length.
+
+![Rainy Periods Timeline](rsi_double_dca_backtest_PROD/rainy_periods_timeline.png)
+
+**Key Insights:**
+- 2022 was the most aggressive year (9 rainy deployments in 256 days)
+- 2008 had the longest rainy period (321 days spanning the Financial Crisis)
+- Recent years (2023-2025) show intermittent rainy conditions
+
+---
+
+### 2. Return on Investment by Period
+
+Horizontal bar chart showing return percentage for each rainy period, color-coded by performance tier.
+
+![Rainy Periods Returns](rsi_double_dca_backtest_PROD/rainy_periods_returns.png)
+
+**Key Insights:**
+- Top performers: 2009 (960%), 2004 (786%), 2005 (708%)
+- Early deployments have highest returns (bought cheapest, held longest)
+- Recent periods (2022-2025) still compounding (14-72% returns already)
+
+---
+
+### 3. Invested vs Current Value Comparison
+
+Side-by-side bars showing amount invested vs current value for each rainy period.
+
+![Investment vs Value](rsi_double_dca_backtest_PROD/rainy_periods_investment_vs_value.png)
+
+**Key Insights:**
+- Visual representation of wealth creation per rainy period
+- 2007 deployment ($1,050) now worth $6,766 (6.4x)
+- 2022 deployment ($1,350) already worth $2,322 (1.7x)
+
+---
+
+### 4. SPY Price Chart with Rainy Deployments
+
+Full 22-year SPY price history with markers showing every rainy day deployment.
+
+![SPY with Rainy Deployments](rsi_double_dca_backtest_PROD/rainy_deployments_on_spy_chart.png)
+
+**Key Insights:**
+- Rainy buys cluster during major corrections and crashes
+- 2008-2009: Heavy deployment during Financial Crisis bottom
+- 2020: Captured COVID crash (March 2020 lows)
+- 2022: Deployed during bear market
+- Strategy automatically "buys the dip" without emotion
+
+---
+
+### 5. Top Performers vs Recent Periods
+
+Comparison of top 5 rainy periods vs 5 most recent periods.
+
+![Top vs Recent](rsi_double_dca_backtest_PROD/rainy_periods_top_vs_recent.png)
+
+**Key Insights:**
+- Best performers had 500-900%+ returns (2004-2012 era)
+- Recent periods (2022-2025) are "young" but already 14-72% up
+- Time in market = primary driver of rainy returns
+
+---
+
+### 6. Cumulative Rainy Value Over Time
+
+Shows the growth trajectory of rainy contributions from 2004 to today.
+
+![Cumulative Value](rsi_double_dca_backtest_PROD/rainy_cumulative_value_over_time.png)
+
+**Key Insights:**
+- Rainy money compounded from $14,550 → $69,234 (375.8% return)
+- Acceleration visible during 2009-2013 recovery
+- Recent deployments (2022-2025) still in early compounding phase
+- Green area shows total wealth creation: **$54,684 gain**
+
+---
+
 *Report generated automatically from backtest data*  
 *All metrics calculated from equity_rainy_strategy_calendar_dates.csv*  
 *Last updated: November 22, 2025*
