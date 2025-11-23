@@ -179,9 +179,9 @@ print("-" * 80)
 for date_str in payday_dates:
     date_obj = pd.Timestamp(date_str)
     if date_obj in october_data.index:
-        close = october_data.loc[date_obj, 'Close']
-        rsi_14_val = october_data.loc[date_obj, 'RSI_14']
-        rsi_sma_val = october_data.loc[date_obj, 'RSI_SMA_7']
+        close = float(october_data.loc[date_obj, 'Close'].iloc[0]) if isinstance(october_data.loc[date_obj, 'Close'], pd.Series) else float(october_data.loc[date_obj, 'Close'])
+        rsi_14_val = float(october_data.loc[date_obj, 'RSI_14'].iloc[0]) if isinstance(october_data.loc[date_obj, 'RSI_14'], pd.Series) else float(october_data.loc[date_obj, 'RSI_14'])
+        rsi_sma_val = float(october_data.loc[date_obj, 'RSI_SMA_7'].iloc[0]) if isinstance(october_data.loc[date_obj, 'RSI_SMA_7'], pd.Series) else float(october_data.loc[date_obj, 'RSI_SMA_7'])
         is_rainy = rsi_sma_val < 45
         action = "🌧️ RAINY BUY $150" if is_rainy else "⛅ BASE BUY ONLY ($150)"
         
