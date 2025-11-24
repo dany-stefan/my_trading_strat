@@ -152,10 +152,34 @@ def main():
         results["Performance Report"] = None
     
     # =========================================================================
-    # PHASE 5: RSI VERIFICATION UPDATE
+    # PHASE 5: UPDATE METRICS REFERENCE
     # =========================================================================
     print("\n" + "="*80)
-    print("PHASE 5: RSI VERIFICATION UPDATE")
+    print("PHASE 5: UPDATE METRICS REFERENCE")
+    print("="*80)
+    
+    if Path("update_metrics_reference.py").exists():
+        success = run_script(
+            "update_metrics_reference.py",
+            "Update METRICS_REFERENCE.json with Latest Data"
+        )
+        results["Metrics Reference Update"] = success
+    else:
+        print("⚠️  update_metrics_reference.py not found - skipping")
+        results["Metrics Reference Update"] = None
+    
+    # =========================================================================
+    # PHASE 6: RSI VERIFICATION UPDATE
+    # =========================================================================
+    print("\n" + "="*80)
+    print("PHASE 6: RSI VERIFICATION UPDATE")
+    print("="*80)
+    
+    # =========================================================================
+    # PHASE 6: RSI VERIFICATION UPDATE
+    # =========================================================================
+    print("\n" + "="*80)
+    print("PHASE 6: RSI VERIFICATION UPDATE")
     print("="*80)
     
     if Path("update_rsi_verification.py").exists():
@@ -169,10 +193,10 @@ def main():
         results["RSI Verification Update"] = None
     
     # =========================================================================
-    # PHASE 6: INTEGRATION VERIFICATION (Validates all outputs)
+    # PHASE 7: INTEGRATION VERIFICATION (Validates all outputs)
     # =========================================================================
     print("\n" + "="*80)
-    print("PHASE 6: INTEGRATION VERIFICATION")
+    print("PHASE 7: INTEGRATION VERIFICATION")
     print("="*80)
     
     success = run_script(
