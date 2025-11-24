@@ -152,10 +152,27 @@ def main():
         results["Performance Report"] = None
     
     # =========================================================================
-    # PHASE 5: Integration Verification (Validates all outputs)
+    # PHASE 5: RSI VERIFICATION UPDATE
     # =========================================================================
     print("\n" + "="*80)
-    print("PHASE 5: INTEGRATION VERIFICATION")
+    print("PHASE 5: RSI VERIFICATION UPDATE")
+    print("="*80)
+    
+    if Path("update_rsi_verification.py").exists():
+        success = run_script(
+            "update_rsi_verification.py",
+            "Update RSI Verification List with Missing Dates"
+        )
+        results["RSI Verification Update"] = success
+    else:
+        print("⚠️  update_rsi_verification.py not found - skipping")
+        results["RSI Verification Update"] = None
+    
+    # =========================================================================
+    # PHASE 6: INTEGRATION VERIFICATION (Validates all outputs)
+    # =========================================================================
+    print("\n" + "="*80)
+    print("PHASE 6: INTEGRATION VERIFICATION")
     print("="*80)
     
     success = run_script(

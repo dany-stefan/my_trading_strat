@@ -52,6 +52,22 @@ This regenerates:
 ✅ All CSV files (equity curves, rainy buys)
 ✅ All 15 PNG charts
 ✅ `COMPREHENSIVE_PERFORMANCE_REPORT.md`
+✅ `RSI_VERIFICATION_LIST.txt` (automatically fills missing dates through today)
+
+### **Automatic RSI Verification Updates**
+
+The system now automatically updates `RSI_VERIFICATION_LIST.txt`:
+
+1. **When `run_all_batch.py` runs** - Adds all missing dates from last entry to today
+2. **When `monitor_strategy.py` runs** (GitHub Actions) - Updates verification list before sending email
+3. **Manual update**: Run `python update_rsi_verification.py` anytime
+
+Each entry includes:
+- Date
+- RSI(14) value
+- RSI SMA(7) value  
+- Rainy day indicator (🌧️ if < 45, ⛅ if >= 45)
+- Payday marker (if date is 3rd or 17th)
 
 ---
 

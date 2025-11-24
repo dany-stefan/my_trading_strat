@@ -26,6 +26,7 @@ from email_formatter import convert_to_html
 from email_generator import generate_email_content
 from payday_scheduler import get_scheduler
 from strategy_config import get_strategy_config
+from update_rsi_verification import update_verification_list
 
 # =============================================================================
 # CONFIGURATION - CHANGE STRATEGY HERE
@@ -347,7 +348,8 @@ def check_conditions():
                 cash_pool=cash_pool,
                 total_contributions=tracking.get('total_contributions', 0),
                 rainy_buys=tracking.get('rainy_buys', []),
-                is_simulation=FORCE_EMAIL  # True for local test runs, False for production
+                is_simulation=FORCE_EMAIL,  # True for local test runs, False for production
+                rsi_14=rsi  # Include RSI(14) for display in email
             )
             
             send_email(subject, body)
@@ -437,6 +439,21 @@ def check_conditions():
 # =============================================================================
 
 if __name__ == "__main__":
+    # Update RSI verification list before checking conditions
+    print("=" * 80)
+    print("UPDATING RSI VERIFICATION LIST")
+    print("=" * 80)
+    try:
+        entries_added = update_verification_list()
+        if entries_added > 0:
+            print(f"✅ Added {entries_added} new verification entries")
+        else:
+            print("✅ Verification list already up to date")
+    except Exception as e:
+        print(f"⚠️  Could not update verification list: {e}")
+        print("   Continuing with strategy check...")
+    print()
+    
     # Setup instructions
     if EMAIL_CONFIG['sender_email'] == "your_email@gmail.com":
         print("=" * 80)

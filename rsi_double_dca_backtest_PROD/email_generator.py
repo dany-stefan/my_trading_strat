@@ -24,7 +24,7 @@ CASH_ACCUMULATION = 30.0         # CAD - Cash saved per payday to build rainy da
 PAYDAY_DAY_OF_MONTH_2 = 15       # Second payday of each month (1st and 15th schedule)
 
 
-def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy_buys, is_simulation=False):
+def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy_buys, is_simulation=False, rsi_14=None):
     """
     Generate email subject and body for payday notifications.
     
@@ -39,10 +39,40 @@ def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy
         total_contributions: Total contributions to date in CAD
         rainy_buys: List of rainy buy records (historical data)
         is_simulation: If True, adds "TEST EMAIL" markers and notices
+        rsi_14: RSI(14) - 14-day RSI value (optional, for display only)
     
     Returns:
         tuple: (subject, body) - email subject and plain text body
     """
+    today = datetime.now().date()
+    
+    # Calculate accumulated rainy pool ROI (only for real emails, not test)
+    rainy_pool_invested = 0.0
+    rainy_pool_shares = 0.0
+    rainy_pool_current_value = 0.0
+    rainy_pool_roi_percent = 0.0
+    rainy_pool_profit = 0.0
+    rainy_pool_avg_price = 0.0
+    
+    if not is_simulation and rainy_buys:
+        total_buy_price = 0.0
+        for buy in rainy_buys:
+            amount = buy.get('amount', 150.0)
+            buy_price = buy.get('price', 0.0)
+            rainy_pool_invested += amount
+            total_buy_price += buy_price
+            if buy_price > 0:
+                rainy_pool_shares += amount / buy_price
+        
+        if len(rainy_buys) > 0:
+            rainy_pool_avg_price = total_buy_price / len(rainy_buys)
+        
+        if rainy_pool_shares > 0:
+            rainy_pool_current_value = rainy_pool_shares * price
+            rainy_pool_profit = rainy_pool_current_value - rainy_pool_invested
+            if rainy_pool_invested > 0:
+                rainy_pool_roi_percent = (rainy_pool_profit / rainy_pool_invested) * 100
+    
     today = datetime.now().date()
     
     # Calculate all market metrics using centralized module
@@ -108,16 +138,38 @@ def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy
         test_notice = ""
     
     # Metrics markdown table (embed in email)
+    rsi_14_display = f"{rsi_14:.2f}" if rsi_14 is not None else "N/A"
+    
+    # Build rainy pool ROI section (only for production emails)
+    rainy_pool_section = ""
+    if not is_simulation and rainy_buys:
+        rainy_pool_section = f"""
+
+💧 RAINY POOL PERFORMANCE TRACKER
+| Metric | Value |
+|---|---|
+| Total Rainy Contributions | ${rainy_pool_invested:,.2f} CAD |
+| Average Rainy Buy Price | ${rainy_pool_avg_price:.2f} USD |
+| Current SPY Price | ${price:.2f} USD |
+| Current Rainy Pool Value | ${rainy_pool_current_value:,.2f} CAD |
+| Rainy Pool Profit | ${rainy_pool_profit:,.2f} CAD |
+| Rainy Pool ROI | {rainy_pool_roi_percent:.2f}% |
+| Rainy Buys Deployed | {len(rainy_buys)} |
+
+*This tracks ONLY your rainy day contributions and their performance*
+"""
+    
     metrics_markdown = f"""
 📌 METRICS SNAPSHOT (Markdown)
 | Metric | Value |
 |---|---|
 | SPY Price | {price_display} |
+| RSI(14) | {rsi_14_display} |
 | RSI SMA(7) | {rsi_sma_display} |
 | Cash Pool | {cash_pool_display} |
 | Threshold | {RSI_THRESHOLD:.0f} |
 | Rainy Today? | {('Yes' if is_rainy else 'No')} |
-"""
+{rainy_pool_section}"""
 
     body = f"""
 🎯 RSI STRATEGY MONITOR - PROD{header_suffix}
@@ -125,6 +177,7 @@ def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy
 ════════════════════════════════════════════════════════════════
 📅 DATE: {today.strftime('%B %d, %Y')}{date_suffix}
 📈 SPY PRICE: {price_display} USD
+📊 RSI(14): {rsi_14_display}
 📊 RSI SMA(7): {rsi_sma_display}
 
 📌 EVALUATION TIMING: This email is sent on the 3rd and 17th of each month

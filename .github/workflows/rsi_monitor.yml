@@ -37,6 +37,15 @@ jobs:
       run: |
         python rsi_double_dca_backtest_PROD/monitor_strategy.py
     
+    - name: Commit updated RSI verification list
+      if: always()
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add RSI_VERIFICATION_LIST.txt || true
+        git diff --staged --quiet || git commit -m "Auto-update RSI verification list - $(date +'%Y-%m-%d')" || true
+        git push || true
+    
     - name: Upload logs (if any)
       if: always()
       uses: actions/upload-artifact@v4

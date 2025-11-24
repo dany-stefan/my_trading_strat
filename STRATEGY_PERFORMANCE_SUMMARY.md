@@ -8,16 +8,16 @@
 
 | Metric | Your Rainy Strategy | Simple DCA | Your Advantage |
 |--------|---------------------|------------|----------------|
-| **Final Equity** | **$519,343** | $434,051 | **+$85,292** 🏆 |
-| **Total Invested** | $73,950<br>*(Base: $59,400 + Rainy: $14,550)* | $59,400<br>*(Base only: 396 paydays × $150)* | +$14,550<br>*(97 rainy buys × $150)* |
-| **Profit ($)** | **$445,393** | $374,651 | **+$70,742** |
-| **Profit (%)** | 602.3% | 630.7% | -28.4% |
-| **Investment ROI CAGR** | 9.26% | 9.46% | -0.20% |
+| **Final Equity** | **$511,954** | $434,051 | **+$77,903** 🏆 |
+| **Total Invested** | $71,850<br>*(Base: $59,400 + Rainy: $12,450)* | $59,400<br>*(Base only: 396 paydays × $150)* | +$12,450<br>*(83 rainy buys × $150)* |
+| **Profit ($)** | **$440,104** | $374,651 | **+$65,453** |
+| **Profit (%)** | 612.5% | 630.7% | -18.2% |
+| **Investment ROI CAGR** | 9.34% | 9.46% | -0.12% |
 
 **What "Total Invested" means:**
-- **Your Rainy Strategy:** Every payday you invest $150 base + save $30. When RSI SMA(7) < 45, you deploy extra $150 from accumulated savings. Total out of pocket = $73,950 (base DCA) + rainy deploys from your savings pool.
+- **Your Rainy Strategy:** Every payday you invest $150 base + save $30. When RSI SMA(7) < 45, you deploy extra $150 from accumulated savings. Total out of pocket = $71,850 (base DCA) + rainy deploys from your savings pool.
 - **Simple DCA:** Only invests $150 every payday, no extra deployments. Total = $59,400.
-- **Cash Pool:** You save $30/payday (~$11,880 over 22 years) which funds your $14,550 in rainy buys. The extra $2,670 comes from initial pool ($330) + growth.
+- **Cash Pool:** You save $30/payday (~$11,880 over 22 years) which funds your $12,450 in rainy buys. The extra $570 comes from initial pool ($330) + remaining balance.
 
 ---
 
@@ -27,15 +27,15 @@
 
 **CAGR measures PERCENTAGE growth** (relative return on invested capital)
 - Simple DCA: 9.46% annual growth on $59,400 → $434,051
-- Your Rainy: 9.26% annual growth on $73,950 → $519,343
+- Your Rainy: 9.34% annual growth on $71,850 → $511,954
 
 ### You Deployed MORE Capital at BETTER Times
 
-- **Extra deployed**: $14,550 in 97 rainy buys (when RSI SMA(7) < 45)
+- **Extra deployed**: $12,450 in 83 rainy buys (when RSI SMA(7) < 45)
   - Funded by: $30 saved per payday × 396 paydays = $11,880 accumulated
-  - Difference ($14,550 - $11,880 = $2,670) comes from initial cash pool ($330) + growth
-- **Extra equity gained**: $85,292 (vs Simple DCA's final value)
-- **ROI on rainy capital**: **586%** (every rainy $1 → $5.86 after 22 years)
+  - Difference ($12,450 - $11,880 = $570) comes from initial cash pool ($330) + remaining balance
+- **Extra equity gained**: $77,903 (vs Simple DCA's final value)
+- **ROI on rainy capital**: **626%** (every rainy $1 → $6.26 after 22 years)
 
 **Cash Pool Mechanics:**
 - Start with $330 initial pool

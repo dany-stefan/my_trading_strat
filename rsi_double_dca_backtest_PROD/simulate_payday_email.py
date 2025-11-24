@@ -147,7 +147,8 @@ def main():
         cash_pool=cash_pool,
         total_contributions=total_contributions,
         rainy_buys=rainy_buys,
-        is_simulation=True
+        is_simulation=True,
+        rsi_14=rsi  # Include RSI(14) for display in email
     )
     
     # Print email preview
