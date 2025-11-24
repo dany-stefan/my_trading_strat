@@ -13,7 +13,7 @@ This analysis presents the **PROD (Production) strategy** - a disciplined, bi-we
 **Key Highlights:**
 - ✅ **30.91% CAGR** over 22 years
 - ✅ **97.6% hit rate** on rainy day deployments (83 of 85 opportunities)
-- ✅ **$511,954 final equity** from $71,850 invested (Base: $59,400 + Rainy: $12,450)
+- ✅ **$511,954 final equity** from $86,100 invested (Base: $73,650 + Rainy: $12,450)
 - ✅ **Outperforms simple DCA by $77,903** (17.9% more wealth)
 
 ---
@@ -25,7 +25,7 @@ This analysis presents the **PROD (Production) strategy** - a disciplined, bi-we
 | Metric | Value | Rating/Context |
 |--------|-------|----------------|
 | **Terminal Value** | $511,954 | BASELINE |
-| **Total Invested** | $71,850 | (Base DCA: $59,400 + Rainy buys: $12,450) |
+| **Total Invested** | $86,100 | (Base DCA: $73,650 + Rainy buys: $12,450) |
 | **Total Profit** | $445,393 (602.3%) | - |
 | **Investment ROI CAGR** | **9.26%** | Annualized return on contributions |
 | **Max Drawdown** | 27.49% | Lower is better |
@@ -41,12 +41,12 @@ This analysis presents the **PROD (Production) strategy** - a disciplined, bi-we
 
 ### Rainy Day Statistics
 
-- **Total Rainy Days (RSI SMA < 45):** 110 opportunities
-- **Successful Deployments:** 97 buys (88.2% hit rate)
-- **Missed Opportunities:** 13 (insufficient cash pool)
-- **Rainy Day Frequency:** 22.4% of execution days (1 in 4-5 paydays)
-- **Average RSI SMA on Buys:** 37.05
-- **Total Rainy Capital Deployed:** $14,550 (97 buys × $150 per rainy buy)
+- **Total Rainy Days (RSI SMA < 45):** 85 opportunities
+- **Successful Deployments:** 83 buys (97.6% hit rate)
+- **Missed Opportunities:** 2 (insufficient cash pool)
+- **Rainy Day Frequency:** 17.3% of execution days (1 in 5-6 paydays)
+- **Average RSI SMA on Buys:** 39.44
+- **Total Rainy Capital Deployed:** $12,450 (83 buys × $150 per rainy buy)
 
 ---
 
@@ -55,7 +55,7 @@ This analysis presents the **PROD (Production) strategy** - a disciplined, bi-we
 ### Simple DCA (No Rainy Logic)
 
 | Metric | Value | vs Rainy Day |
-|--------|-------|--------------||
+|--------|-------|--------------|
 | **Terminal Value** | $434,051 | -$85,292 |
 | **Total Invested** | $59,400 | (Only base DCA: 396 paydays × $150) |
 | **Total Profit** | $374,651 (630.7%) | Lower absolute profit |
@@ -109,13 +109,13 @@ The ROI CAGRs are nearly identical because both strategies compound efficiently.
 
 ## 🌧️ Isolated Rainy Day Performance Analysis
 
-**Analyzing ONLY the $14,550 deployed during rainy days (97 buys when RSI < 45)**
+**Analyzing ONLY the $12,450 deployed during rainy days (83 buys when RSI < 45)**
 
 ### Overall Rainy Money Performance
 
 | Metric | Value |
 |--------|-------|
-| **Total Rainy Contributions** | $14,550 (97 buys) |
+| **Total Rainy Contributions** | $12,450 (83 buys) |
 | **Average SPY Price on Rainy Days** | $210.14 |
 | **Current SPY Price (Nov 21, 2025)** | $659.03 |
 | **Price Appreciation** | **3.14x** |
@@ -399,11 +399,11 @@ The **PROD Rainy Day strategy** demonstrates superior performance across multipl
 ### Historical Market Conditions (532 Paydays, Oct 2003 - Nov 2025)
 
 **Market Favorability Distribution:**
-- **81.8% of paydays (435/532)**: Market is expensive (RSI SMA(7) ≥ 45) ⛅
+- **82.7% of paydays (440/532)**: Market is expensive (RSI SMA(7) ≥ 45) ⛅
   - No rainy deployment - only base $150 DCA invested
   - Cash pool accumulates $30 per payday for future opportunities
 
-- **18.2% of paydays (97/532)**: Market is favorable (RSI SMA(7) < 45) 🌧️
+- **17.3% of paydays (92/532)**: Market is favorable (RSI SMA(7) < 45) 🌧️
   - Rainy day opportunity - deploy extra $150 from cash pool
   - These are your golden buying moments during market dips
 
@@ -411,8 +411,8 @@ The **PROD Rainy Day strategy** demonstrates superior performance across multipl
 
 | Metric | Current Strategy ($150/$30) |
 |--------|----------------------------|
-| **Rainy Opportunities** | 97 (over 22 years) |
-| **Successful Deployments** | 97 ✅ |
+| **Rainy Opportunities** | 85 (over 22 years) |
+| **Successful Deployments** | 83 ✅ |
 | **Missed Opportunities** | 2 |
 | **Hit Rate** | **97.6%** |
 | **Cash Pool Sufficiency** | Near-perfect - only 2 misses in 22 years |
@@ -424,7 +424,7 @@ The **PROD Rainy Day strategy** demonstrates superior performance across multipl
 3. **Minimal Misses** - Even during consecutive rainy days (up to 5 in a row), you only missed 2 deployments in 22 years
 4. **Optimal Sizing** - The $30 accumulation is well-calibrated to match rainy day frequency
 
-**Translation:** Over 22 years (532 paydays), the market gave you 83 golden opportunities to buy dips. Your cash pool strategy captured 81 of them. Only 2 misses. 97.6% execution rate.
+**Translation:** Over 22 years (491 execution days), the market gave you 85 golden opportunities to buy dips. Your cash pool strategy captured 83 of them. Only 2 misses. 97.6% execution rate.
 
 **Key Insight:** If you increased rainy deployment to $250 without scaling accumulation from $30 to $50, you'd miss significantly more opportunities, losing thousands in potential gains. See [💰 INCREASE_RAINY_CONTRIBUTION_ANALYSIS.md](💰%20INCREASE_RAINY_CONTRIBUTION_ANALYSIS.md) for details.
 
