@@ -1,0 +1,451 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 10px;
+            line-height: 1.7;
+            color: #333;
+            font-size: 17px;
+            -webkit-text-size-adjust: 100%;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 100%;
+            margin: 0 auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 4px solid #3498db;
+            padding-bottom: 15px;
+            font-size: 26px;
+            font-weight: 700;
+            margin: 20px 0 25px 0;
+            line-height: 1.3;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+            border-bottom: 3px solid #34495e;
+            padding-bottom: 12px;
+            font-size: 21px;
+            font-weight: 700;
+            line-height: 1.4;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: white;
+            font-size: 15px;
+            table-layout: fixed;
+            overflow-x: auto;
+            display: block;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid #2980b9;
+            font-size: 13px;
+            word-wrap: break-word;
+            line-height: 1.3;
+        }
+        td {
+            padding: 10px 8px;
+            border: 1px solid #ddd;
+            background-color: white;
+            font-size: 15px;
+            word-wrap: break-word;
+            line-height: 1.4;
+        }
+        tbody td {
+            background-color: white !important;
+            color: #333 !important;
+        }
+        tbody tr:nth-child(even) td {
+            background-color: #f8f9fa !important;
+        }
+        .status-box {
+            background-color: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 18px;
+            margin: 20px 0;
+            border-radius: 6px;
+            font-size: 17px;
+        }
+        .warning-box {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 18px;
+            margin: 20px 0;
+            border-radius: 6px;
+            font-size: 17px;
+        }
+        .test-notice {
+            background-color: #cce5ff;
+            border: 3px solid #2196f3;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .info-section {
+            background-color: #f8f9fa;
+            padding: 16px;
+            border-radius: 6px;
+            margin: 12px 0;
+            border-left: 4px solid #6c757d;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .divider {
+            border: none;
+            border-top: 4px double #34495e;
+            margin: 30px 0;
+            height: 4px;
+        }
+        p {
+            margin: 14px 0;
+            font-size: 17px;
+            line-height: 1.6;
+        }
+        strong {
+            color: #2c3e50;
+            font-weight: 700;
+        }
+        em {
+            font-style: italic;
+            color: #555;
+        }
+        .section-title {
+            font-size: 19px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 25px 0 15px 0;
+            line-height: 1.4;
+        }
+        .number-step {
+            font-size: 18px;
+            font-weight: 700;
+            color: #3498db;
+            margin: 15px 0;
+            line-height: 1.5;
+        }
+        .action-required {
+            background-color: #fff3cd;
+            border: 4px solid #ffc107;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: 900;
+            color: #856404;
+        }
+        .decision-box {
+            background-color: #e7f3ff;
+            border: 3px solid #2196f3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .decision-box strong {
+            font-size: 18px;
+            color: #0d47a1;
+        }
+        /* Decision / scenario table highlight classes (parity with TURBO) */
+        table.decision-table thead th {
+            background-color: #22313f;
+            border-color: #1a252f;
+        }
+        .highlight-cell {
+            background-color: #fff3cd !important;
+            border: 2px solid #ffc107 !important;
+            font-weight: 700;
+            color: #8a6d3b !important;
+        }
+        @media only screen and (max-width: 600px) {
+            .container {
+                padding: 12px;
+            }
+            table {
+                font-size: 14px;
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            th {
+                padding: 10px 6px;
+                font-size: 12px;
+                line-height: 1.2;
+            }
+            td {
+                padding: 10px 6px;
+                font-size: 14px;
+                line-height: 1.3;
+            }
+            td:first-child {
+                font-weight: 600;
+                min-width: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+<br>
+<h1>🎯 RSI STRATEGY MONITOR - PROD - TEST EMAIL (LOCAL RUN)</h1>
+<br>
+<div class="test-notice">🧪 THIS IS A TEST EMAIL FROM LOCAL RUN</div>
+<p>This email was manually triggered for testing purposes.</p>
+<br>
+<p>📅 DATE: November 25, 2025 🧪 LOCAL TEST</p>
+<h2>📈 SPY PRICE: $675.02 USD</h2>
+<h2>📊 RSI(14): 53.83</h2>
+<h2>📊 RSI SMA(7): 43.49</h2>
+<br>
+<p>📌 EVALUATION TIMING: This email is sent on the 3rd and 17th of each month</p>
+<p>   (2 days after payday on 1st/15th) when RSI is evaluated for rainy day.</p>
+<br>
+<div class="decision-box"><strong>📋 DECISION FROM STRATEGY RULES</strong></div>
+<br>
+<div class="decision-box"><strong>DECISION PATH:</strong></div>
+<div class="info-section">• RSI SMA(7) = 43.49</div>
+<div class="info-section">• Threshold = 45.0</div>
+<div class="info-section"><strong>• Result:</strong>  RSI < 45 → RAINY DAY ✅</div>
+<div class="info-section"><strong>• Cash Available:</strong>  $330.00</div>
+<br>
+<div class="action-required">ACTION REQUIRED: RAINY BUY $150 CAD</div>
+<p>   (Plus your regular $150 base = $300 total today)</p>
+<br>
+<br>
+<h2>📊 TODAY'S PAYDAY ACTIONS</h2>
+<br>
+<p class="number-step">1️⃣ BASE INVESTMENT (always):</p>
+<p>   Invest: $150 CAD into SPY</p>
+<br>
+<p class="number-step">2️⃣ RAINY DAY CHECK:</p>
+<p>   RSI SMA(7): 43.49</p>
+<p>   Rainy threshold: RSI SMA(7) < 45.0</p>
+<br>
+<p>   ✅ RAINY DAY - RSI SMA(7) < 45!</p>
+<br>
+<p>   🔥 RECOMMENDATION: Buy extra $150 from cash pool</p>
+<br>
+<p>   Cash pool after rainy buy: $180.00</p>
+<p>   Add today's savings: +$30</p>
+<p>   Final cash pool: $210.00</p>
+<br>
+<p>Next payday: 1st of December</p>
+<br>
+<br>
+<p>📌 METRICS SNAPSHOT (Markdown)</p>
+<table>
+<thead>
+<tr><th>Metric</th><th>Value</th></tr>
+</thead>
+<tbody>
+<tr><td>SPY Price</td><td>$675.02</td></tr>
+<tr><td>RSI(14)</td><td>53.83</td></tr>
+<tr><td>RSI SMA(7)</td><td>43.49</td></tr>
+<tr><td>Cash Pool</td><td>$330.00</td></tr>
+<tr><td>Threshold</td><td>45</td></tr>
+<tr><td>Rainy Today?</td><td>Yes</td></tr>
+</tbody>
+</table>
+<br>
+<br>
+<p>STRATEGY ASSUMPTIONS & FRAMEWORK</p>
+<br>
+<p>Your Regular Strategy (Variant #2):</p>
+<div class="info-section"><strong>• Payday schedule:</strong>  1st and 15th of each month (next business day if weekend)</div>
+<div class="info-section"><strong>• Base investment:</strong>  $150 CAD every payday (always do this)</div>
+<div class="info-section"><strong>• Cash savings:</strong>  $30 CAD every payday → builds cash pool</div>
+<div class="info-section"><strong>• Asset:</strong>  SPY (S&P 500 ETF) converted to CAD</div>
+<br>
+<p>Rainy Day Rule:</p>
+<div class="info-section">• Check RSI SMA(7) only on payday (bi-weekly)</div>
+<div class="info-section"><strong>• If RSI SMA(7) < 45:</strong>  Deploy extra $150 from cash pool</div>
+<div class="info-section"><strong>• If RSI SMA(7) ≥ 45:</strong>  Only invest base $150, save the $30</div>
+<br>
+<h2>📊 MARKET CONDITIONS & CASH POOL STRATEGY (22 Years of Data):</h2>
+<br>
+<p>Historical Market Favorability:</p>
+<div class="info-section"><strong>• 82.7% of paydays (440/532):</strong>  Market is expensive (RSI ≥ 45) - No rainy deployment ⛅</div>
+<div class="info-section"><strong>• 17.3% of paydays (92/532):</strong>  Market is favorable (RSI < 45) - Rainy opportunity! 🌧️</div>
+<br>
+<p>Cash Pool Execution Rate:</p>
+<div class="info-section"><strong>• Current Strategy ($150/$30):</strong>  97.6% hit rate ✅</div>
+<p>  - When the market IS rainy (17.3% of time), you deploy 97.6% of opportunities (83/85)</p>
+<p>  - Only 2 missed opportunities in 22 years (99.8% success rate over all paydays)</p>
+<p>  - Saving $30/payday is well-calibrated to handle nearly all rainy periods</p>
+<p>  - Even consecutive rainy days (up to 5 in a row) are mostly covered</p>
+<br>
+<p>Why This Matters:</p>
+<div class="info-section">• The market rarely gives you opportunities (only 17.3% of paydays)</div>
+<div class="info-section">• But when it does, you're almost ALWAYS ready with cash (97.6% execution)</div>
+<div class="info-section">• Your $30/payday accumulation is optimized for rainy day frequency</div>
+<div class="info-section">• Minimal misses = capture nearly ALL 83 golden buying moments</div>
+<br>
+<p>Translation: In 22 years, the market gave you 83 chances to buy dips.</p>
+<p>Your cash pool strategy captured 81 of them. Only 2 misses. 97.6% execution.</p>
+<br>
+<p>💰 PERFORMANCE VS OTHER STRATEGIES</p>
+<br>
+<p>📖 Investment ROI CAGR Definition:</p>
+<p>Annualized return on dollar-cost-averaged contributions (measures growth from total invested → final equity).</p>
+<br>
+<p>Your Strategy vs Alternatives (22 years: 2003-2025):</p>
+<br>
+<table>
+<thead>
+<tr><th>Strategy</th><th>ROI CAGR</th><th>Final Value</th><th>Total Invested</th><th>Profit ($)</th><th>Profit (%)</th><th>vs Simple DCA</th></tr>
+</thead>
+<tbody>
+<tr><td>YOUR RAINY DAY 🏆</td><td>9.34%</td><td>$511,954</td><td>$71,850</td><td>$440,104</td><td>612.5%</td><td>BASELINE</td></tr>
+<tr><td>Simple DCA (No Rainy)</td><td>9.46%</td><td>$434,051</td><td>$59,400</td><td>$374,651</td><td>630.7%</td><td>-$77,903 ⚠️</td></tr>
+<tr><td>Buy & Hold DCA</td><td>8.78%</td><td>$6,367</td><td>$1,000</td><td>$5,367</td><td>536.7%</td><td>-$434,736 ⚠️</td></tr>
+</tbody>
+</table>
+<br>
+<p>🔍 WHY SIMILAR CAGR (9.26% vs 9.46%) BUT YOU WIN BY $85,292:</p>
+<br>
+<p>The ROI CAGRs are nearly identical because both strategies efficiently compound returns.</p>
+<p>BUT the rainy strategy deploys MORE capital ($14,550 extra) at OPTIMAL times (RSI < 45).</p>
+<br>
+<p>The Magic: Every rainy $1 → $5.86 after 22 years (586% ROI on rainy capital!)</p>
+<div class="info-section">• You deployed $14,550 extra → Gained $85,292 extra equity</div>
+<div class="info-section">• That's 5.86x your rainy money (vs 7.3x for base DCA)</div>
+<div class="info-section">• Lower CAGR on rainy buys (they're late-stage contributions) but MASSIVE absolute gains</div>
+<br>
+<p>Think of it: Invest $14.6k more during crashes → Walk away with $85.3k more wealth!</p>
+<br>
+<h2>📊 ADVANCED METRICS (Risk & Quality):</h2>
+<br>
+<table>
+<thead>
+<tr><th>Strategy</th><th>Sharpe Ratio</th><th>SQN</th><th>Max Drawdown</th><th>Volatility</th><th>R² (Stability)</th></tr>
+</thead>
+<tbody>
+<tr><td>YOUR RAINY DAY</td><td>1.26</td><td>6.84</td><td>27.25%</td><td>19.92%</td><td>0.846</td></tr>
+<tr><td>Simple DCA</td><td>1.26</td><td>6.81</td><td>27.55%</td><td>20.44%</td><td>0.845</td></tr>
+<tr><td>Buy & Hold</td><td>14.97</td><td>131.56</td><td>0.00%</td><td>0.30%</td><td>1.000</td></tr>
+</tbody>
+</table>
+<br>
+<p><em>Sharpe: Good | SQN: Excellent</em></p>
+<p><em>Lower drawdown = less risk | Higher R² = more stable growth</em></p>
+<br>
+<h2>📈 WHY YOUR RAINY STRATEGY WINS (THE MATH):</h2>
+<br>
+<p>IS IT WORTH IT? Absolutely - here's the proof:</p>
+<div class="info-section"><strong>• Extra invested during rainy days:</strong>  $12,450</div>
+<div class="info-section"><strong>• Extra equity gained:</strong>  $77,903</div>
+<div class="info-section"><strong>• ROI on just the rainy capital:</strong>  626% (or $7.26 your money)</div>
+<br>
+<p>The Investment Efficiency Breakdown:</p>
+<p>  Deploy: $12,450 more in 83 rainy buys (when RSI < 45)</p>
+<p>  Result: $77,903 more final equity</p>
+<p>  Ratio:  5.86x return on your rainy dollars after 22 years</p>
+<br>
+<p>Why CAGR is similar (9.26% vs 9.46%) but you still crush it:</p>
+<div class="info-section">• Both strategies compound efficiently (9-10% annual returns)</div>
+<div class="info-section">• Simple DCA has slightly higher CAGR because it deploys LESS total capital</div>
+<div class="info-section">• But you deployed MORE capital ($73,950 vs $59,400) at BETTER times (crashes)</div>
+<div class="info-section"><strong>• Result:</strong>  Lower relative CAGR, but WAY higher absolute wealth ($85k more!)</div>
+<br>
+<p>Think of it this way:</p>
+<p>  Simple DCA: 630.7% return on $59,400 = $374,651 profit</p>
+<p>  Rainy Strategy: 602.3% return on $73,950 = $445,393 profit</p>
+<br>
+<p>  Lower % return, but you invested more, so you made $70,742 MORE profit!</p>
+<br>
+<p>Real-world translation: Invest $14.6k more during 22 years of crashes → $85.3k more wealth.</p>
+<p>That's every rainy $1 becoming $5.86. Simple DCA turns each $1 into $7.31, but you </p>
+<p>have $14.6k MORE dollars working for you!</p>
+<br>
+<p>🌧️ HISTORICAL BACKTEST: WHAT IF YOU'D STARTED IN 2003?</p>
+<br>
+<p>The following analysis shows what WOULD have happened if you ran this strategy</p>
+<p>from 2003-2025. This is NOT your actual performance (you just started in 2025).</p>
+<br>
+<p>Analyzing the hypothetical $12,450 deployed during 83 rainy buys (if started in 2003):</p>
+<br>
+<p>Historical Backtest Stats (2003-2025):</p>
+<div class="info-section"><strong>• Total Rainy Contributions:</strong>  $12,450 (83 buys over 21 years)</div>
+<div class="info-section"><strong>• Average SPY Price on Rainy Days:</strong>  $264.21</div>
+<div class="info-section"><strong>• Current SPY Price (2025-11-25 16:</strong> 57:15): $675.02</div>
+<div class="info-section"><strong>• Price Appreciation:</strong>  2.55x</div>
+<div class="info-section"><strong>• Hypothetical Current Value:</strong>  $54,729</div>
+<div class="info-section"><strong>• Hypothetical Profit:</strong>  $42,279</div>
+<div class="info-section"><strong>• Hypothetical ROI:</strong>  339.6%</div>
+<br>
+<p>Top 5 Rainy Periods From Backtest (2003-2025):</p>
+<div class="info-section">1. 2009 (2009-03-03 to 2009-03-17, 14 days, 2 buys): $300 → $2,907 (869% return!) 🏆</div>
+<p>   • Caught the bottom at avg $69.81/share</p>
+<div class="info-section">2. 2010 (2010-02-03 to 2010-06-03, 120 days, 4 buys): $600 → $4,622 (670% return!)</div>
+<div class="info-section">3. 2008 (2008-01-17 to 2008-10-17, 274 days, 9 buys): $1350 → $9,919 (635% return!)</div>
+<div class="info-section">4. 2011 (2011-03-17 to 2011-10-03, 200 days, 5 buys): $750 → $5,405 (621% return!)</div>
+<div class="info-section">5. 2006 (2006-06-19 to 2006-06-19, 0 days, 1 buys): $150 → $1,047 (598% return!)</div>
+<br>
+<p>💡 What This Means For You:</p>
+<p>This backtest shows the strategy worked well historically (339% ROI over 22 years).</p>
+<p>Your ACTUAL results will start accumulating from your first rainy buy (likely Dec 2025).</p>
+<p>The strategy gives you confidence it works, but your real ROI starts from $0 today!</p>
+<br>
+<h2>📊 See attached charts:</h2>
+<p>- strategy_comparison_with_baseline.png - Growth curves comparison</p>
+<p>- rainy_day_analysis_detailed.png - Hit/miss pattern & cash pool</p>
+<p>- spy_price_rainy_periods_drawdown.png - When you bought during crashes</p>
+<p>- cash_pool_hit_miss.png - Cash pool evolution with rainy buy markers</p>
+<p>- spy_price_hit_miss.png - SPY price with successful/missed buy markers</p>
+<p>- rsi_hit_miss.png - RSI indicator with rainy day trigger points</p>
+<br>
+<p>CURRENT STATUS</p>
+<br>
+<p>Cash Pool: $330.00</p>
+<p>Total Contributions to Date: $0.00</p>
+<p>Total Rainy Buys to Date: 0</p>
+<p>   📌 NOTE: Starting with $330.00 initial cash pool (enough for 2 rainy buys)</p>
+<br>
+<h2>📊 YOUR LIVE STRATEGY (Started Nov 2025):</h2>
+<div class="info-section">• You haven't deployed any rainy buys yet (waiting for RSI < 45 on deployment days)</div>
+<div class="info-section"><strong>• First deployment day:</strong>  December 3, 2025</div>
+<div class="info-section"><strong>• Cash pool ready:</strong>  $330.00 (enough for 2 rainy buys)</div>
+<br>
+<p>ACTUAL BACKTEST RESULTS (Oct 2003 - Nov 2025, 22 years):</p>
+<p>📌 This shows HISTORICAL performance if you'd started in 2003 (NOT your actual results)</p>
+<div class="info-section"><strong>• Investment ROI CAGR:</strong>  9.34% (annualized return on contributed capital)</div>
+<div class="info-section"><strong>• Final Equity:</strong>  $511,954 (as of Nov 21, 2025)</div>
+<div class="info-section"><strong>• Total Invested:</strong>  $71,850 (base DCA + rainy buys)</div>
+<div class="info-section"><strong>• Profit:</strong>  $440,104 (612.5% total return)</div>
+<div class="info-section"><strong>• Successful Rainy Buys:</strong>  83 tactical deployments</div>
+<br>
+<p>📌 CAGR NUANCE: Why 9.26% CAGR still beats Simple DCA's 9.46% CAGR:</p>
+<p>   • CAGR measures PERCENTAGE growth (relative return)</p>
+<p>   • You deployed MORE capital ($14,550 extra in rainy buys)</p>
+<p>   • More capital × great timing = $85,292 MORE absolute wealth</p>
+<p>   • Lower % return on larger base = bigger dollar gains!</p>
+<br>
+<p>   Example: 600% on $74k beats 630% on $59k in absolute terms.</p>
+<br>
+<p>This is a SIMULATED email for testing purposes.</p>
+<p>Actual payday emails will be sent on the 1st and 15th of each month.</p>
+<br>
+
+    </div>
+</body>
+</html>

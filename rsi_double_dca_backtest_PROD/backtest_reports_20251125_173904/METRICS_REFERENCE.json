@@ -1,0 +1,70 @@
+{
+  "generation_date": "2025-11-24",
+  "generation_timestamp": "2025-11-24 21:04:07",
+  "backtest_period": {
+    "start_date": "2003-10-15",
+    "end_date": "2025-11-21",
+    "years": 22.1
+  },
+  "rainy_day_strategy": {
+    "final_equity": 511953.81,
+    "final_cash_pool": 2610.0,
+    "total_invested": 86100,
+    "base_dca_investment": 73650,
+    "rainy_investment": 12450,
+    "profit": 425853.81,
+    "profit_percent": 494.6,
+    "cagr_backtest": 44.5,
+    "cagr_roi": 8.4,
+    "max_drawdown_percent": 27.25,
+    "volatility_percent": 19.92
+  },
+  "simple_dca_baseline": {
+    "final_equity": 434050.53,
+    "total_invested": 73650,
+    "cagr_backtest": 43.43,
+    "cagr_roi": 8.36,
+    "max_drawdown_percent": 27.55
+  },
+  "rainy_day_statistics": {
+    "total_opportunities": 85,
+    "successful_deployments": 83,
+    "missed_opportunities": 2,
+    "hit_rate_percent": 97.6,
+    "frequency_percent": 17.3,
+    "average_rsi_sma": 39.44,
+    "total_deployed": 12450,
+    "rainy_portion_value": 53433,
+    "rainy_roi_percent": 329.2,
+    "rainy_cagr_percent": 6.81
+  },
+  "performance_comparison": {
+    "outperformance_vs_dca_dollars": 77903.28,
+    "outperformance_vs_dca_percent": 17.9,
+    "extra_capital_deployed": 12450,
+    "return_on_rainy_capital_percent": 525.7,
+    "return_on_rainy_capital_multiplier": 6.26
+  },
+  "market_comparison": {
+    "market_cagr_percent": 8.0,
+    "rainy_cagr_percent": 6.81,
+    "beats_market_by_percent": -1.19,
+    "extra_wealth_vs_market": -14774
+  },
+  "advanced_metrics": {
+    "sharpe_ratio": 1.26,
+    "sharpe_rating": "Good",
+    "sqn": 6.84,
+    "sqn_rating": "Excellent",
+    "r_squared": 0.846,
+    "win_rate_percent": 54.9
+  },
+  "strategy_parameters": {
+    "base_dca_amount": 150,
+    "rainy_amount": 150,
+    "cash_accumulation_per_payday": 30,
+    "rsi_threshold": 45.0,
+    "payday_schedule": "1st and 15th of each month",
+    "execution_schedule": "3rd and 17th of each month"
+  }
+}

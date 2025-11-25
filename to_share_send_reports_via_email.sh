@@ -5,11 +5,14 @@
 
 WORKSPACE_DIR="/Users/danystefan/Documents/workspace/my_trading_strat"
 FILE_LIST="$WORKSPACE_DIR/to_share_via_email_reports.txt"
-ZIP_NAME="Trading_Strategy_Reports_$(date '+%Y-%m-%d').zip"
+
+# ZIP file with timestamp in workspace root
+TIMESTAMP=$(date '+%Y%m%d_%H%M%S')
+ZIP_NAME="backtest_reports_${TIMESTAMP}.zip"
 ZIP_PATH="$WORKSPACE_DIR/$ZIP_NAME"
 
 # Email configuration
-RECIPIENT="${1:-stefan_dany@icloud.com}"  # Default to your iCloud if no argument
+RECIPIENT="${1:-stefan_dany@icloud.com}"
 SUBJECT="Trading Strategy Performance Reports - $(date '+%B %d, %Y')"
 BODY="Hi,
 
@@ -25,13 +28,16 @@ Attached is a comprehensive trading strategy performance report package (ZIP fil
 • Hit/Miss Charts Documentation
 • Comprehensive Performance Report
 
-📈 VISUALIZATIONS (15 charts):
+📈 VISUALIZATIONS (8 PNG charts):
 • Strategy comparison charts
 • Cash pool analysis
 • RSI timeline and hit/miss patterns
 • Rainy period analytics
 • SPY price with rainy deployments
-• Cumulative value growth
+
+�� DATA & METRICS:
+• Rainy analytics JSON
+• Metrics reference
 
 These reports cover the complete backtest analysis (2003-2025) for the RSI-based DCA rainy day strategy.
 
@@ -40,7 +46,7 @@ Trading Strategy Automation"
 
 # Check if file list exists
 if [ ! -f "$FILE_LIST" ]; then
-    echo "Error: File list not found at $FILE_LIST"
+    echo "❌ Error: File list not found at $FILE_LIST"
     exit 1
 fi
 
@@ -56,43 +62,34 @@ fi
 cd "$WORKSPACE_DIR"
 echo ""
 
-# Remove old ZIP if exists
-[ -f "$ZIP_PATH" ] && rm "$ZIP_PATH"
+# Clean up old ZIP files in workspace root
+echo "🧹 Cleaning up old ZIP files..."
+OLD_ZIPS=$(ls "$WORKSPACE_DIR"/backtest_reports_*.zip 2>/dev/null | wc -l)
+if [ "$OLD_ZIPS" -gt 0 ]; then
+    rm "$WORKSPACE_DIR"/backtest_reports_*.zip
+    echo "   Removed $OLD_ZIPS old ZIP file(s)"
+else
+    echo "   No old ZIP files found"
+fi
+echo ""
 
-# Create temporary directory for organized ZIP structure
-TEMP_DIR=$(mktemp -d)
-REPORTS_DIR="$TEMP_DIR/Trading_Strategy_Reports"
-mkdir -p "$REPORTS_DIR"
-
-echo "=== Gathering report files ==="
+# Create ZIP file
+echo "📦 Creating ZIP archive: $ZIP_NAME"
 FILE_COUNT=0
 while IFS= read -r file; do
-    # Skip empty lines and comments
     [[ -z "$file" || "$file" =~ ^# ]] && continue
-    
-    # Build full path
     FULL_PATH="$WORKSPACE_DIR/$file"
-    
-    # Check if file exists
     if [ -f "$FULL_PATH" ]; then
-        echo "✓ Found: $file"
-        # Copy file to temp directory, preserving directory structure
-        DEST_PATH="$REPORTS_DIR/$file"
-        mkdir -p "$(dirname "$DEST_PATH")"
-        cp "$FULL_PATH" "$DEST_PATH"
+        echo "  ✅ Added: $file"
         ((FILE_COUNT++))
     else
-        echo "✗ Missing: $file"
+        echo "  ⚠️  Missing: $file"
     fi
 done < "$FILE_LIST"
 
-echo ""
-echo "=== Creating ZIP archive ==="
-cd "$TEMP_DIR"
-zip -r "$ZIP_PATH" "Trading_Strategy_Reports" -q
-
-# Clean up temp directory
-rm -rf "$TEMP_DIR"
+# Create the ZIP using the file list
+cd "$WORKSPACE_DIR"
+zip -q "$ZIP_PATH" -@ < "$FILE_LIST"
 
 if [ ! -f "$ZIP_PATH" ]; then
     echo "❌ Error creating ZIP file"
@@ -100,8 +97,8 @@ if [ ! -f "$ZIP_PATH" ]; then
 fi
 
 ZIP_SIZE=$(du -h "$ZIP_PATH" | cut -f1)
-echo "✅ Created ZIP: $ZIP_NAME ($ZIP_SIZE)"
-echo "📦 Contains: $FILE_COUNT files"
+echo ""
+echo "✅ Created: $ZIP_NAME ($ZIP_SIZE, $FILE_COUNT files)"
 echo ""
 echo "=== Creating email with ZIP attachment ==="
 
@@ -122,7 +119,7 @@ if [ $? -eq 0 ]; then
     echo "✅ Email draft created successfully in Mail.app"
     echo "📧 Recipient: $RECIPIENT"
     echo "📎 Attachment: $ZIP_NAME ($ZIP_SIZE)"
-    echo "📦 Contains: $FILE_COUNT files (8 markdown + 15 PNG charts)"
+    echo "📦 Contains: $FILE_COUNT files (9 markdown + 8 PNG charts + 1 HTML + 1 JSON)"
     echo ""
     echo "Please review the email in Mail.app and click Send when ready."
     echo ""
