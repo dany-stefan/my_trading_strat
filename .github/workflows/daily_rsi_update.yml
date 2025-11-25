@@ -28,9 +28,11 @@ jobs:
         pip install yfinance pandas numpy
     
     - name: Update RSI Verification List
+      env:
+        TRIGGER_SOURCE: ${{ github.event_name == 'workflow_dispatch' && 'Daily RSI Workflow (Manual)' || 'Daily RSI Workflow (Auto)' }}
       run: |
         cd rsi_double_dca_backtest_PROD
-        python update_rsi_verification.py
+        python -c "from update_rsi_verification import update_verification_list; import os; trigger = os.environ.get('TRIGGER_SOURCE', 'Daily RSI Workflow (Auto)'); count = update_verification_list(trigger_source=trigger); print(f'Added {count} entries')"
     
     - name: Commit updated RSI verification list
       run: |

@@ -53,7 +53,7 @@ fi
 # Update RSI Verification List before creating ZIP
 echo "=== Updating RSI Verification List ==="
 cd "$WORKSPACE_DIR/rsi_double_dca_backtest_PROD"
-python3 update_rsi_verification.py
+python3 -c "from update_rsi_verification import update_verification_list; count = update_verification_list(trigger_source='Local ZIP Script'); print(f'Added {count} entries')"
 if [ $? -eq 0 ]; then
     echo "✅ RSI Verification List updated"
 else

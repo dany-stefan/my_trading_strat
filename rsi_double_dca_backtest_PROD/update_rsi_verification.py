@@ -13,13 +13,15 @@ from pathlib import Path
 from rsi_indicators import compute_rsi_with_sma
 
 
-def update_verification_list(verification_file_path=None):
+def update_verification_list(verification_file_path=None, trigger_source=None):
     """
     Update RSI_VERIFICATION_LIST.txt with missing dates.
     
     Args:
         verification_file_path: Path to RSI_VERIFICATION_LIST.txt
                                (defaults to ../RSI_VERIFICATION_LIST.txt)
+        trigger_source: String describing what triggered the update
+                       (e.g., "Daily RSI Workflow (Auto)", "Bi-weekly Email (Manual)", "Local ZIP Script")
     
     Returns:
         int: Number of new entries added
@@ -38,6 +40,31 @@ def update_verification_list(verification_file_path=None):
     except FileNotFoundError:
         print(f"❌ Verification file not found: {verification_file_path}")
         return 0
+    
+    # Find the "Last Updated" line to replace
+    lines = content.split('\n')
+    last_updated_idx = None
+    for idx, line in enumerate(lines):
+        if line.strip().startswith('Last Updated:'):
+            last_updated_idx = idx
+            break
+    
+    # Update the "Last Updated" line
+    if trigger_source is None:
+        trigger_source = "Manual Execution"
+    
+    update_time = datetime.now().strftime('%Y-%m-%d %I:%M:%S %p EST')
+    new_last_updated_line = f"Last Updated: {update_time} | Trigger: {trigger_source}"
+    
+    if last_updated_idx is not None:
+        lines[last_updated_idx] = new_last_updated_line
+    else:
+        # If no "Last Updated" line exists, add it after the header
+        for idx, line in enumerate(lines):
+            if 'MATCH VERIFICATION:' in line:
+                lines.insert(idx + 1, new_last_updated_line)
+                lines.insert(idx + 2, '')  # Add blank line
+                break
     
     # Find the last (most recent) date entry - NOW AT TOP after header
     lines = content.split('\n')

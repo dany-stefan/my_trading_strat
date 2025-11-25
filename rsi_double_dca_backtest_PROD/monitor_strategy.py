@@ -427,8 +427,16 @@ if __name__ == "__main__":
     print("=" * 80)
     print("UPDATING RSI VERIFICATION LIST")
     print("=" * 80)
+    
+    # Determine trigger source from environment variable
+    force_email = os.environ.get('FORCE_EMAIL', 'false').lower() == 'true'
+    if force_email:
+        trigger_source = "Bi-weekly Email Workflow (Manual)"
+    else:
+        trigger_source = "Bi-weekly Email Workflow (Auto)"
+    
     try:
-        entries_added = update_verification_list()
+        entries_added = update_verification_list(trigger_source=trigger_source)
         if entries_added > 0:
             print(f"✅ Added {entries_added} new verification entries")
         else:

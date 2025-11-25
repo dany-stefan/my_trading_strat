@@ -7,6 +7,7 @@ TradingView Calculation:
 • SMA(7) on RSI: Uses SIMPLE Moving Average
 
 MATCH VERIFICATION: 100.0% - ALL VALUES MATCH! ✅
+Last Updated: 2025-11-25 06:30:00 PM EST | Trigger: Manual Correction
 Period: 2025 only (future dates will be auto-added by workflow)
 
 ═══════════════════════════════════════════════════════════════════════════
