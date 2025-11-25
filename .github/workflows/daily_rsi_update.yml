@@ -2,8 +2,8 @@ name: Daily RSI Verification Update
 
 on:
   schedule:
-    # Runs at 4:30 PM EST (21:30 UTC) every weekday after market close
-    - cron: '30 21 * * 1-5'
+    # Runs at 5:30 PM EST (22:30 UTC) every weekday after market close and data is finalized
+    - cron: '30 22 * * 1-5'
   workflow_dispatch:  # Allows manual trigger from GitHub UI
 
 permissions:
