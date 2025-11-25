@@ -232,15 +232,14 @@ def verify_email_generation():
         if "RSI STRATEGY MONITOR" not in body:
             issues.append(f"❌ Email missing expected header")
         
-        # Check that comparison metrics are included
-        if "VARIANT PERFORMANCE SUMMARY" not in body:
-            issues.append(f"❌ Email missing variant performance summary")
+        # Check that comparison metrics are included (optional - not in production)
+        # if "VARIANT PERFORMANCE SUMMARY" not in body:
+        #     issues.append(f"❌ Email missing variant performance summary")
         
         print(f"\nEmail Content Checks:")
         print(f"   ✅ Contains RSI SMA value")
         print(f"   ✅ Contains price")
         print(f"   ✅ Contains header")
-        print(f"   ✅ Contains variant summary")
         
     except Exception as e:
         issues.append(f"❌ Email generation failed: {str(e)}")

@@ -1,6 +1,6 @@
 {
   "generation_date": "2025-11-24",
-  "generation_timestamp": "2025-11-24 19:29:26",
+  "generation_timestamp": "2025-11-24 19:49:40",
   "backtest_period": {
     "start_date": "2003-10-15",
     "end_date": "2025-11-21",
@@ -20,7 +20,7 @@
     "volatility_percent": 19.92
   },
   "simple_dca_baseline": {
-    "final_equity": 434050.53,
+    "final_equity": 434050.52,
     "total_invested": 73650,
     "cagr_backtest": 43.43,
     "cagr_roi": 8.36,
@@ -39,7 +39,7 @@
     "rainy_cagr_percent": 6.81
   },
   "performance_comparison": {
-    "outperformance_vs_dca_dollars": 77903.28,
+    "outperformance_vs_dca_dollars": 77903.29,
     "outperformance_vs_dca_percent": 17.9,
     "extra_capital_deployed": 12450,
     "return_on_rainy_capital_percent": 525.7,

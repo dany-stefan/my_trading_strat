@@ -121,7 +121,7 @@ def main():
     print("="*80)
     
     viz_scripts = [
-        ("generate_cash_pool_visualization.py", "Cash Pool Visualization"),
+        # ("generate_cash_pool_visualization.py", "Cash Pool Visualization"),  # Requires rsi_vs_sma_payday_analysis.csv (not generated)
         ("generate_rsi_timeline_chart.py", "RSI Timeline Chart"),
         ("generate_hit_miss_charts.py", "Hit/Miss Charts"),
     ]
