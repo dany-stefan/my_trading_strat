@@ -48,37 +48,51 @@ def update_verification_list(verification_file_path=None):
         print(f"❌ Verification file not found: {verification_file_path}")
         return 0
     
-    # Find the last date entry
+    # Find the last (most recent) date entry - NOW AT TOP after header
     lines = content.split('\n')
-    last_date = None
-    last_date_line_idx = None
+    first_date = None
+    first_date_line_idx = None
+    header_end_idx = None
     
+    # Find where data entries start (after "VERIFICATION ENTRIES:" header)
     for idx, line in enumerate(lines):
+        if 'VERIFICATION ENTRIES:' in line:
+            header_end_idx = idx + 2  # Skip header and separator line
+            break
+    
+    if header_end_idx is None:
+        print("❌ Could not find VERIFICATION ENTRIES header")
+        return 0
+    
+    # Find first date entry (most recent, since file is reversed)
+    for idx in range(header_end_idx, len(lines)):
+        line = lines[idx]
         # Look for date pattern: YYYY-MM-DD at start of line
         if line.strip() and line[0:4].isdigit() and '-' in line[0:10]:
             try:
                 date_str = line.split()[0]
                 date_obj = datetime.strptime(date_str, '%Y-%m-%d')
-                last_date = date_obj
-                last_date_line_idx = idx
+                first_date = date_obj
+                first_date_line_idx = idx
+                break  # Found the most recent date (at top)
             except:
                 continue
     
-    if last_date is None:
+    if first_date is None:
         print("❌ Could not find any date entries in verification file")
         return 0
     
-    print(f"📅 Last verification entry: {last_date.strftime('%Y-%m-%d')}")
+    print(f"📅 Last verification entry: {first_date.strftime('%Y-%m-%d')}")
     
-    # Calculate dates to add (from day after last_date to today)
+    # Calculate dates to add (from day after first_date to today)
     today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
     
-    if last_date.date() >= today.date():
+    if first_date.date() >= today.date():
         print("✅ Verification list is already up to date")
         return 0
     
     # Fetch market data
-    start_date = last_date + timedelta(days=1)
+    start_date = first_date + timedelta(days=1)
     end_date = today + timedelta(days=1)  # Include today
     
     print(f"📊 Fetching market data from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}...")
@@ -105,18 +119,12 @@ def update_verification_list(verification_file_path=None):
             print("⚠️  Not enough data to calculate RSI SMA(7)")
             return 0
         
-        # Find the insertion point (after last date entry, before next section)
-        insert_idx = last_date_line_idx + 1
+        # Insert at top of data section (right after header, at first_date_line_idx)
+        insert_idx = first_date_line_idx
         
-        # Look for the next section header (line starting with letters after the last date)
-        while insert_idx < len(lines) and lines[insert_idx].strip():
-            if lines[insert_idx][0:3].isalpha() and lines[insert_idx][0:3].isupper():
-                break
-            insert_idx += 1
-        
-        # Generate new entries
+        # Generate new entries (in REVERSE order so newest is at top)
         new_entries = []
-        for date, row in df.iterrows():
+        for date, row in reversed(list(df.iterrows())):  # Reverse to put newest first
             date_str = date.strftime('%Y-%m-%d')
             rsi = float(row['RSI'])
             rsi_sma = float(row['RSI_SMA_7'])

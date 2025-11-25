@@ -5,7 +5,7 @@
 
 WORKSPACE_DIR="/Users/danystefan/Documents/workspace/my_trading_strat"
 FILE_LIST="$WORKSPACE_DIR/to_share_via_email_reports.txt"
-ZIP_NAME="Trading_Strategy_Reports.zip"
+ZIP_NAME="Trading_Strategy_Reports_$(date '+%Y-%m-%d').zip"
 ZIP_PATH="$WORKSPACE_DIR/$ZIP_NAME"
 
 # Email configuration
