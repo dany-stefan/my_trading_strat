@@ -8,7 +8,7 @@ FILE_LIST="$WORKSPACE_DIR/to_share_via_email_reports.txt"
 
 # ZIP file with timestamp in workspace root
 TIMESTAMP=$(date '+%Y%m%d_%H%M%S')
-ZIP_NAME="backtest_reports_${TIMESTAMP}.zip"
+ZIP_NAME="trading_strategy_reports_${TIMESTAMP}.zip"
 ZIP_PATH="$WORKSPACE_DIR/$ZIP_NAME"
 
 # Email configuration
@@ -64,9 +64,9 @@ echo ""
 
 # Clean up old ZIP files in workspace root
 echo "🧹 Cleaning up old ZIP files..."
-OLD_ZIPS=$(ls "$WORKSPACE_DIR"/backtest_reports_*.zip 2>/dev/null | wc -l)
+OLD_ZIPS=$(ls "$WORKSPACE_DIR"/trading_strategy_reports_*.zip 2>/dev/null | wc -l)
 if [ "$OLD_ZIPS" -gt 0 ]; then
-    rm "$WORKSPACE_DIR"/backtest_reports_*.zip
+    rm "$WORKSPACE_DIR"/trading_strategy_reports_*.zip
     echo "   Removed $OLD_ZIPS old ZIP file(s)"
 else
     echo "   No old ZIP files found"
