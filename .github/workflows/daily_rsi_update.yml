@@ -2,8 +2,9 @@ name: Daily RSI Verification Update
 
 on:
   schedule:
-    # Runs at 5:30 PM EST (22:30 UTC) every weekday after market close and data is finalized
-    - cron: '30 22 * * 1-5'
+    # Runs at 7:00 PM EST (00:00 UTC next day) every weekday - ensures market data is available
+    # Market data from yfinance typically available 6-7 PM EST
+    - cron: '0 0 * * 2-6'  # Runs at midnight UTC (7 PM EST previous day) Tue-Sat for Mon-Fri data
   workflow_dispatch:  # Allows manual trigger from GitHub UI
 
 permissions:

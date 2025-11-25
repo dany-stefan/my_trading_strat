@@ -104,6 +104,9 @@ def update_verification_list(verification_file_path=None):
         close = df['Adj Close'] if 'Adj Close' in df.columns else df['Close']
         df['RSI'], df['RSI_SMA_7'] = compute_rsi_with_sma(close, rsi_period=14, sma_period=7)
         
+        # Keep original dataframe before filtering
+        df_original = df.copy()
+        
         # Filter to only valid dates (where we have RSI SMA calculated)
         df = df.dropna(subset=['RSI_SMA_7'])
         
@@ -111,7 +114,14 @@ def update_verification_list(verification_file_path=None):
         df = df[df.index > first_date]
         
         if df.empty:
-            print("✅ No new entries to add (all dates up to date)")
+            # Check if this is because we're already up to date or because data isn't available yet
+            last_market_date = df_original.index.max() if not df_original.empty else None
+            if last_market_date and last_market_date.date() <= first_date.date():
+                print(f"⏳ No new market data available yet (last: {last_market_date.strftime('%Y-%m-%d')})")
+                print(f"   Current verification up to: {first_date.strftime('%Y-%m-%d')}")
+                print(f"   Market data typically available after 5 PM EST")
+            else:
+                print("✅ No new entries to add (all dates up to date)")
             return 0
         
         # Insert at top of data section (right after header, at first_date_line_idx)
