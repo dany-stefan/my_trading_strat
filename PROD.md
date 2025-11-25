@@ -510,6 +510,56 @@ The **PROD Rainy Day strategy** demonstrates superior performance across multipl
 
 ---
 
+## 🛡️ For Future You: When You Get Hesitant
+
+### "Is the $77,903 advantage just from investing more money?"
+
+**Yes, mostly. Here's the honest breakdown:**
+
+The $77,903 advantage breaks into TWO parts:
+
+1. **$72,390 from deploying more capital (92.9%)** 
+   - You invested $12,450 extra over 22 years
+   - At the same average price as simple DCA, this would have given you $72,390 more
+   - This is just math: more money invested → more wealth
+
+2. **$5,513 from better TIMING (7.1%)**
+   - Rainy strategy bought at $140.15/share average
+   - Simple DCA bought at $141.68/share average
+   - 1.08% cheaper price → 6.69 extra shares → $5,513 more value
+
+### The Apples-to-Apples Test
+
+**If both strategies invested the exact same $87,100:**
+- **Rainy Strategy:** $511,954 (bought at $140.15/share avg)
+- **Simple DCA (Bootstrapped):** $506,441 (bought at $141.68/share avg)
+- **Rainy wins by:** $5,513 (1.09% better)
+
+### The Honest Truth
+
+**93% of your advantage is from having more capital in the market**, not genius timing.
+
+BUT here's why you should still do it:
+
+1. **$5,513 is real money** - That 1.08% price discount from buying dips adds up
+2. **You're deploying capital anyway** - The $30/payday was going to be invested eventually
+3. **Psychological edge** - Buying dips feels right and keeps you disciplined
+4. **Downside protection** - Lower average cost = better protection in crashes
+5. **It works 97.6% of the time** - Only 2 missed opportunities in 22 years
+
+### The Bottom Line
+
+Don't expect magic. The rainy strategy is **1.09% better** than simple DCA when comparing same capital.
+
+But 1.09% better over 22 years = **$5,513 extra wealth** for zero extra work (just automated RSI checks).
+
+**That's $250/year for doing absolutely nothing differently** except buying when RSI says "market is oversold."
+
+Still worth it? Your call. But the data says yes.
+
+---
+
 *Report generated automatically from backtest data*  
 *All metrics calculated from equity_rainy_strategy_calendar_dates.csv*  
+*Bootstrap analysis: Same capital invested, different timing*  
 *Last updated: November 24, 2025*
