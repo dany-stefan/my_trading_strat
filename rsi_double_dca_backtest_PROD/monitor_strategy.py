@@ -427,19 +427,16 @@ if __name__ == "__main__":
     print("=" * 80)
     print("UPDATING RSI VERIFICATION LIST")
     print("=" * 80)
-    # NOTE: RSI Verification List is manually verified against TradingView
-    # Auto-updates disabled because yfinance gives inconsistent intraday data
-    # To update manually, verify values on TradingView and edit RSI_VERIFICATION_LIST.txt
-    # try:
-    #     entries_added = update_verification_list()
-    #     if entries_added > 0:
-    #         print(f"✅ Added {entries_added} new verification entries")
-    #     else:
-    #         print("✅ Verification list already up to date")
-    # except Exception as e:
-    #     print(f"⚠️  Could not update verification list: {e}")
-    #     print("   Continuing with strategy check...")
-    # print()
+    try:
+        entries_added = update_verification_list()
+        if entries_added > 0:
+            print(f"✅ Added {entries_added} new verification entries")
+        else:
+            print("✅ Verification list already up to date")
+    except Exception as e:
+        print(f"⚠️  Could not update verification list: {e}")
+        print("   Continuing with strategy check...")
+    print()
     
     # Setup instructions
     if EMAIL_CONFIG['sender_email'] == "your_email@gmail.com":

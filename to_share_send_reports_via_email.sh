@@ -50,19 +50,17 @@ if [ ! -f "$FILE_LIST" ]; then
     exit 1
 fi
 
-# NOTE: RSI Verification List updates disabled - values should be manually verified
-# yfinance gives inconsistent intraday data that doesn't match TradingView
-# Update RSI file manually by verifying values on TradingView
-# echo "=== Updating RSI Verification List ==="
-# cd "$WORKSPACE_DIR/rsi_double_dca_backtest_PROD"
-# python3 update_rsi_verification.py
-# if [ $? -eq 0 ]; then
-#     echo "✅ RSI Verification List updated"
-# else
-#     echo "⚠️  Warning: Failed to update RSI Verification List"
-# fi
-# cd "$WORKSPACE_DIR"
-# echo ""
+# Update RSI Verification List before creating ZIP
+echo "=== Updating RSI Verification List ==="
+cd "$WORKSPACE_DIR/rsi_double_dca_backtest_PROD"
+python3 update_rsi_verification.py
+if [ $? -eq 0 ]; then
+    echo "✅ RSI Verification List updated"
+else
+    echo "⚠️  Warning: Failed to update RSI Verification List"
+fi
+cd "$WORKSPACE_DIR"
+echo ""
 
 # Clean up old ZIP files in workspace root
 echo "🧹 Cleaning up old ZIP files..."
