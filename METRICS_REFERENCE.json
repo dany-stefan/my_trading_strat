@@ -1,18 +1,18 @@
 {
   "generation_date": "2025-11-24",
-  "generation_timestamp": "2025-11-24 19:12:00",
+  "generation_timestamp": "2025-11-24 19:29:26",
   "backtest_period": {
     "start_date": "2003-10-15",
     "end_date": "2025-11-21",
     "years": 22.1
   },
   "rainy_day_strategy": {
-    "final_equity": 511953.82,
+    "final_equity": 511953.81,
     "final_cash_pool": 2610.0,
     "total_invested": 86100,
     "base_dca_investment": 73650,
     "rainy_investment": 12450,
-    "profit": 425853.82,
+    "profit": 425853.81,
     "profit_percent": 494.6,
     "cagr_backtest": 44.5,
     "cagr_roi": 8.4,
@@ -20,7 +20,7 @@
     "volatility_percent": 19.92
   },
   "simple_dca_baseline": {
-    "final_equity": 434050.54,
+    "final_equity": 434050.53,
     "total_invested": 73650,
     "cagr_backtest": 43.43,
     "cagr_roi": 8.36,
