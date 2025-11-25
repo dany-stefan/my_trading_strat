@@ -10,16 +10,7 @@ import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
 from pathlib import Path
-
-
-def calculate_rsi(data, period=14):
-    """Calculate RSI using Wilder's smoothing (matches TradingView)"""
-    delta = data['Close'].diff()
-    gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
-    loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
-    rs = gain / loss
-    rsi = 100 - (100 / (1 + rs))
-    return rsi
+from rsi_indicators import compute_rsi_with_sma
 
 
 def update_verification_list(verification_file_path=None):
@@ -91,9 +82,10 @@ def update_verification_list(verification_file_path=None):
         print("✅ Verification list is already up to date")
         return 0
     
-    # Fetch market data
-    start_date = first_date + timedelta(days=1)
-    end_date = today + timedelta(days=1)  # Include today
+    # Fetch market data - need extra days for RSI calculation
+    # Start 30 days before to ensure we have enough data for RSI(14) + SMA(7)
+    start_date = first_date - timedelta(days=30)
+    end_date = today  # Only up to today, not tomorrow
     
     print(f"📊 Fetching market data from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}...")
     
@@ -108,15 +100,18 @@ def update_verification_list(verification_file_path=None):
         if isinstance(df.columns, pd.MultiIndex):
             df.columns = df.columns.get_level_values(0)
         
-        # Calculate indicators
-        df['RSI'] = calculate_rsi(df)
-        df['RSI_SMA_7'] = df['RSI'].rolling(window=7).mean()
+        # Calculate indicators using shared module (SINGLE SOURCE OF TRUTH)
+        close = df['Adj Close'] if 'Adj Close' in df.columns else df['Close']
+        df['RSI'], df['RSI_SMA_7'] = compute_rsi_with_sma(close, rsi_period=14, sma_period=7)
         
         # Filter to only valid dates (where we have RSI SMA calculated)
         df = df.dropna(subset=['RSI_SMA_7'])
         
+        # Only keep dates AFTER first_date (don't duplicate)
+        df = df[df.index > first_date]
+        
         if df.empty:
-            print("⚠️  Not enough data to calculate RSI SMA(7)")
+            print("✅ No new entries to add (all dates up to date)")
             return 0
         
         # Insert at top of data section (right after header, at first_date_line_idx)

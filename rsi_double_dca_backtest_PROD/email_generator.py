@@ -11,6 +11,7 @@ Shared by both simulation and production email scripts to ensure consistency.
 from datetime import datetime, timedelta
 from market_metrics import calculate_market_metrics
 from strategy_comparison import calculate_strategy_comparison
+from rainy_analytics import load_rainy_analytics
 
 # =============================================================================
 # STRATEGY PARAMETERS
@@ -46,32 +47,35 @@ def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy
     """
     today = datetime.now().date()
     
-    # Calculate accumulated rainy pool ROI (only for real emails, not test)
-    rainy_pool_invested = 0.0
-    rainy_pool_shares = 0.0
-    rainy_pool_current_value = 0.0
-    rainy_pool_roi_percent = 0.0
-    rainy_pool_profit = 0.0
-    rainy_pool_avg_price = 0.0
+    # Use LIVE rainy buys from tracking (current reality, not backtest simulation)
+    # rainy_buys parameter contains actual deployed buys from strategy_tracking.json
+    live_rainy_count = len(rainy_buys) if rainy_buys else 0
     
-    if not is_simulation and rainy_buys:
+    # Calculate live rainy pool metrics (from actual deployed buys)
+    live_rainy_invested = 0.0
+    live_rainy_shares = 0.0
+    live_rainy_avg_price = 0.0
+    
+    if live_rainy_count > 0:
         total_buy_price = 0.0
         for buy in rainy_buys:
             amount = buy.get('amount', 150.0)
             buy_price = buy.get('price', 0.0)
-            rainy_pool_invested += amount
+            live_rainy_invested += amount
             total_buy_price += buy_price
             if buy_price > 0:
-                rainy_pool_shares += amount / buy_price
+                live_rainy_shares += amount / buy_price
         
-        if len(rainy_buys) > 0:
-            rainy_pool_avg_price = total_buy_price / len(rainy_buys)
-        
-        if rainy_pool_shares > 0:
-            rainy_pool_current_value = rainy_pool_shares * price
-            rainy_pool_profit = rainy_pool_current_value - rainy_pool_invested
-            if rainy_pool_invested > 0:
-                rainy_pool_roi_percent = (rainy_pool_profit / rainy_pool_invested) * 100
+        live_rainy_avg_price = total_buy_price / live_rainy_count if live_rainy_count > 0 else 0.0
+    
+    live_rainy_current_value = live_rainy_shares * price if live_rainy_shares > 0 else 0.0
+    live_rainy_profit = live_rainy_current_value - live_rainy_invested
+    live_rainy_roi_percent = (live_rainy_profit / live_rainy_invested * 100) if live_rainy_invested > 0 else 0.0
+    
+    # Load backtest rainy day analytics from JSON (for reference/comparison only)
+    rainy_analytics = load_rainy_analytics()
+    backtest_summary = rainy_analytics.get('summary', {})
+    backtest_top_periods = rainy_analytics.get('top_periods', [])[:5]
     
     today = datetime.now().date()
     
@@ -140,23 +144,37 @@ def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy
     # Metrics markdown table (embed in email)
     rsi_14_display = f"{rsi_14:.2f}" if rsi_14 is not None else "N/A"
     
-    # Build rainy pool ROI section (only for production emails)
+    # Build rainy pool ROI section (LIVE data from strategy_tracking.json)
     rainy_pool_section = ""
-    if not is_simulation and rainy_buys:
+    if not is_simulation and live_rainy_count > 0:
         rainy_pool_section = f"""
 
-💧 RAINY POOL PERFORMANCE TRACKER
+💧 YOUR RAINY POOL PERFORMANCE (LIVE TRACKING)
 | Metric | Value |
 |---|---|
-| Total Rainy Contributions | ${rainy_pool_invested:,.2f} CAD |
-| Average Rainy Buy Price | ${rainy_pool_avg_price:.2f} USD |
+| Total Rainy Contributions | ${live_rainy_invested:,.2f} CAD |
+| Average Rainy Buy Price | ${live_rainy_avg_price:.2f} USD |
 | Current SPY Price | ${price:.2f} USD |
-| Current Rainy Pool Value | ${rainy_pool_current_value:,.2f} CAD |
-| Rainy Pool Profit | ${rainy_pool_profit:,.2f} CAD |
-| Rainy Pool ROI | {rainy_pool_roi_percent:.2f}% |
-| Rainy Buys Deployed | {len(rainy_buys)} |
+| Current Rainy Pool Value | ${live_rainy_current_value:,.2f} CAD |
+| Rainy Pool Profit | ${live_rainy_profit:,.2f} CAD |
+| Rainy Pool ROI | {live_rainy_roi_percent:.2f}% |
+| Rainy Buys Deployed | {live_rainy_count} |
 
-*This tracks ONLY your rainy day contributions and their performance*
+*This tracks ONLY your actual rainy day contributions since you started*
+"""
+    elif not is_simulation:
+        # No rainy buys yet - show initial status
+        rainy_pool_section = f"""
+
+💧 YOUR RAINY POOL PERFORMANCE (LIVE TRACKING)
+| Metric | Value |
+|---|---|
+| Total Rainy Contributions | $0.00 CAD |
+| Rainy Buys Deployed | 0 |
+| Status | 🎯 Waiting for first rainy day opportunity! |
+
+*You haven't deployed any rainy buys yet. First deployment day is Dec 3, 2025.*
+*When RSI SMA(7) < 45 on a deployment day, you'll make your first rainy buy!*
 """
     
     metrics_markdown = f"""
@@ -316,41 +334,50 @@ Real-world translation: Invest $14.6k more during 22 years of crashes → $85.3k
 That's every rainy $1 becoming $5.86. Simple DCA turns each $1 into $7.31, but you 
 have $14.6k MORE dollars working for you!
 
-🌧️ ISOLATED RAINY DAY PERFORMANCE
+🌧️ HISTORICAL BACKTEST: WHAT IF YOU'D STARTED IN 2003?
 
-Analyzing ONLY the $12,450 deployed during 83 rainy buys (when RSI < 45):
+The following analysis shows what WOULD have happened if you ran this strategy
+from 2003-2025. This is NOT your actual performance (you just started in 2025).
 
-Overall Rainy Money Stats:
-• Total Rainy Contributions: $14,550 (97 buys over 22 years)
-• Average SPY Price on Rainy Days: $210.14
-• Current SPY Price (Nov 21, 2025): $659.03
-• Price Appreciation: 3.14x (you bought at 68% discount vs today!)
-• Total Shares from Rainy Money: 105.05 shares
-• Current Value of Rainy Shares: $69,234
-• Dollar Gain on Rainy Money: $54,684
-• Percent Return on Rainy Contributions: 375.8%
+Analyzing the hypothetical $12,450 deployed during {backtest_summary.get('num_buys', 0)} rainy buys (if started in 2003):
 
-Top 5 Rainy Periods (by return):
-1. 2009 (Mar-Nov, 245 days, 2 buys): $300 → $3,180 (960% return!) 🏆
-   • Caught the Financial Crisis bottom at avg $64.93/share
-2. 2004 (Mar-Aug, 139 days, 5 buys): $750 → $6,646 (786% return)
-   • Early strategy deployment, held 21 years
-3. 2005 (Apr-Oct, 196 days, 4 buys): $600 → $4,847 (708% return)
-4. 2008 (Jan-Dec, 321 days, 5 buys): $750 → $5,841 (679% return)
-   • Great Financial Crisis - caught falling knife perfectly
-5. 2010 (Feb-Dec, 303 days, 6 buys): $900 → $6,946 (672% return)
+Historical Backtest Stats (2003-2025):
+• Total Rainy Contributions: ${backtest_summary.get('total_contributions', 0):,.0f} ({backtest_summary.get('num_buys', 0)} buys over {backtest_summary.get('years_active', 0)} years)
+• Average SPY Price on Rainy Days: ${backtest_summary.get('avg_buy_price', 0):.2f}
+• Current SPY Price ({rainy_analytics.get('generated_at', 'N/A')}): ${price:.2f}
+• Price Appreciation: {backtest_summary.get('price_appreciation_multiple', 0):.2f}x
+• Hypothetical Current Value: ${backtest_summary.get('current_value', 0):,.0f}
+• Hypothetical Profit: ${backtest_summary.get('profit', 0):,.0f}
+• Hypothetical ROI: {backtest_summary.get('roi_percent', 0):.1f}%
 
-Recent Rainy Periods (still compounding):
-• 2025 (Jan-Mar, 73 days, 4 buys): $600 → $682 (14% return - just started!)
-• 2024 (Apr-Aug, 110 days, 3 buys): $450 → $592 (32% return)
-• 2023 (Jan-Oct, 273 days, 5 buys): $750 → $1,259 (68% return)
-• 2022 (Feb-Oct, 256 days, 9 buys): $1,350 → $2,323 (72% return)
+Top 5 Rainy Periods From Backtest (2003-2025):"""
+    
+    # Add top periods from backtest analytics JSON
+    for i, period in enumerate(backtest_top_periods, 1):
+        year = period.get('year', 'N/A')
+        num_buys = period.get('num_buys', 0)
+        contributions = period.get('total_contributions', 0)
+        current_value = period.get('current_value', 0)
+        roi = period.get('roi_percent', 0)
+        duration = period.get('duration_days', 0)
+        start_date = period.get('start_date', '')
+        end_date = period.get('end_date', '')
+        
+        trophy = " 🏆" if i == 1 else ""
+        body += f"""
+{i}. {year} ({start_date} to {end_date}, {duration} days, {num_buys} buys): ${contributions:.0f} → ${current_value:,.0f} ({roi:.0f}% return!){trophy}"""
+        
+        if i == 1:
+            avg_price = period.get('avg_price', 0)
+            body += f"""
+   • Caught the bottom at avg ${avg_price:.2f}/share"""
+    
+    body += f"""
 
-💡 The Power of Rainy Periods:
-Every $1 you deployed during rainy days became $4.76 from price appreciation alone!
-Longest rainy period: 2008 (321 days, 5 buys during Financial Crisis)
-Most aggressive: 2022 (9 buys, $1,350 deployed during bear market)
-Best vintage: 2009 - caught absolute bottom at $51.53 per share
+💡 What This Means For You:
+This backtest shows the strategy worked well historically (339% ROI over 22 years).
+Your ACTUAL results will start accumulating from your first rainy buy (likely Dec 2025).
+The strategy gives you confidence it works, but your real ROI starts from $0 today!
 
 📊 See attached charts:
 - strategy_comparison_with_baseline.png - Growth curves comparison
@@ -364,9 +391,15 @@ CURRENT STATUS
 
 Cash Pool: {cash_pool_display}
 Total Contributions to Date: {total_contributions_display}
-Total Rainy Buys to Date: {rainy_buys_count}{initial_note}
+Total Rainy Buys to Date: {live_rainy_count}{initial_note}
+
+📊 YOUR LIVE STRATEGY (Started Nov 2025):
+• You haven't deployed any rainy buys yet (waiting for RSI < 45 on deployment days)
+• First deployment day: December 3, 2025
+• Cash pool ready: ${cash_pool:.2f} (enough for {int(cash_pool / 150)} rainy buys)
 
 ACTUAL BACKTEST RESULTS (Oct 2003 - Nov 2025, {comp_metrics['backtest_years']} years):
+📌 This shows HISTORICAL performance if you'd started in 2003 (NOT your actual results)
 • Investment ROI CAGR: {comp_metrics['rainy_cagr']} (annualized return on contributed capital)
 • Final Equity: {comp_metrics['rainy_final']} (as of Nov 21, 2025)
 • Total Invested: {comp_metrics['rainy_invested']} (base DCA + rainy buys)

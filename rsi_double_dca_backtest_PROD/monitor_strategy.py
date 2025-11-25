@@ -27,6 +27,7 @@ from email_generator import generate_email_content
 from payday_scheduler import get_scheduler
 from strategy_config import get_strategy_config
 from update_rsi_verification import update_verification_list
+from rsi_indicators import compute_rsi_with_sma
 
 # =============================================================================
 # CONFIGURATION - CHANGE STRATEGY HERE
@@ -100,29 +101,12 @@ def get_rsi(ticker="SPY", period=None, lookback_days=100):
         
         close = df["Close"] if "Close" in df.columns else df["Adj Close"]
         
-        # Calculate RSI using Wilder's smoothing (industry standard)
-        delta = close.diff()
-        gain = delta.clip(lower=0)
-        loss = -delta.clip(upper=0)
-        
-        # Initialize arrays for Wilder's smoothing
-        avg_gain = pd.Series(index=close.index, dtype=float)
-        avg_loss = pd.Series(index=close.index, dtype=float)
-        
-        # First value: SMA
-        avg_gain.iloc[period] = gain.iloc[1:period+1].mean()
-        avg_loss.iloc[period] = loss.iloc[1:period+1].mean()
-        
-        # Subsequent values: Wilder's smoothing
-        for i in range(period + 1, len(close)):
-            avg_gain.iloc[i] = (avg_gain.iloc[i-1] * (period - 1) + gain.iloc[i]) / period
-            avg_loss.iloc[i] = (avg_loss.iloc[i-1] * (period - 1) + loss.iloc[i]) / period
-        
-        rs = avg_gain / avg_loss
-        rsi = 100 - (100 / (1 + rs))
-        
-        # Calculate SMA of RSI (uses strategy config for period)
-        rsi_sma = rsi.rolling(window=strategy_config.rsi_sma_period).mean()
+        # Calculate RSI using shared module (SINGLE SOURCE OF TRUTH)
+        rsi, rsi_sma = compute_rsi_with_sma(
+            close, 
+            rsi_period=period, 
+            sma_period=strategy_config.rsi_sma_period
+        )
         
         current_rsi = rsi.iloc[-1]
         current_rsi_sma = rsi_sma.iloc[-1]

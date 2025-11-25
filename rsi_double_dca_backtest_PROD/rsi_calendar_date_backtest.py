@@ -24,6 +24,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from trading_calendar import get_calendar
 from strategy_config import get_strategy_config, STRATEGY_VARIANTS
+from rsi_indicators import compute_rsi_with_sma
 
 # =============================================================================
 # PARAMETERS
@@ -92,38 +93,12 @@ prices["SPY_CAD"] = prices[INDEX_TICKER] / prices[FX_TICKER]
 # =============================================================================
 print("Computing RSI(14) and RSI SMA(7) on SPY...")
 
-def compute_rsi(series: pd.Series, period: int = 14) -> pd.Series:
-    """
-    Calculate RSI using Wilder's smoothing method (industry standard).
-    This matches TradingView and other platforms.
-    
-    Wilder's smoothing formula:
-    - First avg: Simple Moving Average over initial period
-    - Next avg: (Previous avg * (period-1) + Current value) / period
-    """
-    delta = series.diff()
-    gain = delta.clip(lower=0)
-    loss = -delta.clip(upper=0)
-    
-    # Initialize arrays
-    avg_gain = pd.Series(index=series.index, dtype=float)
-    avg_loss = pd.Series(index=series.index, dtype=float)
-    
-    # First value: SMA over initial period
-    avg_gain.iloc[period] = gain.iloc[1:period+1].mean()
-    avg_loss.iloc[period] = loss.iloc[1:period+1].mean()
-    
-    # Subsequent values: Wilder's smoothing
-    for i in range(period + 1, len(series)):
-        avg_gain.iloc[i] = (avg_gain.iloc[i-1] * (period - 1) + gain.iloc[i]) / period
-        avg_loss.iloc[i] = (avg_loss.iloc[i-1] * (period - 1) + loss.iloc[i]) / period
-    
-    rs = avg_gain / avg_loss
-    rsi = 100 - (100 / (1 + rs))
-    return rsi
-
-prices["RSI"] = compute_rsi(prices[INDEX_TICKER], RSI_PERIOD)
-prices["RSI_SMA"] = prices["RSI"].rolling(RSI_SMA_PERIOD).mean()
+# Use shared RSI calculation module (SINGLE SOURCE OF TRUTH)
+prices["RSI"], prices["RSI_SMA"] = compute_rsi_with_sma(
+    prices[INDEX_TICKER], 
+    rsi_period=RSI_PERIOD, 
+    sma_period=RSI_SMA_PERIOD
+)
 prices = prices.dropna(subset=["RSI", "RSI_SMA"])
 
 start_date = prices.index[0]
@@ -412,6 +387,13 @@ if rainy_strategy['rainy_buys']:
     rainy_df = pd.DataFrame(rainy_strategy['rainy_buys'])
     rainy_df.to_csv('rainy_buys_calendar_dates.csv', index=False)
     print(f"✅ Saved: rainy_buys_calendar_dates.csv ({len(rainy_strategy['rainy_buys'])} records)")
+    
+    # Generate rainy analytics JSON from CSV
+    print("Generating rainy analytics JSON...")
+    from rainy_analytics import generate_rainy_analytics
+    current_price = prices[INDEX_TICKER].iloc[-1]
+    generate_rainy_analytics(current_spy_price=float(current_price))
+    print(f"✅ Saved: rainy_analytics.json")
 
 # =============================================================================
 # VISUALIZATION
