@@ -85,7 +85,7 @@ def update_verification_list(verification_file_path=None):
     # Fetch market data - need extra days for RSI calculation
     # Start 30 days before to ensure we have enough data for RSI(14) + SMA(7)
     start_date = first_date - timedelta(days=30)
-    end_date = today  # Only up to today, not tomorrow
+    end_date = datetime.now()  # Use current datetime to include today's data if available
     
     print(f"📊 Fetching market data from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}...")
     
