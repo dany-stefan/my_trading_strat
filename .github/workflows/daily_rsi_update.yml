@@ -1,11 +1,15 @@
-name: Daily RSI Verification Update
+name: Daily RSI Verification Update (DISABLED)
+
+# DISABLED: yfinance gives inconsistent intraday data that doesn't match TradingView
+# RSI verification file should be manually updated with TradingView-verified values
+# This workflow is kept for reference but will not run automatically
 
 on:
-  schedule:
-    # Runs at 7:00 PM EST (00:00 UTC next day) every weekday - ensures market data is available
-    # Market data from yfinance typically available 6-7 PM EST
-    - cron: '0 0 * * 2-6'  # Runs at midnight UTC (7 PM EST previous day) Tue-Sat for Mon-Fri data
-  workflow_dispatch:  # Allows manual trigger from GitHub UI
+  # schedule:
+  #   # Runs at 7:00 PM EST (00:00 UTC next day) every weekday - ensures market data is available
+  #   # Market data from yfinance typically available 6-7 PM EST
+  #   - cron: '0 0 * * 2-6'  # Runs at midnight UTC (7 PM EST previous day) Tue-Sat for Mon-Fri data
+  workflow_dispatch:  # Manual trigger only
 
 permissions:
   contents: write
