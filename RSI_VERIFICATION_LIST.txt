@@ -14,7 +14,7 @@ SOURCE 2 (TradingView):
 • SMA(7): Simple Moving Average on RSI
 
 VERIFICATION STATUS: Comparing local calculations vs TradingView
-Last Updated: 2025-11-25 09:00:50 PM EST | Trigger: Local ZIP Script
+Last Updated: 2025-11-26 02:05:15 AM EST | Trigger: Daily RSI Workflow (Manual)
 Period: 2025 only (future dates will be auto-added by workflow)
 
 ═══════════════════════════════════════════════════════════════════════════
@@ -25,6 +25,8 @@ NOV 2025:
 
 Date            Local-RSI  Local-SMA  TV-RSI   TV-SMA   Match    Rainy?   Note
 ───────────────────────────────────────────────────────────────────────────────────────────────
+2025-11-25        53.87      43.53    53.87    43.53   ✅       YES      
+2025-11-24        49.52      42.73    49.52    42.73   ✅       YES      
 2025-11-21        41.65      42.57    41.65    42.57   ✅       YES     
 2025-11-20        35.37      45.08    35.37    45.08   ✅       NO      
 2025-11-19        41.87      48.45    41.87    48.45   ✅       NO      
