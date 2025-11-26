@@ -65,7 +65,10 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
     if trigger_source is None:
         trigger_source = "Manual Execution"
     
-    update_time = datetime.now().strftime('%Y-%m-%d %I:%M:%S %p EST')
+    # Convert to EST (UTC-5)
+    from datetime import timezone, timedelta
+    est = timezone(timedelta(hours=-5))
+    update_time = datetime.now(est).strftime('%Y-%m-%d %I:%M:%S %p EST')
     new_last_updated_line = f"Last Updated: {update_time} | Trigger: {trigger_source}"
     
     if last_updated_idx is not None:
