@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-11-25 19:22:26",
+  "generated_at": "2025-11-25 20:56:45",
   "current_spy_price": 668.73,
   "data_source": "rainy_buys_calendar_dates.csv",
   "summary": {
@@ -7,8 +7,8 @@
     "num_buys": 83,
     "avg_buy_price": 264.21,
     "total_shares": 81.08,
-    "current_value": 54219.29,
-    "profit": 41769.29,
+    "current_value": 54219.3,
+    "profit": 41769.3,
     "roi_percent": 335.5,
     "price_appreciation_multiple": 2.53,
     "first_buy_date": "2004-03-17",
@@ -694,8 +694,8 @@
       "price": 72.96,
       "amount": 150.0,
       "shares": 2.0559,
-      "current_value": 1374.86,
-      "profit": 1224.86,
+      "current_value": 1374.87,
+      "profit": 1224.87,
       "roi_percent": 816.58
     },
     {
@@ -864,8 +864,8 @@
       "price": 175.79,
       "amount": 150.0,
       "shares": 0.8533,
-      "current_value": 570.62,
-      "profit": 420.62,
+      "current_value": 570.61,
+      "profit": 420.61,
       "roi_percent": 280.41
     },
     {
