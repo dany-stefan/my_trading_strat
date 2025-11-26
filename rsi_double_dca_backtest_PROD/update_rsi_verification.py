@@ -232,15 +232,16 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
         print("✅ Verification list is already up to date")
         return 0
     
-    # Fetch market data - need extra days for RSI calculation
-    # Start 30 days before to ensure we have enough data for RSI(14) + SMA(7)
-    start_date = first_date - timedelta(days=30)
+    # Fetch market data - MUST use FULL HISTORY to match backtest (SINGLE SOURCE OF TRUTH)
+    # Backtest uses ALL data from 2003, so we must too for consistency
+    backtest_start_date = '2003-01-01'
     end_date = datetime.now()  # Use current datetime to include today's data if available
     
-    print(f"📊 Fetching market data from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}...")
+    print(f"📊 Fetching FULL market data from {backtest_start_date} to {end_date.strftime('%Y-%m-%d')}...")
+    print(f"   (Using full history to match backtest - SINGLE SOURCE OF TRUTH)")
     
     try:
-        df = yf.download('SPY', start=start_date, end=end_date, interval='1d', progress=False)
+        df = yf.download('SPY', start=backtest_start_date, end=end_date, interval='1d', progress=False)
         
         if df.empty:
             print("⚠️  No new market data available")
@@ -251,6 +252,7 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
             df.columns = df.columns.get_level_values(0)
         
         # Calculate indicators using shared module (SINGLE SOURCE OF TRUTH)
+        # IMPORTANT: Use same column preference as backtest (Adj Close preferred)
         close = df['Adj Close'] if 'Adj Close' in df.columns else df['Close']
         df['RSI'], df['RSI_SMA_7'] = compute_rsi_with_sma(close, rsi_period=14, sma_period=7)
         
