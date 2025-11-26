@@ -53,14 +53,13 @@ fi
 # Update RSI Verification List before creating ZIP
 echo "=== Updating RSI Verification List ==="
 
-# Check if ALPHAVANTAGE_API_KEY is set
+# Auto-set ALPHAVANTAGE_API_KEY if not already in environment
 if [ -z "$ALPHAVANTAGE_API_KEY" ]; then
-    echo "⚠️  ALPHAVANTAGE_API_KEY not set in environment"
-    echo "   TV values will be marked as TBD (can be backfilled later by daily workflow)"
-    echo "   To populate TV values now, run: export ALPHAVANTAGE_API_KEY=4PJSX4ETS4LPQEF2"
+    echo "🔑 Auto-setting ALPHAVANTAGE_API_KEY for TV value population"
+    export ALPHAVANTAGE_API_KEY=4PJSX4ETS4LPQEF2
     echo ""
 else
-    echo "✅ ALPHAVANTAGE_API_KEY found - will fetch TV values from API"
+    echo "✅ ALPHAVANTAGE_API_KEY already set - will fetch TV values from API"
     echo ""
 fi
 
