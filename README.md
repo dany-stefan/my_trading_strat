@@ -14,6 +14,36 @@
 
 ## 🚀 Quick Start
 
+### 🏆 HOLYGRAIL: Fresh Backtest Regeneration (All Reports)
+
+When you need to regenerate ALL backtest reports from scratch using the latest data:
+
+```bash
+cd /Users/danystefan/Documents/workspace/my_trading_strat
+bash regenerate_all_reports.sh
+```
+
+**This runs:**
+- 8 Python scripts sequentially (no interruption)
+- Generates 19 files (CSVs, charts, reports, email preview)
+- Uses single source of truth (`compute_rsi_with_sma()`)
+- Verifies all files exist after completion
+- Takes ~2-3 minutes
+
+**Generated files:**
+- `equity_baseline_calendar_dates.csv` (baseline DCA)
+- `equity_rainy_strategy_calendar_dates.csv` (rainy strategy)
+- `rainy_buys_calendar_dates.csv` (rainy buy history)
+- `rainy_analytics.json` (hit/miss analytics)
+- 8 PNG charts (comparison, timeline, hit/miss, etc.)
+- `simulated_email_preview.html` (email preview)
+- `COMPREHENSIVE_PERFORMANCE_REPORT.md` (full report)
+- And more...
+
+**After holygrail run:** Always run `bash to_share_send_reports_via_email.sh` to create ZIP for stakeholders.
+
+---
+
 ### 1. Preview Your Email (No Email Sent!)
 
 ```bash
