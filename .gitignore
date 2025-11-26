@@ -26,6 +26,9 @@ strategy_tracking.json
 # Temporary files - allow specific analysis files
 # (CSVs and PNGs from backtest are committed for documentation)
 
+# Ad-hoc analysis folder (temporary work, do not commit)
+tmp_adhoc_analysis/
+
 # Sensitive
 *.pem
 *.key
