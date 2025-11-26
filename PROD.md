@@ -50,9 +50,9 @@ This analysis presents the **PROD (Production) strategy** - a disciplined, bi-we
 - **Total Rainy Days (RSI SMA < 45):** 85 opportunities
 - **Successful Deployments:** 83 buys (97.6% hit rate)
 - **Missed Opportunities:** 2 (insufficient cash pool)
-- **Rainy Day Frequency:** 17.3% of execution days (1 in 5-6 paydays)
+- **Rainy Day Frequency:** 17.3% of execution days (paydays) — 85 opportunities out of ~491 actual execution days (paydays) on trading days
 - **Average RSI SMA on Buys:** 39.44
-- **Total Rainy Capital Deployed:** $12,450 (83 buys × $150 per rainy buy)
+- **Total Rainy Capital Deployed:** $12,450 (83 deployments × $150 per rainy deployment)
 
 ---
 
@@ -476,16 +476,17 @@ The **PROD Rainy Day strategy** demonstrates superior performance across multipl
 
 ## 📊 Market Favorability & Cash Pool Execution
 
-### Historical Market Conditions (532 Paydays, Oct 2003 - Nov 2025)
+### Historical Market Conditions (~491 Execution Days (Paydays), Oct 2003 - Nov 2025)
 
 **Market Favorability Distribution:**
-- **82.7% of paydays (440/532)**: Market is expensive (RSI SMA(7) ≥ 45) ⛅
+- **82.7% of execution days (paydays) (~406/491)**: Market is expensive (RSI SMA(7) ≥ 45) ⛅
   - No rainy deployment - only base $150 DCA invested
-  - Cash pool accumulates $30 per payday for future opportunities
+  - Cash pool accumulates $30 per execution day (payday) for future opportunities
 
-- **17.3% of paydays (92/532)**: Market is favorable (RSI SMA(7) < 45) 🌧️
-  - Rainy day opportunity - deploy extra $150 from cash pool
+- **17.3% of execution days (paydays) (85/491)**: Market is favorable (RSI SMA(7) < 45) 🌧️
+  - Rainy day opportunity - deploy extra $150 from cash pool (if sufficient capital)
   - These are your golden buying moments during market dips
+  - **Note:** 532 would be the theoretical maximum (22.11 years × 24 paydays/year), but actual execution days (paydays) fall on trading days only, excluding weekends/holidays
 
 **Cash Pool Execution Performance:**
 
@@ -499,12 +500,17 @@ The **PROD Rainy Day strategy** demonstrates superior performance across multipl
 
 **Why This Matters:**
 
-1. **Market is Selective** - Only 17.3% of paydays offer good buying opportunities (83 out of 532 paydays)
-2. **Near-Perfect Execution** - Your $30/payday accumulation captures 97.6% of those 83 opportunities (only 2 misses)
+1. **Market is Selective** - Only 17.3% of execution days (paydays) offer good buying opportunities (85 rainy opportunities out of ~491 actual execution days (paydays) on trading days)
+2. **Near-Perfect Execution** - Your $30/execution day (payday) accumulation captures 97.6% of those 85 opportunities (83 successful deployments, only 2 misses)
 3. **Minimal Misses** - Even during consecutive rainy days (up to 5 in a row), you only missed 2 deployments in 22 years
 4. **Optimal Sizing** - The $30 accumulation is well-calibrated to match rainy day frequency
 
-**Translation:** Over 22 years (491 execution days), the market gave you 85 golden opportunities to buy dips. Your cash pool strategy captured 83 of them. Only 2 misses. 97.6% execution rate.
+**Translation:** Over 22 years (~491 actual execution days (paydays) on trading days), the market gave you 85 golden opportunities to buy dips. Your cash pool strategy captured 83 of them. Only 2 misses. 97.6% execution rate.
+
+**Terminology:**
+- **Execution days (paydays)**: When base $150 DCA happens (3rd & 17th, or next trading day) = ~491 actual days. Official payday is 1st & 15th, but money takes 2 days to transfer through bank, so effective payday is 3rd & 17th.
+- **Deployment days**: Subset of execution days when rainy buy happens (RSI SMA < 45 AND sufficient cash) = 83 days
+- **Rainy opportunities**: Days when RSI SMA < 45 (whether or not you had cash to deploy) = 85 days
 
 **Key Insight:** If you increased rainy deployment to $250 without scaling accumulation from $30 to $50, you'd miss significantly more opportunities, losing thousands in potential gains. See [💰 INCREASE_RAINY_CONTRIBUTION_ANALYSIS.md](💰%20INCREASE_RAINY_CONTRIBUTION_ANALYSIS.md) for details.
 

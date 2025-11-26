@@ -839,28 +839,32 @@ Don't sacrifice $17,207 to save $480/year. **Scale properly or stay at $150.**
 ---
 
 ### 2. **Grand Strategy Hit Rate** (Market Conditions)
-*"Of all paydays, how often are conditions rainy (RSI < 45)?"*
+*"Of all execution days (paydays), how often are conditions rainy (RSI < 45)?"*
 
 | Metric | Value |
 |--------|-------|
-| **Total Paydays** (3rd & 17th) | 532 paydays from Oct 2003 - Nov 2025 |
-| **Rainy Opportunities** (RSI < 45) | 85 rainy paydays |
-| **Market Favorability** | **16.0%** of all paydays are rainy |
-| **Non-Rainy Rate** | **81.8%** of paydays (market is "expensive") |
+| **Total Execution Days (Paydays)** (3rd & 17th on trading days) | ~491 actual execution days (paydays) from Oct 2003 - Nov 2025 (532 would be theoretical max, but some fall on weekends/holidays) |
+| **Rainy Opportunities** (RSI < 45) | 85 rainy opportunities |
+| **Market Favorability** | **17.3%** of actual execution days (paydays) are rainy (85/491) |
+| **Non-Rainy Rate** | **82.7%** of execution days (paydays) (market is "expensive") |
 
 **What this measures:** How often market conditions meet your RSI < 45 threshold.
 
 - **NOT a "hit rate"** - it's market condition frequency
-- You were thinking of the **~82% non-rainy rate** (when market is NOT in favorable conditions)
+- You were thinking of the **~83% non-rainy rate** (when market is NOT in favorable conditions)
 - This is independent of your cash pool - it's about market behavior, not your strategy execution
+
+**Terminology:**
+- **Execution days (paydays)**: When base $150 DCA happens (3rd & 17th, or next trading day) = ~491 actual days. Official payday is 1st & 15th, but money takes 2 days to transfer through bank, so effective payday is 3rd & 17th.
+- **Deployment days**: Subset of execution days when rainy buy happens (RSI SMA < 45 AND sufficient cash) = 83 days
 
 ---
 
 ### 🎯 The Critical Difference
 
 **Grand Strategy (Market Conditions):**
-- 85 rainy opportunities out of 532 paydays = 16.0% favorable conditions
-- This means the market is "expensive" (RSI ≥ 45) about 82% of the time
+- 85 rainy opportunities out of ~491 actual execution days (paydays) = 17.3% favorable conditions
+- This means the market is "expensive" (RSI ≥ 45) about 82.7% of the time
 - **This is the same for BOTH strategies** - market doesn't care about your cash pool
 
 **Rainy Opportunity Hit Rate (Cash Pool Capacity):**
