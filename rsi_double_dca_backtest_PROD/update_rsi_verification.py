@@ -163,7 +163,7 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
             
             # Determine if it's a rainy day
             is_rainy = rsi_sma < 45.0
-            rainy_status = "YES RAINY" if is_rainy else "NO RAINY"
+            rainy_status = "YES" if is_rainy else "NO"
             
             # Check day markers
             day_of_month = date.day
@@ -182,10 +182,12 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
                 markers.append("Deploy 17th")
             
             # Combine markers
-            marker_text = f" ({', '.join(markers)})" if markers else ""
+            marker_text = ', '.join(markers) if markers else ""
             
-            # Format entry
-            entry = f"{date_str}        {rsi:5.2f}        {rsi_sma:5.2f}   RSI={rsi:.2f} SMA={rsi_sma:.2f} ✅    100%     {rainy_status}{marker_text}"
+            # Format entry in dual-source format:
+            # Date            Local-RSI  Local-SMA  TV-RSI   TV-SMA   Match    Rainy?   Note
+            # 2025-11-25        53.83      43.49    TBD      TBD      ⏳       YES      
+            entry = f"{date_str}        {rsi:5.2f}      {rsi_sma:5.2f}    TBD      TBD      ⏳       {rainy_status:8s} {marker_text}"
             new_entries.append(entry)
         
         if not new_entries:

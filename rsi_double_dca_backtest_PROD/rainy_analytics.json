@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-11-25 18:44:06",
+  "generated_at": "2025-11-25 18:56:46",
   "current_spy_price": 668.73,
   "data_source": "rainy_buys_calendar_dates.csv",
   "summary": {
@@ -694,8 +694,8 @@
       "price": 72.96,
       "amount": 150.0,
       "shares": 2.0559,
-      "current_value": 1374.87,
-      "profit": 1224.87,
+      "current_value": 1374.86,
+      "profit": 1224.86,
       "roi_percent": 816.58
     },
     {
