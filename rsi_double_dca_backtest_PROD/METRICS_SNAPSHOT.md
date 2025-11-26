@@ -1,9 +1,9 @@
-# Metrics Snapshot - 2025-11-26 02:10:00
+# Metrics Snapshot - 2025-11-26 16:32:18
 
 | Metric | Value |
 |---|---|
-| SPY Price | $675.02 |
-| RSI SMA(7) | 43.53 |
+| SPY Price | $680.62 |
+| RSI SMA(7) | 45.56 |
 | Cash Pool | $330.00 |
 | Threshold | 45 |
-| Rainy Today? | Yes |
+| Rainy Today? | No |
