@@ -7,7 +7,7 @@ TradingView Calculation:
 • SMA(7) on RSI: Uses SIMPLE Moving Average
 
 MATCH VERIFICATION: 100.0% - ALL VALUES MATCH! ✅
-Last Updated: 2025-11-25 06:30:00 PM EST | Trigger: Manual Correction
+Last Updated: 2025-11-25 07:00:00 PM EST | Trigger: Manual Correction (Post-Backtest)
 Period: 2025 only (future dates will be auto-added by workflow)
 
 ═══════════════════════════════════════════════════════════════════════════
@@ -16,6 +16,7 @@ Period: 2025 only (future dates will be auto-added by workflow)
 ═══════════════════════════════════════════════════════════════════════════
 NOV 2025:
 
+2025-11-25        53.83        43.49   RSI=53.83 SMA=43.49 ✅    100%     YES RAINY
 2025-11-24        49.49        42.73   RSI=49.49 SMA=42.73 ✅    100%     YES RAINY
 2025-11-21        41.65        42.57   RSI=41.65 SMA=42.57 ✅    100%     YES RAINY
 2025-11-20        35.37        45.08   RSI=35.37 SMA=45.08 ✅    100%     NO RAINY
