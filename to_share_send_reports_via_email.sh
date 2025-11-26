@@ -52,6 +52,18 @@ fi
 
 # Update RSI Verification List before creating ZIP
 echo "=== Updating RSI Verification List ==="
+
+# Check if ALPHAVANTAGE_API_KEY is set
+if [ -z "$ALPHAVANTAGE_API_KEY" ]; then
+    echo "⚠️  ALPHAVANTAGE_API_KEY not set in environment"
+    echo "   TV values will be marked as TBD (can be backfilled later by daily workflow)"
+    echo "   To populate TV values now, run: export ALPHAVANTAGE_API_KEY=4PJSX4ETS4LPQEF2"
+    echo ""
+else
+    echo "✅ ALPHAVANTAGE_API_KEY found - will fetch TV values from API"
+    echo ""
+fi
+
 cd "$WORKSPACE_DIR/rsi_double_dca_backtest_PROD"
 python3 -c "from update_rsi_verification import update_verification_list; count = update_verification_list(trigger_source='Local ZIP Script'); print(f'Added {count} entries')"
 if [ $? -eq 0 ]; then
