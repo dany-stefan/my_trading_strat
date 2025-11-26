@@ -77,34 +77,32 @@ This project now uses **Alpha Vantage API** for dual-source RSI verification, pr
 
 ## 🚀 Usage
 
-### Daily Workflow (Automatic)
+### Daily Workflow (Automatic) - **FULLY AUTOMATED**
 ```yaml
 # Runs at 7 PM EST weekdays
-# Automatically fetches Alpha Vantage data for new entries
-# Updates RSI_VERIFICATION_LIST.txt
+# Automatically performs COMPLETE verification workflow:
+# 1. Fetches Alpha Vantage data (1 API call)
+# 2. Backfills ALL TBD entries from previous days
+# 3. Re-evaluates all pending matches (⏳ → ✅/❌)
+# 4. Adds new entry for today with external verification
+# 5. Commits changes to repository
 ```
 
-### Manual Population (Local)
+**No manual intervention needed!** The workflow handles everything.
+
+### Manual Trigger (GitHub UI)
+```yaml
+# Go to Actions → Daily RSI Verification Update → Run workflow
+# Same complete workflow as automatic run
+# Useful for testing or immediate updates
+```
+
+### Local Testing
 ```bash
-# Backfill historical data (respects rate limits)
 cd rsi_double_dca_backtest_PROD
 export ALPHAVANTAGE_API_KEY='4PJSX4ETS4LPQEF2'
 
-# Dry run (see what would be updated)
-python3 populate_tv_values_from_alphavantage.py --dry-run --limit 5
-
-# Real run (update first 20 entries)
-python3 populate_tv_values_from_alphavantage.py --limit 20
-
-# Full backfill (all TBD entries - may take multiple days due to rate limits)
-python3 populate_tv_values_from_alphavantage.py
-```
-
-### Test Integration
-```bash
-# Test update_rsi_verification.py with API
-cd rsi_double_dca_backtest_PROD
-export ALPHAVANTAGE_API_KEY='4PJSX4ETS4LPQEF2'
+# Run the complete update workflow
 python3 update_rsi_verification.py
 ```
 
@@ -147,11 +145,12 @@ python3 update_rsi_verification.py
 
 ## ⚠️ Important Notes
 
-1. **Rate Limits**: Free tier allows 25 calls/day. Plan backfills accordingly.
-2. **Daily Updates**: Workflow will fetch 1 new entry per day (well within limits)
-3. **Manual Backfills**: Use `--limit` flag to stay within daily quota
-4. **API Key Security**: Never commit API key to repository - use GitHub Secrets only
-5. **Workflow Dependency**: Both workflows require `requests` package (already added)
+1. **Fully Automated**: No manual backfills needed - workflow handles everything
+2. **API Efficiency**: Only 1 API call per day (fetches all data at once)
+3. **Auto-Backfilling**: Catches up on any TBD entries automatically
+4. **Daily Updates**: Workflow adds new entry + backfills + re-evaluates matches
+5. **API Key Security**: Never commit API key to repository - use GitHub Secrets only
+6. **Workflow Dependency**: Both workflows require `requests` package (already added)
 
 ---
 
@@ -160,10 +159,11 @@ python3 update_rsi_verification.py
 1. ✅ **DONE**: Create integration scripts
 2. ✅ **DONE**: Clear fake TV values
 3. ✅ **DONE**: Update workflow files
-4. ⚠️  **TODO**: Add API key to GitHub Secrets (see instructions above)
-5. ⏳ **PENDING**: Backfill historical data (run population script with limits)
-6. ⏳ **PENDING**: Test daily workflow (trigger manually from GitHub UI)
-7. ⏳ **PENDING**: Verify ZIP generation includes real external data
+4. ✅ **DONE**: Implement auto-backfilling in update script
+5. ⚠️  **TODO**: Add API key to GitHub Secrets (see instructions above)
+6. ⏳ **PENDING**: Push changes to GitHub
+7. ⏳ **PENDING**: Test daily workflow (trigger manually from GitHub UI)
+8. ⏳ **PENDING**: Verify ZIP generation includes real external data
 
 ---
 
