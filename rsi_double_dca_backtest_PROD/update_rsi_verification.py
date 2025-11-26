@@ -6,9 +6,11 @@ Updates RSI_VERIFICATION_LIST.txt with missing dates from the last entry to toda
 Called by monitor_strategy.py to keep verification list current.
 
 Now includes automatic TradingView (Alpha Vantage) data fetching for dual-source verification.
+Automatically backfills TBD entries from previous days on each run.
 """
 
 import os
+import re
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
@@ -19,11 +21,13 @@ from fetch_alphavantage_rsi import fetch_alphavantage_rsi, calculate_rsi_sma
 
 def update_verification_list(verification_file_path=None, trigger_source=None):
     """
-    Update RSI_VERIFICATION_LIST.txt with missing dates AND update pending matches.
+    Update RSI_VERIFICATION_LIST.txt with missing dates, backfill TBD values, and re-evaluate matches.
     
-    This function:
-    1. Adds new entries for any missing dates (with TBD for TradingView values)
-    2. Updates pending entries (⏳) by checking if Local matches TradingView values
+    This function performs a complete update workflow:
+    1. Fetch Alpha Vantage data once for all operations
+    2. Backfill any TBD entries from previous days with Alpha Vantage data
+    3. Re-evaluate all pending match statuses (⏳ → ✅/❌)
+    4. Add new entries for any missing dates (with Alpha Vantage data if available)
     
     Args:
         verification_file_path: Path to RSI_VERIFICATION_LIST.txt
@@ -74,7 +78,72 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
                 lines.insert(idx + 2, '')  # Add blank line
                 break
     
-    # STEP 1: Update pending matches (⏳) - check if Local values match TradingView
+    # STEP 1: Fetch Alpha Vantage data once for all operations
+    api_key = os.environ.get('ALPHAVANTAGE_API_KEY')
+    av_rsi_data = None
+    av_sma_data = None
+    
+    if api_key:
+        print("🔑 Alpha Vantage API key found - fetching external verification data...")
+        try:
+            av_rsi_data = fetch_alphavantage_rsi(api_key=api_key)
+            if av_rsi_data:
+                av_sma_data = calculate_rsi_sma(av_rsi_data)
+                print(f"✅ Fetched Alpha Vantage data: {len(av_rsi_data)} RSI values, {len(av_sma_data)} SMA values")
+        except Exception as e:
+            print(f"⚠️  Failed to fetch Alpha Vantage data: {e}")
+            print("   Will proceed without external verification")
+    else:
+        print("⚠️  ALPHAVANTAGE_API_KEY not set - will add entries with TBD for TV values")
+    
+    # STEP 2: Backfill TBD entries from previous days
+    tbd_backfilled = 0
+    if av_rsi_data and av_sma_data:
+        print("\n🔄 Backfilling TBD entries from previous days...")
+        for idx, line in enumerate(lines):
+            # Look for lines with TBD values
+            if 'TBD' in line and line.strip() and line[0:4].isdigit():
+                try:
+                    parts = re.split(r'\s{2,}', line.strip())
+                    if len(parts) >= 6:
+                        date_str = parts[0]
+                        local_rsi = float(parts[1])
+                        local_sma = float(parts[2])
+                        tv_rsi = parts[3]
+                        tv_sma = parts[4]
+                        rainy = parts[6] if len(parts) > 6 else 'NO'
+                        note = ' '.join(parts[7:]) if len(parts) > 7 else ''
+                        
+                        # Check if we have Alpha Vantage data for this date
+                        if tv_rsi == 'TBD' and tv_sma == 'TBD':
+                            if date_str in av_rsi_data and date_str in av_sma_data:
+                                tv_rsi_val = av_rsi_data[date_str]
+                                tv_sma_val = av_sma_data[date_str]
+                                
+                                # Check if values match (within 1.0 tolerance)
+                                rsi_match = abs(local_rsi - tv_rsi_val) <= 1.0
+                                sma_match = abs(local_sma - tv_sma_val) <= 1.0
+                                
+                                if rsi_match and sma_match:
+                                    match_status = '✅'
+                                else:
+                                    match_status = '❌'
+                                
+                                # Reconstruct line with TV values
+                                new_line = f"{date_str}       {local_rsi:6.2f}     {local_sma:6.2f}   {tv_rsi_val:6.2f}   {tv_sma_val:6.2f}   {match_status}       {rainy:8}"
+                                if note:
+                                    new_line += f" {note}"
+                                
+                                lines[idx] = new_line
+                                tbd_backfilled += 1
+                                print(f"{match_status} Backfilled {date_str}: TV-RSI={tv_rsi_val:.2f}, TV-SMA={tv_sma_val:.2f}")
+                except (ValueError, IndexError) as e:
+                    continue
+        
+        if tbd_backfilled > 0:
+            print(f"✅ Backfilled {tbd_backfilled} TBD entries")
+    
+    # STEP 3: Re-evaluate pending matches (⏳) after backfilling
     pending_updates = 0
     for idx, line in enumerate(lines):
         # Look for lines with pending match status (⏳)
@@ -102,51 +171,33 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
                             updated_line = line.replace('⏳', '✅')
                             lines[idx] = updated_line
                             pending_updates += 1
-                            print(f"✅ Updated {date_str}: Local={local_rsi:.2f}/{local_sma:.2f} matches TV={tv_rsi_val:.2f}/{tv_sma_val:.2f}")
+                            print(f"✅ Re-evaluated {date_str}: Local={local_rsi:.2f}/{local_sma:.2f} matches TV={tv_rsi_val:.2f}/{tv_sma_val:.2f}")
                         else:
                             # Update to ❌ (mismatch)
                             updated_line = line.replace('⏳', '❌')
                             lines[idx] = updated_line
                             pending_updates += 1
-                            print(f"❌ Mismatch {date_str}: Local={local_rsi:.2f}/{local_sma:.2f} vs TV={tv_rsi_val:.2f}/{tv_sma_val:.2f}")
+                            print(f"❌ Re-evaluated {date_str}: Local={local_rsi:.2f}/{local_sma:.2f} vs TV={tv_rsi_val:.2f}/{tv_sma_val:.2f}")
             except (ValueError, IndexError):
                 continue
     
-    # Write file if we updated any pending matches (before checking for new entries)
-    if pending_updates > 0:
-        print(f"📝 Updated {pending_updates} pending match status(es)")
+    # Write file if we backfilled or updated pending matches
+    if tbd_backfilled > 0 or pending_updates > 0:
+        print(f"\n📝 Writing updates: {tbd_backfilled} backfilled, {pending_updates} re-evaluated")
         updated_content = '\n'.join(lines)
         with open(verification_file_path, 'w') as f:
             f.write(updated_content)
     
-    # STEP 2: Add new entries with Alpha Vantage data fetching
-    # Fetch Alpha Vantage data if API key is available
-    api_key = os.environ.get('ALPHAVANTAGE_API_KEY')
-    av_rsi_data = None
-    av_sma_data = None
-    
-    if api_key:
-        print("🔑 Alpha Vantage API key found - will fetch external verification data")
-        try:
-            av_rsi_data = fetch_alphavantage_rsi(api_key=api_key)
-            if av_rsi_data:
-                av_sma_data = calculate_rsi_sma(av_rsi_data)
-                print(f"✅ Fetched Alpha Vantage data: {len(av_rsi_data)} RSI values, {len(av_sma_data)} SMA values")
-        except Exception as e:
-            print(f"⚠️  Failed to fetch Alpha Vantage data: {e}")
-            print("   Will add entries with TBD for TV values")
-    else:
-        print("⚠️  ALPHAVANTAGE_API_KEY not set - will add entries with TBD for TV values")
-    
+    # STEP 4: Add new entries with Alpha Vantage data
     # Find the last (most recent) date entry - NOW AT TOP after header
     # Use 'lines' which has the pending updates applied
     first_date = None
     first_date_line_idx = None
     header_end_idx = None
     
-    # Find where data entries start (after "VERIFICATION ENTRIES:" header)
+    # Find where data entries start (after "VERIFICATION ENTRIES" header)
     for idx, line in enumerate(lines):
-        if 'VERIFICATION ENTRIES:' in line:
+        if 'VERIFICATION ENTRIES' in line:
             header_end_idx = idx + 2  # Skip header and separator line
             break
     
