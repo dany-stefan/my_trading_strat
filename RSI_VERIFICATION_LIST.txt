@@ -8,13 +8,13 @@ SOURCE 1 (Local Calculations):
 • RSI(14): Uses Wilder's RMA (Relative Moving Average)
 • SMA(7): Simple Moving Average of RSI values
 
-SOURCE 2 (TradingView):
-• Manual verification from TradingView charts
+SOURCE 2 (TradingView via Alpha Vantage API):
+• Automatic external verification via Alpha Vantage API
 • RSI(14): Uses RMA (Wilder's smoothing)
-• SMA(7): Simple Moving Average on RSI
+• SMA(7): Calculated locally from API RSI values
 
-VERIFICATION STATUS: Comparing local calculations vs TradingView
-Last Updated: 2025-11-26 02:09:57 AM EST | Trigger: Bi-weekly Email Workflow (Manual)
+VERIFICATION STATUS: Comparing local calculations vs Alpha Vantage API
+Last Updated: 2025-11-26 02:42:00 PM EST | Trigger: Manual Update - Timezone Fix
 Period: 2025 only (future dates will be auto-added by workflow)
 
 ═══════════════════════════════════════════════════════════════════════════
