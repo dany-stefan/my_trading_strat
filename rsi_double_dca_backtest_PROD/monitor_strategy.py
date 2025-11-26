@@ -71,16 +71,18 @@ TRACKING_FILE = Path(__file__).parent / "strategy_tracking.json"
 # HELPER FUNCTIONS
 # =============================================================================
 
-def get_rsi(ticker="SPY", period=None, lookback_days=100):
+def get_rsi(ticker="SPY", period=None, lookback_days=None):
     """
     Fetch SPY data and calculate RSI indicators.
     
     Uses strategy_config to determine which indicators to calculate.
+    IMPORTANT: Uses FULL historical data (from 2003) to match backtest calculations
+    and ensure consistency across all scripts (SINGLE SOURCE OF TRUTH).
     
     Args:
         ticker: Stock ticker symbol
         period: RSI period (defaults to strategy config)
-        lookback_days: Days of historical data to fetch
+        lookback_days: IGNORED - always uses full history from 2003 for consistency
     
     Returns:
         Tuple of (rsi, rsi_sma, price) or (None, None, None) on error
@@ -88,8 +90,9 @@ def get_rsi(ticker="SPY", period=None, lookback_days=100):
     if period is None:
         period = strategy_config.rsi_period
     
+    # Use FULL historical data to match backtest (SINGLE SOURCE OF TRUTH)
+    start_date = '2003-01-01'
     end_date = datetime.now()
-    start_date = end_date - timedelta(days=lookback_days)
     
     try:
         df = yf.download(ticker, start=start_date, end=end_date, interval="1d", progress=False)
@@ -99,7 +102,8 @@ def get_rsi(ticker="SPY", period=None, lookback_days=100):
         if isinstance(df.columns, pd.MultiIndex):
             df.columns = df.columns.get_level_values(0)
         
-        close = df["Close"] if "Close" in df.columns else df["Adj Close"]
+        # Use same column preference as backtest for consistency
+        close = df["Adj Close"] if "Adj Close" in df.columns else df["Close"]
         
         # Calculate RSI using shared module (SINGLE SOURCE OF TRUTH)
         rsi, rsi_sma = compute_rsi_with_sma(
