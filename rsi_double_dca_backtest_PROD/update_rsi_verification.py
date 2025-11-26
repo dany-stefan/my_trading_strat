@@ -129,8 +129,8 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
                                 else:
                                     match_status = '❌'
                                 
-                                # Reconstruct line with TV values
-                                new_line = f"{date_str}       {local_rsi:6.2f}     {local_sma:6.2f}   {tv_rsi_val:6.2f}   {tv_sma_val:6.2f}   {match_status}       {rainy:8}"
+                                # Reconstruct line with TV values - consistent formatting
+                                new_line = f"{date_str}        {local_rsi:5.2f}      {local_sma:5.2f}    {tv_rsi_val:5.2f}    {tv_sma_val:5.2f}   {match_status}       {rainy:8}"
                                 if note:
                                     new_line += f" {note}"
                                 
@@ -330,12 +330,12 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
             # Combine markers
             marker_text = ', '.join(markers) if markers else ""
             
-            # Format entry in dual-source format with TV values if available:
+            # Format entry in dual-source format with TV values if available - consistent formatting:
             # Date            Local-RSI  Local-SMA  TV-RSI   TV-SMA   Match    Rainy?   Note
             if tv_rsi == "TBD":
                 entry = f"{date_str}        {rsi:5.2f}      {rsi_sma:5.2f}    TBD      TBD      ⏳       {rainy_status:8s} {marker_text}"
             else:
-                entry = f"{date_str}       {rsi:6.2f}     {rsi_sma:6.2f}   {tv_rsi}   {tv_sma}   {match_status}       {rainy_status:8s} {marker_text}"
+                entry = f"{date_str}        {rsi:5.2f}      {rsi_sma:5.2f}    {tv_rsi_val:5.2f}    {tv_sma_val:5.2f}   {match_status}       {rainy_status:8s} {marker_text}"
             
             new_entries.append(entry)
         
