@@ -4,13 +4,17 @@ RSI Verification List Updater
 
 Updates RSI_VERIFICATION_LIST.txt with missing dates from the last entry to today.
 Called by monitor_strategy.py to keep verification list current.
+
+Now includes automatic TradingView (Alpha Vantage) data fetching for dual-source verification.
 """
 
+import os
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
 from pathlib import Path
 from rsi_indicators import compute_rsi_with_sma
+from fetch_alphavantage_rsi import fetch_alphavantage_rsi, calculate_rsi_sma
 
 
 def update_verification_list(verification_file_path=None, trigger_source=None):
@@ -115,7 +119,25 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
         with open(verification_file_path, 'w') as f:
             f.write(updated_content)
     
-    # STEP 2: Add new entries (existing logic)
+    # STEP 2: Add new entries with Alpha Vantage data fetching
+    # Fetch Alpha Vantage data if API key is available
+    api_key = os.environ.get('ALPHAVANTAGE_API_KEY')
+    av_rsi_data = None
+    av_sma_data = None
+    
+    if api_key:
+        print("🔑 Alpha Vantage API key found - will fetch external verification data")
+        try:
+            av_rsi_data = fetch_alphavantage_rsi(api_key=api_key)
+            if av_rsi_data:
+                av_sma_data = calculate_rsi_sma(av_rsi_data)
+                print(f"✅ Fetched Alpha Vantage data: {len(av_rsi_data)} RSI values, {len(av_sma_data)} SMA values")
+        except Exception as e:
+            print(f"⚠️  Failed to fetch Alpha Vantage data: {e}")
+            print("   Will add entries with TBD for TV values")
+    else:
+        print("⚠️  ALPHAVANTAGE_API_KEY not set - will add entries with TBD for TV values")
+    
     # Find the last (most recent) date entry - NOW AT TOP after header
     # Use 'lines' which has the pending updates applied
     first_date = None
@@ -211,6 +233,29 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
             rsi = float(row['RSI'])
             rsi_sma = float(row['RSI_SMA_7'])
             
+            # Fetch TradingView (Alpha Vantage) values if available
+            tv_rsi = "TBD"
+            tv_sma = "TBD"
+            match_status = "⏳"
+            
+            if av_rsi_data and av_sma_data:
+                if date_str in av_rsi_data and date_str in av_sma_data:
+                    tv_rsi_val = av_rsi_data[date_str]
+                    tv_sma_val = av_sma_data[date_str]
+                    
+                    # Check if values match (within 1.0 tolerance)
+                    rsi_match = abs(rsi - tv_rsi_val) <= 1.0
+                    sma_match = abs(rsi_sma - tv_sma_val) <= 1.0
+                    
+                    if rsi_match and sma_match:
+                        match_status = "✅"
+                    else:
+                        match_status = "❌"
+                    
+                    # Format TV values
+                    tv_rsi = f"{tv_rsi_val:6.2f}"
+                    tv_sma = f"{tv_sma_val:6.2f}"
+            
             # Determine if it's a rainy day
             is_rainy = rsi_sma < 45.0
             rainy_status = "YES" if is_rainy else "NO"
@@ -234,10 +279,13 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
             # Combine markers
             marker_text = ', '.join(markers) if markers else ""
             
-            # Format entry in dual-source format:
+            # Format entry in dual-source format with TV values if available:
             # Date            Local-RSI  Local-SMA  TV-RSI   TV-SMA   Match    Rainy?   Note
-            # 2025-11-25        53.83      43.49    TBD      TBD      ⏳       YES      
-            entry = f"{date_str}        {rsi:5.2f}      {rsi_sma:5.2f}    TBD      TBD      ⏳       {rainy_status:8s} {marker_text}"
+            if tv_rsi == "TBD":
+                entry = f"{date_str}        {rsi:5.2f}      {rsi_sma:5.2f}    TBD      TBD      ⏳       {rainy_status:8s} {marker_text}"
+            else:
+                entry = f"{date_str}       {rsi:6.2f}     {rsi_sma:6.2f}   {tv_rsi}   {tv_sma}   {match_status}       {rainy_status:8s} {marker_text}"
+            
             new_entries.append(entry)
         
         if not new_entries:
