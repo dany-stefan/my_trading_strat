@@ -15,7 +15,11 @@ from rsi_indicators import compute_rsi_with_sma
 
 def update_verification_list(verification_file_path=None, trigger_source=None):
     """
-    Update RSI_VERIFICATION_LIST.txt with missing dates.
+    Update RSI_VERIFICATION_LIST.txt with missing dates AND update pending matches.
+    
+    This function:
+    1. Adds new entries for any missing dates (with TBD for TradingView values)
+    2. Updates pending entries (⏳) by checking if Local matches TradingView values
     
     Args:
         verification_file_path: Path to RSI_VERIFICATION_LIST.txt
@@ -66,8 +70,54 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
                 lines.insert(idx + 2, '')  # Add blank line
                 break
     
+    # STEP 1: Update pending matches (⏳) - check if Local values match TradingView
+    pending_updates = 0
+    for idx, line in enumerate(lines):
+        # Look for lines with pending match status (⏳)
+        if '⏳' in line and line.strip() and line[0:4].isdigit():
+            try:
+                parts = line.split()
+                if len(parts) >= 7:
+                    date_str = parts[0]
+                    local_rsi = float(parts[1])
+                    local_sma = float(parts[2])
+                    tv_rsi = parts[3]
+                    tv_sma = parts[4]
+                    
+                    # Check if TradingView values are no longer TBD
+                    if tv_rsi != 'TBD' and tv_sma != 'TBD':
+                        tv_rsi_val = float(tv_rsi)
+                        tv_sma_val = float(tv_sma)
+                        
+                        # Check if values match (within 1.0 tolerance)
+                        rsi_match = abs(local_rsi - tv_rsi_val) <= 1.0
+                        sma_match = abs(local_sma - tv_sma_val) <= 1.0
+                        
+                        if rsi_match and sma_match:
+                            # Update to ✅ (match)
+                            updated_line = line.replace('⏳', '✅')
+                            lines[idx] = updated_line
+                            pending_updates += 1
+                            print(f"✅ Updated {date_str}: Local={local_rsi:.2f}/{local_sma:.2f} matches TV={tv_rsi_val:.2f}/{tv_sma_val:.2f}")
+                        else:
+                            # Update to ❌ (mismatch)
+                            updated_line = line.replace('⏳', '❌')
+                            lines[idx] = updated_line
+                            pending_updates += 1
+                            print(f"❌ Mismatch {date_str}: Local={local_rsi:.2f}/{local_sma:.2f} vs TV={tv_rsi_val:.2f}/{tv_sma_val:.2f}")
+            except (ValueError, IndexError):
+                continue
+    
+    # Write file if we updated any pending matches (before checking for new entries)
+    if pending_updates > 0:
+        print(f"📝 Updated {pending_updates} pending match status(es)")
+        updated_content = '\n'.join(lines)
+        with open(verification_file_path, 'w') as f:
+            f.write(updated_content)
+    
+    # STEP 2: Add new entries (existing logic)
     # Find the last (most recent) date entry - NOW AT TOP after header
-    lines = content.split('\n')
+    # Use 'lines' which has the pending updates applied
     first_date = None
     first_date_line_idx = None
     header_end_idx = None
