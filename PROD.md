@@ -102,8 +102,8 @@ This analysis presents the **PROD (Production) strategy** - a disciplined, bi-we
 
 1. **You deployed MORE capital** ($86,100 = base + rainy vs $73,650 = only base) at DISCOUNTED prices
    - Extra invested: $12,450 during RSI < 45 conditions
-   - That $12,450 became **$53,433** (329% ROI on rainy capital!)
-   - Gain from rainy timing alone: **$40,983**
+   - That $12,450 became **$79,030** (535% ROI on rainy capital!)
+   - Gain from rainy timing alone: **$66,580**
 
 2. **You bought 29.4% cheaper** on rainy days
    - Rainy average price: $153.56
@@ -117,7 +117,7 @@ This analysis presents the **PROD (Production) strategy** - a disciplined, bi-we
 **The Math:**
 - Base DCA (your rainy strategy minus rainy contributions): 490% profit on $73,650 = $360,401
 - Your Rainy: 495% profit on $86,100 = $425,854
-- **Extra profit: $65,453** (from both more capital AND better timing)
+- **Extra profit: $66,580** (from both more capital AND better timing)
 
 **💡 Don't chase CAGR percentages. Chase absolute dollars. $77,903 > 0.04%!** 🎯
 
@@ -230,9 +230,9 @@ This analysis presents the **PROD (Production) strategy** - a disciplined, bi-we
 1. **You deployed $12,450 MORE** during market dips (RSI < 45)
    - Extra capital invested at discounted prices
    
-2. **That $12,450 became $53,433** 
-   - 329% ROI on just the rainy portion!
-   - Gain from tactical timing: **$40,983**
+2. **That $12,450 became $79,030** 
+   - 535% ROI on just the rainy portion!
+   - Gain from tactical timing: **$66,580**
    
 3. **You bought 29.4% cheaper** 
    - Rainy average: $153.56/share
@@ -272,7 +272,7 @@ This analysis presents the **PROD (Production) strategy** - a disciplined, bi-we
 **The Math:**
 - Simple DCA: 490% profit on $73,650 = **$360,401**
 - Rainy Day: 495% profit on $86,100 = **$425,854**
-- Extra profit: **$65,453** (from more capital + better timing)
+- Extra profit: **$66,580** (from more capital + better timing)
 
 **💡 Don't chase CAGR percentages. Chase absolute dollars.**
 
@@ -288,9 +288,9 @@ OUTPERFORMANCE:                $77,903
 
 Extra invested:                $12,450
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ROI on extra capital:          329.2%
+ROI on extra capital:          535.0%
 
-Every extra $1 → $4.29 💰
+Every extra $1 → $6.35 💰
 ```
 
 ### Advanced Metrics Comparison

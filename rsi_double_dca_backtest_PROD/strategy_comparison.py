@@ -228,7 +228,7 @@ class StrategyComparison:
         self.extra_deployed_vs_dca = self.rainy_extra_deployments
         
         # ROI on rainy capital = extra gain / rainy deployments
-        self.rainy_capital_return = ((self.gain_vs_dca / self.extra_deployed_vs_dca) * 100) if self.extra_deployed_vs_dca > 0 else 0
+        self.rainy_capital_return = ((self.gain_vs_dca - self.extra_deployed_vs_dca) / self.extra_deployed_vs_dca) * 100 if self.extra_deployed_vs_dca > 0 else 0
         self.rainy_capital_multiplier = 1 + (self.rainy_capital_return / 100)
         
         # vs Buy & Hold

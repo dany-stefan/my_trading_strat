@@ -149,7 +149,7 @@ def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy
     if not is_simulation and live_rainy_count > 0:
         rainy_pool_section = f"""
 
-💧 YOUR RAINY POOL PERFORMANCE (LIVE TRACKING)
+💧 RAINY POOL PERFORMANCE TRACKER
 | Metric | Value |
 |---|---|
 | Total Rainy Contributions | ${live_rainy_invested:,.2f} CAD |
@@ -158,24 +158,27 @@ def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy
 | Current Rainy Pool Value | ${live_rainy_current_value:,.2f} CAD |
 | Rainy Pool Profit | ${live_rainy_profit:,.2f} CAD |
 | Rainy Pool ROI | {live_rainy_roi_percent:.2f}% |
-| Rainy Buys Deployed | {live_rainy_count} |
+| Rainy Buys Executed | {live_rainy_count} |
 
-*This tracks ONLY your actual rainy day contributions since you started*
+*This tracks ONLY your rainy day contributions and their performance*
 """
     elif not is_simulation:
         # No rainy buys yet - show initial status
         rainy_pool_section = f"""
 
-💧 YOUR RAINY POOL PERFORMANCE (LIVE TRACKING)
+💧 RAINY POOL PERFORMANCE TRACKER
 | Metric | Value |
 |---|---|
 | Total Rainy Contributions | $0.00 CAD |
-| Rainy Buys Deployed | 0 |
+| Rainy Buys Executed | 0 |
 | Status | 🎯 Waiting for first rainy day opportunity! |
 
 *You haven't deployed any rainy buys yet. First deployment day is Dec 3, 2025.*
 *When RSI SMA(7) < 45 on a deployment day, you'll make your first rainy buy!*
 """
+    
+    # Build live rainy tracking summary for CURRENT STATUS section
+    live_rainy_tracking = ""
     
     metrics_markdown = f"""
 📌 METRICS SNAPSHOT (Markdown)
@@ -251,8 +254,8 @@ Rainy Day Rule:
 📊 MARKET CONDITIONS & CASH POOL STRATEGY (22 Years of Data):
 
 Historical Market Favorability:
-• 82.7% of paydays (440/532): Market is expensive (RSI ≥ 45) - No rainy deployment ⛅
-• 17.3% of paydays (92/532): Market is favorable (RSI < 45) - Rainy opportunity! 🌧️
+• 82.7% of paydays (406/491): Market is expensive (RSI ≥ 45) - No rainy deployment ⛅
+• 17.3% of paydays (85/491): Market is favorable (RSI < 45) - Rainy opportunity! 🌧️
 
 Cash Pool Execution Rate:
 • Current Strategy ($150/$30): 97.6% hit rate ✅
@@ -267,8 +270,8 @@ Why This Matters:
 • Your $30/payday accumulation is optimized for rainy day frequency
 • Minimal misses = capture nearly ALL 83 golden buying moments
 
-Translation: In 22 years, the market gave you 83 chances to buy dips.
-Your cash pool strategy captured 81 of them. Only 2 misses. 97.6% execution.
+<p>Translation: In 22 years, the market gave you 85 chances to buy dips.
+Your cash pool strategy captured 83 of them. Only 2 misses. 97.6% execution.
 
 💰 PERFORMANCE VS OTHER STRATEGIES
 
@@ -288,12 +291,12 @@ Your Strategy vs Alternatives ({comp_metrics['backtest_years']} years: {comp_met
 The ROI CAGRs are nearly identical because both strategies efficiently compound returns.
 BUT the rainy strategy deploys MORE capital ($14,550 extra) at OPTIMAL times (RSI < 45).
 
-The Magic: Every rainy $1 → $5.86 after 22 years (586% ROI on rainy capital!)
-• You deployed $14,550 extra → Gained $85,292 extra equity
-• That's 5.86x your rainy money (vs 7.3x for base DCA)
+The Magic: Every rainy $1 → $6.35 after 22 years (535% ROI on rainy capital!)
+• You deployed $12,450 extra → Gained $79,030 extra equity
+• That's 6.35x your rainy money (vs 7.3x for base DCA)
 • Lower CAGR on rainy buys (they're late-stage contributions) but MASSIVE absolute gains
 
-Think of it: Invest $14.6k more during crashes → Walk away with $85.3k more wealth!
+Think of it: Invest $12.5k more during crashes → Walk away with $79k more wealth!
 
 📊 ADVANCED METRICS (Risk & Quality):
 
@@ -316,7 +319,7 @@ IS IT WORTH IT? Absolutely - here's the proof:
 The Investment Efficiency Breakdown:
   Deploy: {comp_metrics['extra_deployed']} more in 83 rainy buys (when RSI < 45)
   Result: {comp_metrics['gain_vs_dca']} more final equity
-  Ratio:  5.86x return on your rainy dollars after 22 years
+  Ratio:  6.35x return on your rainy dollars after 22 years
 
 Why CAGR is similar (9.26% vs 9.46%) but you still crush it:
 • Both strategies compound efficiently (9-10% annual returns)
@@ -392,6 +395,7 @@ CURRENT STATUS
 Cash Pool: {cash_pool_display}
 Total Contributions to Date: {total_contributions_display}
 Total Rainy Buys to Date: {live_rainy_count}{initial_note}
+{live_rainy_tracking}
 
 📊 YOUR LIVE STRATEGY (Started Nov 2025):
 • You haven't deployed any rainy buys yet (waiting for RSI < 45 on deployment days)
