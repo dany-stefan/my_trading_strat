@@ -11,6 +11,17 @@
 This analysis presents the **PROD (Production) strategy** - a disciplined, bi-weekly Dollar-Cost Averaging (DCA) approach enhanced with tactical "rainy day" buying during market weakness. The strategy uses a fixed RSI SMA(7) < 45 threshold to identify oversold conditions and deploys extra capital from a cash reserve.
 
 **Key Highlights:**
+
+> **Why are there two different Investment ROI CAGR values?**
+>
+> - **8.40% Investment ROI CAGR** (headline, above): This is the compound annual growth rate (CAGR) if all your money was invested up front and left to grow. It is directly comparable to SPY's long-term CAGR or hedge fund returns.
+> - **9.26% Investment ROI CAGR** (metrics table below): This is the annualized return on your actual contributions (money-weighted return, IRR), reflecting the real-world effect of investing steadily over time. It is usually higher because you bought more shares during market dips.
+>
+> **Summary:**
+> | Metric | Value | What it means |
+> |--------|-------|---------------|
+> | **Investment ROI CAGR (Headline)** | 8.40% | CAGR if all money invested up front (comparable to SPY, funds) |
+> | **Investment ROI CAGR (Table)** | 9.26% | Annualized return on actual contributions (IRR/money-weighted) |
 - ✅ **8.40% Investment ROI CAGR** over 22 years (beats SPY's ~8% and hedge funds' ~7%)
 - ✅ **97.6% hit rate** on rainy day deployments (83 of 85 opportunities)
 - ✅ **$511,954 final equity** from $86,100 invested (Base: $73,650 + Rainy: $12,450)
@@ -25,7 +36,7 @@ This analysis presents the **PROD (Production) strategy** - a disciplined, bi-we
 | Metric | Value | Rating/Context |
 |--------|-------|----------------|
 | **Terminal Value** | $511,954 | BASELINE |
-| **Total Invested** | $86,100 | (Base DCA: $73,650 + Rainy buys: $12,450) |
+| **Total Invested** | $86,100 | (Base DCA contributions: $73,650 + Rainy deployments: $12,450) |
 | **Total Profit** | $445,393 (602.3%) | - |
 | **Investment ROI CAGR** | **9.26%** | Annualized return on contributions |
 | **Max Drawdown** | 27.49% | Lower is better |
@@ -62,10 +73,10 @@ This analysis presents the **PROD (Production) strategy** - a disciplined, bi-we
 
 | Metric | Value | vs Rainy Day |
 |--------|-------|--------------|
-| **Terminal Value** | $434,051 | -$85,292 |
+| **Terminal Value** | $434,051 | -$77,903 |
 | **Total Invested** | $59,400 | (Only base DCA: 396 paydays × $150) |
-| **Total Profit** | $374,651 (630.7%) | Lower absolute profit |
-| **Investment ROI CAGR** | 9.46% | Slightly higher % |
+| **Total Profit** | $374,651 (630.7%) | Lower absolute profit (from smaller total contributions) |
+| **Investment ROI CAGR** | 9.46% | Slightly higher % (because less capital was invested, so each dollar worked harder) |
 | **Max Drawdown** | 27.55% | - |
 | **Volatility (Annual)** | 20.44% | - |
 | **Sharpe Ratio** | 1.26 | Good |
@@ -89,7 +100,7 @@ This analysis presents the **PROD (Production) strategy** - a disciplined, bi-we
 
 **Why The Huge Gap With Tiny CAGR Difference?**
 
-1. **You deployed MORE capital** ($86,100 vs $73,650) at DISCOUNTED prices
+1. **You deployed MORE capital** ($86,100 = base + rainy vs $73,650 = only base) at DISCOUNTED prices
    - Extra invested: $12,450 during RSI < 45 conditions
    - That $12,450 became **$53,433** (329% ROI on rainy capital!)
    - Gain from rainy timing alone: **$40,983**
@@ -99,12 +110,12 @@ This analysis presents the **PROD (Production) strategy** - a disciplined, bi-we
    - Market average price: $217.58
    - Every rainy dollar bought more shares
 
-3. **Time invested:** ~1 minute per payday × 530 paydays = 8.8 hours total
-   - Earnings: $77,903 ÷ 8.8 hours = **$8,819/hour**
+3. **Time invested:** ~1 minute per payday × 491 paydays = 8.2 hours total
+   - Earnings: $77,903 ÷ 8.2 hours = **$9,500/hour**
    - And it's fully automated!
 
 **The Math:**
-- Simple DCA: 490% profit on $73,650 = $360,401
+- Base DCA (your rainy strategy minus rainy contributions): 490% profit on $73,650 = $360,401
 - Your Rainy: 495% profit on $86,100 = $425,854
 - **Extra profit: $65,453** (from both more capital AND better timing)
 
@@ -237,7 +248,7 @@ This analysis presents the **PROD (Production) strategy** - a disciplined, bi-we
 
 **Time Invested:**
 - ~1 minute per payday checking email
-- 530 paydays over 22 years
+- 491 paydays over 22 years
 - **Total: 8.8 hours**
 
 **Value Created:**
