@@ -102,7 +102,7 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
     # STEP 2: Backfill TBD entries from previous days
     tbd_backfilled = 0
     if av_rsi_data and av_sma_data:
-        print("\n🔄 Backfilling TBD entries from previous days...")
+        print("\n🔄 Backfilling TBD entries (including today)...")
         for idx, line in enumerate(lines):
             # Look for lines with TBD values
             if 'TBD' in line and line.strip() and line[0:4].isdigit():
