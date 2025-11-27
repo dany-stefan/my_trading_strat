@@ -168,34 +168,25 @@ print(f"✅ {len(execution_schedule)} execution days scheduled")
 # =============================================================================
 # SIMULATE RAINY DAY STRATEGY TO FIND BUY POINTS
 # =============================================================================
-print("\nSimulating rainy day strategy to identify buy points...")
+print("\nLoading VERIFIED rainy buy data...")
 
-cash_pool = INITIAL_CASH_POOL
+# Load verified rainy buys instead of simulating
+rainy_buys_df = pd.read_csv('rainy_buys_calendar_dates.csv')
+rainy_buys_df['date'] = pd.to_datetime(rainy_buys_df['date'])
+
+# Filter to dates within our data range
 rainy_buys = []
-
-for dt in execution_schedule:
-    if dt not in prices.index:
-        continue
-    
-    row = prices.loc[dt]
-    price_cad = row["SPY_CAD"]
-    rsi_sma = row["RSI_SMA"]
-    
-    # Check for rainy day
-    is_rainy = rsi_sma < RSI_THRESHOLD
-    
-    if is_rainy and cash_pool >= RAINY_AMOUNT:
+for _, row in rainy_buys_df.iterrows():
+    buy_date = row['date']
+    if buy_date in prices.index:
+        price_row = prices.loc[buy_date]
         rainy_buys.append({
-            "date": dt,
-            "rsi_sma": rsi_sma,
-            "price": price_cad
+            "date": buy_date,
+            "rsi_sma": price_row["RSI_SMA"],
+            "price": price_row["SPY_CAD"]
         })
-        cash_pool -= RAINY_AMOUNT
-    
-    # Add cash savings
-    cash_pool += CASH_ACCUMULATION
 
-print(f"✅ Found {len(rainy_buys)} rainy day buys")
+print(f"✅ Found {len(rainy_buys)} verified rainy day buys")
 
 # =============================================================================
 # GENERATE CHART

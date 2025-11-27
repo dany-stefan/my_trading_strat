@@ -77,7 +77,7 @@ This analysis compares three investment strategies over 22 years of market histo
 **vs Simple DCA:**
 - **Extra Profit:** $79,030 (20.7% more wealth)
 - **Cost:** Only $12,450 extra capital deployed
-- **ROI on Rainy Capital:** 635% (every $1 → $7.35)
+- **ROI on Rainy Capital:** 535% (every $1 → $6.35)
 - **Same base contributions:** Both strategies invest $150 bi-weekly
 - **Difference:** Rainy Day deploys savings tactically during RSI < 45
 
