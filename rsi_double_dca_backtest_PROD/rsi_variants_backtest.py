@@ -397,6 +397,11 @@ for rank, r in enumerate(filtered_results[:3], 1):
 # =============================================================================
 print("\nGenerating SPY price chart with rainy periods...")
 
+# Load VERIFIED rainy buys data to analyze consecutive buys per period
+rainy_buys_df = pd.read_csv('rainy_buys_calendar_dates.csv')
+rainy_buys_df['date'] = pd.to_datetime(rainy_buys_df['date'])
+rainy_buy_dates = set(rainy_buys_df['date'])
+
 # Identify rainy periods (RSI < 45) with consecutive period lengths
 rainy_45 = prices[prices['RSI'] < 45].copy()
 rainy_periods = []
@@ -415,10 +420,13 @@ if not rainy_45.empty:
             else:
                 # Save previous period
                 period_length = len(rainy_45[(rainy_45.index >= period_start) & (rainy_45.index <= period_end)])
+                # Count verified buys in this period
+                buys_in_period = sum(1 for buy_date in rainy_buy_dates if period_start <= buy_date <= period_end)
                 rainy_periods.append({
                     'start': period_start,
                     'end': period_end,
-                    'length': period_length
+                    'length': period_length,
+                    'buys': buys_in_period
                 })
                 period_start = dt
                 period_end = dt
@@ -426,10 +434,13 @@ if not rainy_45.empty:
     # Don't forget the last period
     if period_start is not None:
         period_length = len(rainy_45[(rainy_45.index >= period_start) & (rainy_45.index <= period_end)])
+        # Count verified buys in this period
+        buys_in_period = sum(1 for buy_date in rainy_buy_dates if period_start <= buy_date <= period_end)
         rainy_periods.append({
             'start': period_start,
             'end': period_end,
-            'length': period_length
+            'length': period_length,
+            'buys': buys_in_period
         })
 
 # Create SPY drawdown
@@ -443,13 +454,29 @@ fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(18, 10), sharex=True,
 ax1.plot(prices.index, prices[INDEX_TICKER], color='#1f77b4', linewidth=1.5, label='SPY Price (USD)')
 ax1.fill_between(prices.index, 0, prices[INDEX_TICKER], alpha=0.1, color='#1f77b4')
 
-# Highlight rainy periods
+# Highlight rainy periods with color coding based on consecutive buys
+legend_added_single = False
+legend_added_multiple = False
 for period in rainy_periods:
-    ax1.axvspan(period['start'], period['end'], alpha=0.2, color='red', 
-                label='Rainy Period (RSI < 45)' if period == rainy_periods[0] else '')
+    if period['buys'] == 1:
+        # Single buy - yellow
+        color = 'yellow'
+        label = 'Single Buy Period' if not legend_added_single else ''
+        legend_added_single = True
+    elif period['buys'] >= 2:
+        # Multiple consecutive buys - red
+        color = 'red'
+        label = 'Multiple Consecutive Buys' if not legend_added_multiple else ''
+        legend_added_multiple = True
+    else:
+        # No buys in this period - light gray
+        color = 'lightgray'
+        label = ''
+    
+    ax1.axvspan(period['start'], period['end'], alpha=0.3, color=color, label=label)
 
 ax1.set_ylabel('SPY Price (USD)', fontsize=12, fontweight='bold')
-ax1.set_title('SPY Price History with Rainy Periods (RSI < 45)', fontsize=14, fontweight='bold', pad=15)
+ax1.set_title('SPY Price History with Rainy Periods (RSI < 45) - Color Coded by Buy Frequency', fontsize=14, fontweight='bold', pad=15)
 ax1.grid(alpha=0.3, linestyle='--')
 ax1.legend(loc='upper left', fontsize=10)
 ax1.set_yscale('log')
@@ -506,54 +533,40 @@ print("Exported: rsi_history_thresholds.png")
 # =============================================================================
 print("\nGenerating rainy day buy analysis chart...")
 
-# Get your chosen variant (#2) for detailed analysis
-your_variant = filtered_results[1]  # Index 1 = Rank #2
-variant_cadence = your_variant['cadence']
-variant_rsi_threshold = your_variant['rsi_threshold']
-variant_rainy_amount = your_variant['rainy_amount']
+# Load VERIFIED rainy buys data instead of re-simulating
+rainy_buys_df = pd.read_csv('rainy_buys_calendar_dates.csv')
+rainy_buys_df['date'] = pd.to_datetime(rainy_buys_df['date'])
 
-# Re-simulate to track individual rainy day events
-rainy_schedule = weekly_set if variant_cadence == "weekly" else biweekly_set
-cash_pool = 0.0
+# Create rainy_df from verified data
 rainy_events = []
+for idx, row in rainy_buys_df.iterrows():
+    dt = row['date']
+    if dt in prices.index:
+        rsi_val = prices.loc[dt, 'RSI']
+        spy_price = prices.loc[dt, INDEX_TICKER]
+        
+        # Determine RSI band based on RSI_SMA from verified data
+        rsi_sma = row['rsi_sma']
+        if rsi_sma < 30:
+            band = "Extreme (<30)"
+        elif rsi_sma < 35:
+            band = "Very Low (30-35)"
+        elif rsi_sma < 40:
+            band = "Low (35-40)"
+        else:
+            band = "Moderate (40-45)"
+        
+        rainy_events.append({
+            'date': dt,
+            'rsi': rsi_sma,  # Use verified RSI_SMA
+            'spy_price': spy_price,
+            'hit': True,  # All verified buys are hits
+            'amount': row['amount'],
+            'band': band,
+            'cash_pool': row['cash_after']  # Use verified cash pool data
+        })
 
-for dt in biweekly_set:
-    cash_pool += CASH_ACCUMULATION  # Save $30 every payday
-    
-    if dt in rainy_schedule:
-        if dt in prices.index:
-            rsi_val = prices.loc[dt, 'RSI']
-            spy_price = prices.loc[dt, INDEX_TICKER]
-            
-            if pd.notna(rsi_val) and rsi_val < variant_rsi_threshold:
-                # Rainy day detected
-                hit = cash_pool >= variant_rainy_amount
-                amount_deployed = variant_rainy_amount if hit else 0
-                
-                if hit:
-                    cash_pool -= variant_rainy_amount
-                
-                # Determine RSI band
-                if rsi_val < 30:
-                    band = "Extreme (<30)"
-                elif rsi_val < 35:
-                    band = "Very Low (30-35)"
-                elif rsi_val < 40:
-                    band = "Low (35-40)"
-                else:
-                    band = "Moderate (40-45)"
-                
-                rainy_events.append({
-                    'date': dt,
-                    'rsi': rsi_val,
-                    'spy_price': spy_price,
-                    'hit': hit,
-                    'amount': amount_deployed,
-                    'band': band,
-                    'cash_pool': cash_pool
-                })
-
-# Create DataFrame
+# Create DataFrame from verified data
 rainy_df = pd.DataFrame(rainy_events)
 
 # Calculate cumulative extra buying
@@ -562,15 +575,15 @@ rainy_df['cumulative_extra'] = rainy_df['amount'].cumsum()
 # Get SPY drawdown for rainy dates
 rainy_df['spy_drawdown'] = rainy_df['date'].apply(lambda d: spy_drawdown.loc[d] if d in spy_drawdown.index else 0)
 
-# Create figure with 3 subplots
-fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(18, 14), sharex=True,
-                                     gridspec_kw={'height_ratios': [2, 1, 1]})
+# Create figure with 3 subplots (remove bottom panel for separate chart)
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(18, 10), sharex=True,
+                                gridspec_kw={'height_ratios': [2, 1]})
 
 # Top panel: SPY Price with Hit/Miss markers colored by RSI band
 ax1_twin = ax1.twinx()
 ax1.plot(prices.index, prices[INDEX_TICKER], color='#1f77b4', linewidth=1.5, label='SPY Price', alpha=0.6)
 
-# Plot rainy day markers
+# Plot rainy day markers (only hits since we're using verified data)
 band_colors = {
     "Extreme (<30)": '#8B0000',      # Dark red
     "Very Low (30-35)": '#DC143C',   # Crimson
@@ -580,24 +593,17 @@ band_colors = {
 
 for band in band_colors.keys():
     band_data = rainy_df[rainy_df['band'] == band]
-    hits = band_data[band_data['hit']]
-    misses = band_data[~band_data['hit']]
     
-    if not hits.empty:
-        ax1_twin.scatter(hits['date'], hits['rsi'], c=band_colors[band], 
-                        marker='o', s=100, edgecolors='black', linewidths=1.5,
-                        label=f'{band} (Hit)', zorder=5, alpha=0.8)
-    
-    if not misses.empty:
-        ax1_twin.scatter(misses['date'], misses['rsi'], c=band_colors[band], 
-                        marker='x', s=100, linewidths=2,
-                        label=f'{band} (Miss)', zorder=5, alpha=0.8)
+    if not band_data.empty:
+        ax1_twin.scatter(band_data['date'], band_data['rsi'], c=band_colors[band], 
+                        marker='^', s=100, edgecolors='black', linewidths=1.5,
+                        label=f'{band} (n={len(band_data)})', zorder=5, alpha=0.8)
 
 ax1.set_ylabel('SPY Price (USD)', fontsize=12, fontweight='bold', color='#1f77b4')
-ax1_twin.set_ylabel('RSI Level', fontsize=12, fontweight='bold')
+ax1_twin.set_ylabel('RSI SMA Level', fontsize=12, fontweight='bold')
 ax1_twin.set_ylim(0, 50)
-ax1_twin.axhline(y=variant_rsi_threshold, color='red', linestyle='--', linewidth=1.5, alpha=0.7, label=f'Your Threshold ({variant_rsi_threshold})')
-ax1.set_title(f'Rainy Day Buy Opportunities: Variant #2 (Bi-weekly ${int(variant_rainy_amount)} RSI<{variant_rsi_threshold})', 
+ax1_twin.axhline(y=45, color='red', linestyle='--', linewidth=1.5, alpha=0.7, label='Your Threshold (45)')
+ax1.set_title(f'Verified Rainy Day Buys: 83 Successful Deployments (2003-2025)', 
              fontsize=14, fontweight='bold', pad=15)
 ax1.grid(alpha=0.3, linestyle='--')
 ax1.set_yscale('log')
@@ -617,40 +623,69 @@ ax2.plot(prices.index, spy_drawdown, color='#d62728', linewidth=1, alpha=0.8)
 hits_only = rainy_df[rainy_df['hit']]
 ax2.scatter(hits_only['date'], hits_only['spy_drawdown'], c='green', 
            marker='^', s=80, edgecolors='black', linewidths=1,
-           label=f'Successful Buy (n={len(hits_only)})', zorder=5)
+           label=f'Successful Buys (n={len(hits_only)})', zorder=5)
 
 ax2.axhline(y=0, color='black', linestyle='-', linewidth=0.5)
 ax2.set_ylabel('SPY Drawdown (%)', fontsize=12, fontweight='bold')
+ax2.set_xlabel('Date', fontsize=12, fontweight='bold')
 ax2.grid(alpha=0.3, linestyle='--')
 ax2.legend(loc='lower left', fontsize=10)
-
-# Bottom panel: Cumulative extra buying power deployed
-ax3.plot(rainy_df['date'], rainy_df['cumulative_extra'], color='#2ca02c', 
-        linewidth=2.5, label='Cumulative Extra Capital Deployed')
-ax3.fill_between(rainy_df['date'], 0, rainy_df['cumulative_extra'], 
-                 alpha=0.3, color='#2ca02c')
-
-ax3.set_ylabel('Cumulative Extra\nBuying ($CAD)', fontsize=12, fontweight='bold')
-ax3.set_xlabel('Date', fontsize=12, fontweight='bold')
-ax3.grid(alpha=0.3, linestyle='--')
-ax3.legend(loc='upper left', fontsize=10)
-ax3.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
+ax2.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
 
 plt.tight_layout()
 plt.savefig(out_dir / "rainy_day_analysis_detailed.png", dpi=150, bbox_inches='tight')
 plt.close()
 print("Exported: rainy_day_analysis_detailed.png")
 
-# Print rainy day statistics by band
-print("\nRainy Day Statistics by RSI Band:")
+# =============================================================================
+# SEPARATE CHART: Cumulative Extra Rainy Capital Deployed
+# =============================================================================
+print("\nGenerating cumulative rainy capital deployed chart...")
+
+fig, ax = plt.subplots(figsize=(16, 8))
+
+ax.plot(rainy_df['date'], rainy_df['cumulative_extra'], color='#2ca02c', 
+        linewidth=3, label='Cumulative Extra Capital Deployed')
+ax.fill_between(rainy_df['date'], 0, rainy_df['cumulative_extra'], 
+                 alpha=0.3, color='#2ca02c')
+
+ax.set_ylabel('Cumulative Extra Buying Power ($CAD)', fontsize=13, fontweight='bold')
+ax.set_xlabel('Date', fontsize=13, fontweight='bold')
+ax.set_title('Cumulative Extra Rainy Capital Deployed: $12,450 Total (2003-2025)', 
+             fontsize=16, fontweight='bold', pad=20)
+ax.grid(alpha=0.3, linestyle='--')
+ax.legend(loc='upper left', fontsize=12)
+
+# Add final value annotation
+final_cumulative = rainy_df['cumulative_extra'].iloc[-1]
+ax.annotate(f'Total Deployed: ${final_cumulative:,.0f}', 
+           xy=(rainy_df['date'].iloc[-1], final_cumulative), 
+           xytext=(-150, -50), textcoords='offset points',
+           bbox=dict(boxstyle='round,pad=0.5', facecolor='white', alpha=0.8),
+           fontsize=11, fontweight='bold', ha='left')
+
+ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
+plt.xticks(rotation=45)
+
+plt.tight_layout()
+plt.savefig(out_dir / "cumulative_rainy_capital_deployed.png", dpi=150, bbox_inches='tight')
+plt.close()
+print("Exported: cumulative_rainy_capital_deployed.png")
+
+# Print rainy day statistics by band using verified data
+print("\nRainy Day Statistics by RSI Band (Verified Data):")
+total_deployed = rainy_df['amount'].sum()
+print(f"Total rainy buys: {len(rainy_df)}")
+print(f"Total capital deployed: ${total_deployed:,.0f}")
+
 for band in ["Extreme (<30)", "Very Low (30-35)", "Low (35-40)", "Moderate (40-45)"]:
     band_data = rainy_df[rainy_df['band'] == band]
     if not band_data.empty:
-        hits = band_data[band_data['hit']].shape[0]
-        total = band_data.shape[0]
-        total_deployed = band_data['amount'].sum()
+        count = len(band_data)
+        total_deployed_band = band_data['amount'].sum()
         avg_drawdown = band_data['spy_drawdown'].mean()
-        print(f"  {band}: {hits}/{total} hit ({hits/total*100:.1f}%), ${total_deployed:,.0f} deployed, avg DD: {avg_drawdown:.1f}%")
+        percentage = (count / len(rainy_df)) * 100
+        print(f"  {band}: {count} buys ({percentage:.1f}%), ${total_deployed_band:,.0f} deployed, avg DD: {avg_drawdown:.1f}%")
 
 # =============================================================================
 # VISUALIZATION 3 - Top 3 Variants vs Baseline DCA

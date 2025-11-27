@@ -18,3 +18,4 @@ rsi_double_dca_backtest_PROD/cash_pool_hit_miss.png
 rsi_double_dca_backtest_PROD/spy_price_hit_miss.png
 rsi_double_dca_backtest_PROD/rsi_hit_miss.png
 rsi_double_dca_backtest_PROD/COMPREHENSIVE_PERFORMANCE_REPORT.md
+rsi_double_dca_backtest_PROD/cumulative_rainy_capital_deployed.png
