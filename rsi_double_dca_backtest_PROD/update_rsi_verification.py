@@ -87,7 +87,7 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
     av_sma_data = None
     
     if api_key:
-        print("🔑 Alpha Vantage API key found - fetching external verification data...")
+        print("🔑 Alpha Vantage API key found - fetching most recent 12 days of external verification data...")
         try:
             av_rsi_data = fetch_alphavantage_rsi(api_key=api_key)
             if av_rsi_data:
