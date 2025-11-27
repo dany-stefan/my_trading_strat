@@ -73,12 +73,14 @@ def fetch_alphavantage_rsi(symbol='SPY', api_key=None):
         
         rsi_data = data['Technical Analysis: RSI']
         
-        # Convert to {date: rsi_value} format
+        # Convert to {date: rsi_value} format, but only keep the most recent 7 days
         result = {}
-        for date_str, values in rsi_data.items():
-            result[date_str] = float(values['RSI'])
-        
-        print(f"✅ Fetched {len(result)} days of RSI data")
+        # Sort dates descending (most recent first)
+        sorted_dates = sorted(rsi_data.keys(), reverse=True)
+        for date_str in sorted_dates[:7]:
+            result[date_str] = float(rsi_data[date_str]['RSI'])
+
+        print(f"✅ Fetched {len(result)} days of RSI data (most recent 7 days only)")
         return result
     
     except requests.exceptions.RequestException as e:
