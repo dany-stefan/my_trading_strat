@@ -2,10 +2,10 @@ name: Bi-weekly Strategy Email Report
 
 on:
   schedule:
-    # Runs at 7:00 AM EST (12:00 UTC) on 3rd and 17th (execution days)
-    # Note: Payday is 1st and 15th, but execution occurs 2 days later to sync with Wealthsimple recurring buys
-    # Sends HTML email report (NO ZIP - ZIP is manual only via local script)
-    - cron: '0 12 3,17 * *'
+    # Runs at 11:00 AM EST (16:00 UTC) on 3rd and 17th of each month
+    # If 3rd/17th falls on weekend, runs on next weekday (handled by script logic)
+    # Sends bi-weekly strategy email report with RSI analysis
+    - cron: '0 16 3,17 * *'
   workflow_dispatch:  # Allows manual trigger from GitHub UI (sends TEST email)
 
 permissions:

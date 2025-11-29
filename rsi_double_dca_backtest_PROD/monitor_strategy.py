@@ -14,7 +14,7 @@ pip install yfinance pandas numpy
 import yfinance as yf
 import pandas as pd
 import numpy as np
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -28,6 +28,11 @@ from payday_scheduler import get_scheduler
 from strategy_config import get_strategy_config
 from update_rsi_verification import update_verification_list
 from rsi_indicators import compute_rsi_with_sma
+
+# =============================================================================
+# TIMEZONE CONFIGURATION - Use Eastern Time for all calculations
+# =============================================================================
+EST = timezone(timedelta(hours=-5))  # Eastern Standard Time (UTC-5)
 
 # =============================================================================
 # CONFIGURATION - CHANGE STRATEGY HERE
@@ -92,7 +97,7 @@ def get_rsi(ticker="SPY", period=None, lookback_days=None):
     
     # Use FULL historical data to match backtest (SINGLE SOURCE OF TRUTH)
     start_date = '2003-01-01'
-    end_date = datetime.now()
+    end_date = datetime.now(EST)
     
     try:
         df = yf.download(ticker, start=start_date, end=end_date, interval="1d", progress=False)
@@ -236,16 +241,25 @@ def check_conditions():
     print("=" * 80)
     print(f"{STRATEGY_NAME} - DAILY CHECK")
     print("=" * 80)
-    print(f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"Date: {datetime.now(EST).strftime('%Y-%m-%d %H:%M:%S EST')}")
     print()
     
     # Load tracking data
     tracking = load_tracking()
     cash_pool = tracking['cash_pool']
-    today = datetime.now().date()
+    today = datetime.now(EST).date()
     today_str = today.strftime('%Y-%m-%d')
     
-    # Get current RSI and RSI SMA(7)
+    # Check if today is a valid execution day (3rd/17th or next weekday)
+    # The workflow runs on 3rd/17th, but we need to verify if today is actually the execution day
+    today_datetime = datetime.combine(today, datetime.min.time()).replace(tzinfo=EST)
+    if not payday_scheduler.is_payday(today_datetime):
+        print(f"ℹ️  Today ({today_str}) is not an execution day (3rd/17th or next weekday after)")
+        print("   Workflow will exit without sending email")
+        return
+    
+    print(f"✅ Today ({today_str}) is a valid execution day")
+    print()
     print("Fetching SPY RSI(14) and RSI SMA(7)...")
     rsi, rsi_sma, price = get_rsi(period=RSI_PERIOD)
     
@@ -290,7 +304,7 @@ def check_conditions():
                     rainy_buys=tracking.get('rainy_buys', [])
                 )
                 m = metrics_obj.get_all_metrics()
-                timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                timestamp = datetime.now(EST).strftime('%Y-%m-%d %H:%M:%S EST')
                 snapshot_lines = [
                     f"# Metrics Snapshot - {timestamp}",
                     "",
@@ -407,7 +421,7 @@ def check_conditions():
             print(f"   💰 Cash pool preserved: ${tracking['cash_pool']:.2f}")
     
     # Update last check timestamp
-    tracking['last_check'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    tracking['last_check'] = datetime.now(EST).strftime('%Y-%m-%d %H:%M:%S EST')
     
     # Save tracking data
     save_tracking(tracking)
