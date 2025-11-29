@@ -191,6 +191,108 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
         with open(verification_file_path, 'w') as f:
             f.write(updated_content)
     
+    # STEP 3.5: Re-evaluate today's entry with fresh local calculations (7 PM EST workflow)
+    # Always update today's local RSI/SMA values with fresh calculations, even if values exist
+    today_date_str = datetime.now().strftime('%Y-%m-%d')
+    todays_entry_updated = False
+    
+    print(f"\n🔄 Re-evaluating today's entry ({today_date_str}) with fresh local calculations...")
+    
+    # Fetch FULL historical data like the backtest (SINGLE SOURCE OF TRUTH)
+    # RSI(14) and RSI SMA(7) need sufficient historical data for accuracy
+    backtest_start_date = '2003-01-01'
+    fresh_end_date = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')  # Include tomorrow in case
+    
+    try:
+        fresh_df = yf.download('SPY', start=backtest_start_date, end=fresh_end_date, interval='1d', progress=False)
+        
+        if not fresh_df.empty:
+            # Handle multi-index columns
+            if isinstance(fresh_df.columns, pd.MultiIndex):
+                fresh_df.columns = fresh_df.columns.get_level_values(0)
+            
+            # Calculate fresh indicators using shared module (SINGLE SOURCE OF TRUTH)
+            # Use same column preference as backtest (Adj Close preferred)
+            close = fresh_df['Adj Close'] if 'Adj Close' in fresh_df.columns else fresh_df['Close']
+            fresh_df['RSI'], fresh_df['RSI_SMA_7'] = compute_rsi_with_sma(close, rsi_period=14, sma_period=7)
+            
+            # Get today's fresh values if available
+            if today_date_str in fresh_df.index.strftime('%Y-%m-%d').values:
+                today_row = fresh_df.loc[fresh_df.index.strftime('%Y-%m-%d') == today_date_str]
+                if not today_row.empty:
+                    fresh_local_rsi = float(today_row['RSI'].iloc[0])
+                    fresh_local_sma = float(today_row['RSI_SMA_7'].iloc[0])
+                    
+                    # Find and update today's entry
+                    for idx, line in enumerate(lines):
+                        if line.strip() and line.startswith(today_date_str):
+                            try:
+                                parts = re.split(r'\s{2,}', line.strip())
+                                if len(parts) >= 6:
+                                    date_str = parts[0]
+                                    old_local_rsi = float(parts[1])
+                                    old_local_sma = float(parts[2])
+                                    tv_rsi_str = parts[3]
+                                    tv_sma_str = parts[4]
+                                    current_status = parts[5]
+                                    rainy = parts[6] if len(parts) > 6 else 'NO'
+                                    note = ' '.join(parts[7:]) if len(parts) > 7 else ''
+                                    
+                                    # Update with fresh local calculations
+                                    new_line = f"{date_str}        {fresh_local_rsi:5.2f}      {fresh_local_sma:5.2f}    {tv_rsi_str}    {tv_sma_str}   {current_status}       {rainy:8}"
+                                    if note:
+                                        new_line += f" {note}"
+                                    
+                                    lines[idx] = new_line
+                                    todays_entry_updated = True
+                                    
+                                    # Re-evaluate match status if we have TV values
+                                    if tv_rsi_str != 'TBD' and tv_sma_str != 'TBD':
+                                        tv_rsi_val = float(tv_rsi_str)
+                                        tv_sma_val = float(tv_sma_str)
+                                        
+                                        rsi_match = abs(fresh_local_rsi - tv_rsi_val) <= 1.0
+                                        sma_match = abs(fresh_local_sma - tv_sma_val) <= 1.0
+                                        
+                                        if rsi_match and sma_match:
+                                            new_status = '✅'
+                                        else:
+                                            new_status = '❌'
+                                        
+                                        # Update status if it changed
+                                        if new_status != current_status:
+                                            new_line = f"{date_str}        {fresh_local_rsi:5.2f}      {fresh_local_sma:5.2f}    {tv_rsi_str}    {tv_sma_str}   {new_status}       {rainy:8}"
+                                            if note:
+                                                new_line += f" {note}"
+                                            lines[idx] = new_line
+                                            print(f"🔄 Today's entry status changed: {current_status} → {new_status} (Fresh Local={fresh_local_rsi:.2f}/{fresh_local_sma:.2f} vs TV={tv_rsi_val:.2f}/{tv_sma_val:.2f})")
+                                        else:
+                                            print(f"✅ Today's entry re-verified: Still {new_status} (Fresh Local={fresh_local_rsi:.2f}/{fresh_local_sma:.2f} matches TV={tv_rsi_val:.2f}/{tv_sma_val:.2f})")
+                                    else:
+                                        print(f"🔄 Today's local values updated: RSI {old_local_rsi:.2f}→{fresh_local_rsi:.2f}, SMA {old_local_sma:.2f}→{fresh_local_sma:.2f} (TV values still TBD)")
+                                    
+                                    break  # Found and updated today's entry
+                            except (ValueError, IndexError) as e:
+                                print(f"⚠️  Error parsing today's entry: {e}")
+                                continue
+                    
+                    if todays_entry_updated:
+                        # Write the updated file with fresh local values
+                        updated_content = '\n'.join(lines)
+                        with open(verification_file_path, 'w') as f:
+                            f.write(updated_content)
+                        print("✅ Today's entry updated with fresh local calculations")
+                    else:
+                        print(f"ℹ️  Today's entry ({today_date_str}) not found in verification list")
+                else:
+                    print(f"⚠️  No fresh market data available for today ({today_date_str})")
+            else:
+                print(f"⚠️  Today's date ({today_date_str}) not found in fresh market data")
+        else:
+            print("⚠️  Could not fetch fresh market data for today's re-evaluation")
+    except Exception as e:
+        print(f"⚠️  Error fetching fresh data for today's re-evaluation: {e}")
+    
     # STEP 4: Add new entries with Alpha Vantage data
     # Find the last (most recent) date entry - NOW AT TOP after header
     # Use 'lines' which has the pending updates applied
