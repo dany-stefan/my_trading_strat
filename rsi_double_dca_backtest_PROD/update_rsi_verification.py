@@ -335,7 +335,9 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
     
     if first_date.date() >= today.date():
         print("✅ Verification list is already up to date")
-        return 0
+        # Still return total updates from backfilling/re-evaluation
+        total_updates = tbd_backfilled + pending_updates + (1 if todays_entry_updated else 0)
+        return total_updates
     
     # Fetch market data - MUST use FULL HISTORY to match backtest (SINGLE SOURCE OF TRUTH)
     # Backtest uses ALL data from 2003, so we must too for consistency
@@ -377,9 +379,14 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
                 print(f"⏳ No new market data available yet (last: {last_market_date.strftime('%Y-%m-%d')})")
                 print(f"   Current verification up to: {first_date.strftime('%Y-%m-%d')}")
                 print(f"   Market data typically available after 5 PM EST")
+                # Return backfilled/re-evaluated count even if no new entries
+                total_updates = tbd_backfilled + pending_updates + (1 if todays_entry_updated else 0)
+                return total_updates
             else:
                 print("✅ No new entries to add (all dates up to date)")
-            return 0
+                # Return backfilled/re-evaluated count
+                total_updates = tbd_backfilled + pending_updates + (1 if todays_entry_updated else 0)
+                return total_updates
         
         # Insert at top of data section (right after header, at first_date_line_idx)
         insert_idx = first_date_line_idx
@@ -447,8 +454,13 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
             new_entries.append(entry)
         
         if not new_entries:
-            print("✅ No new entries to add")
-            return 0
+            # Check if we had any updates from backfilling or re-evaluation
+            total_updates = tbd_backfilled + pending_updates + (1 if todays_entry_updated else 0)
+            if total_updates > 0:
+                print(f"✅ No new entries added, but {total_updates} entries were updated (backfilled/re-evaluated)")
+            else:
+                print("✅ No new entries to add")
+            return total_updates
         
         # Insert new entries
         lines[insert_idx:insert_idx] = new_entries
@@ -462,7 +474,9 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
         for entry in new_entries:
             print(f"   {entry}")
         
-        return len(new_entries)
+        # Return total updates: backfilled + re-evaluated + today's fresh update
+        total_updates = len(new_entries) + tbd_backfilled + pending_updates + (1 if todays_entry_updated else 0)
+        return total_updates
         
     except Exception as e:
         print(f"❌ Error updating verification list: {e}")
