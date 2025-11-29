@@ -191,17 +191,21 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
         with open(verification_file_path, 'w') as f:
             f.write(updated_content)
     
-    # STEP 3.5: Re-evaluate today's entry with fresh local calculations (7 PM EST workflow)
-    # Always update today's local RSI/SMA values with fresh calculations, even if values exist
-    today_date_str = datetime.now().strftime('%Y-%m-%d')
+    # STEP 3.5: Re-evaluate most recent entry with fresh local calculations (7 PM EST workflow)
+    # Always update the most recent trading day's local RSI/SMA values with fresh calculations
     todays_entry_updated = False
     
-    print(f"\n🔄 Re-evaluating today's entry ({today_date_str}) with fresh local calculations...")
+    # Use Eastern Time for date calculations (workflow runs at 7 PM EST)
+    est = timezone(timedelta(hours=-5))
+    now_est = datetime.now(est)
+    today_date_str = now_est.strftime('%Y-%m-%d')
+    
+    print(f"\n🔄 Re-evaluating most recent entry with fresh local calculations (using EST: {today_date_str})...")
     
     # Fetch FULL historical data like the backtest (SINGLE SOURCE OF TRUTH)
     # RSI(14) and RSI SMA(7) need sufficient historical data for accuracy
     backtest_start_date = '2003-01-01'
-    fresh_end_date = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')  # Include tomorrow in case
+    fresh_end_date = (now_est + timedelta(days=1)).strftime('%Y-%m-%d')  # Include tomorrow in case
     
     try:
         fresh_df = yf.download('SPY', start=backtest_start_date, end=fresh_end_date, interval='1d', progress=False)
@@ -216,27 +220,33 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
             close = fresh_df['Adj Close'] if 'Adj Close' in fresh_df.columns else fresh_df['Close']
             fresh_df['RSI'], fresh_df['RSI_SMA_7'] = compute_rsi_with_sma(close, rsi_period=14, sma_period=7)
             
-            # Get today's fresh values if available
-            if today_date_str in fresh_df.index.strftime('%Y-%m-%d').values:
-                today_row = fresh_df.loc[fresh_df.index.strftime('%Y-%m-%d') == today_date_str]
-                if not today_row.empty:
-                    fresh_local_rsi = float(today_row['RSI'].iloc[0])
-                    fresh_local_sma = float(today_row['RSI_SMA_7'].iloc[0])
-                    
-                    # Find and update today's entry
-                    for idx, line in enumerate(lines):
-                        if line.strip() and line.startswith(today_date_str):
-                            try:
-                                parts = re.split(r'\s{2,}', line.strip())
-                                if len(parts) >= 6:
-                                    date_str = parts[0]
-                                    old_local_rsi = float(parts[1])
-                                    old_local_sma = float(parts[2])
-                                    tv_rsi_str = parts[3]
-                                    tv_sma_str = parts[4]
-                                    current_status = parts[5]
-                                    rainy = parts[6] if len(parts) > 6 else 'NO'
-                                    note = ' '.join(parts[7:]) if len(parts) > 7 else ''
+            # Get the most recent available trading day
+            if not fresh_df.empty:
+                most_recent_date = fresh_df.index.max()
+                most_recent_date_str = most_recent_date.strftime('%Y-%m-%d')
+                
+                print(f"📅 Most recent available trading day: {most_recent_date_str}")
+                
+                # Find and update the most recent entry
+                for idx, line in enumerate(lines):
+                    if line.strip() and line.startswith(most_recent_date_str):
+                        try:
+                            parts = re.split(r'\s{2,}', line.strip())
+                            if len(parts) >= 6:
+                                date_str = parts[0]
+                                old_local_rsi = float(parts[1])
+                                old_local_sma = float(parts[2])
+                                tv_rsi_str = parts[3]
+                                tv_sma_str = parts[4]
+                                current_status = parts[5]
+                                rainy = parts[6] if len(parts) > 6 else 'NO'
+                                note = ' '.join(parts[7:]) if len(parts) > 7 else ''
+                                
+                                # Get fresh local values for the most recent trading day
+                                recent_row = fresh_df.loc[fresh_df.index.strftime('%Y-%m-%d') == most_recent_date_str]
+                                if not recent_row.empty:
+                                    fresh_local_rsi = float(recent_row['RSI'].iloc[0])
+                                    fresh_local_sma = float(recent_row['RSI_SMA_7'].iloc[0])
                                     
                                     # Update with fresh local calculations
                                     new_line = f"{date_str}        {fresh_local_rsi:5.2f}      {fresh_local_sma:5.2f}    {tv_rsi_str}    {tv_sma_str}   {current_status}       {rainy:8}"
@@ -265,33 +275,31 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
                                             if note:
                                                 new_line += f" {note}"
                                             lines[idx] = new_line
-                                            print(f"🔄 Today's entry status changed: {current_status} → {new_status} (Fresh Local={fresh_local_rsi:.2f}/{fresh_local_sma:.2f} vs TV={tv_rsi_val:.2f}/{tv_sma_val:.2f})")
+                                            print(f"🔄 Most recent entry status changed: {current_status} → {new_status} (Fresh Local={fresh_local_rsi:.2f}/{fresh_local_sma:.2f} vs TV={tv_rsi_val:.2f}/{tv_sma_val:.2f})")
                                         else:
-                                            print(f"✅ Today's entry re-verified: Still {new_status} (Fresh Local={fresh_local_rsi:.2f}/{fresh_local_sma:.2f} matches TV={tv_rsi_val:.2f}/{tv_sma_val:.2f})")
+                                            print(f"✅ Most recent entry re-verified: Still {new_status} (Fresh Local={fresh_local_rsi:.2f}/{fresh_local_sma:.2f} matches TV={tv_rsi_val:.2f}/{tv_sma_val:.2f})")
                                     else:
-                                        print(f"🔄 Today's local values updated: RSI {old_local_rsi:.2f}→{fresh_local_rsi:.2f}, SMA {old_local_sma:.2f}→{fresh_local_sma:.2f} (TV values still TBD)")
+                                        print(f"🔄 Most recent local values updated: RSI {old_local_rsi:.2f}→{fresh_local_rsi:.2f}, SMA {old_local_sma:.2f}→{fresh_local_sma:.2f} (TV values still TBD)")
                                     
-                                    break  # Found and updated today's entry
-                            except (ValueError, IndexError) as e:
-                                print(f"⚠️  Error parsing today's entry: {e}")
-                                continue
-                    
-                    if todays_entry_updated:
-                        # Write the updated file with fresh local values
-                        updated_content = '\n'.join(lines)
-                        with open(verification_file_path, 'w') as f:
-                            f.write(updated_content)
-                        print("✅ Today's entry updated with fresh local calculations")
-                    else:
-                        print(f"ℹ️  Today's entry ({today_date_str}) not found in verification list")
+                                    break  # Found and updated the most recent entry
+                        except (ValueError, IndexError) as e:
+                            print(f"⚠️  Error parsing most recent entry: {e}")
+                            continue
+                
+                if todays_entry_updated:
+                    # Write the updated file with fresh local values
+                    updated_content = '\n'.join(lines)
+                    with open(verification_file_path, 'w') as f:
+                        f.write(updated_content)
+                    print("✅ Most recent entry updated with fresh local calculations")
                 else:
-                    print(f"⚠️  No fresh market data available for today ({today_date_str})")
+                    print(f"ℹ️  Most recent entry ({most_recent_date_str}) not found in verification list")
             else:
-                print(f"⚠️  Today's date ({today_date_str}) not found in fresh market data")
+                print(f"⚠️  No fresh market data available")
         else:
-            print("⚠️  Could not fetch fresh market data for today's re-evaluation")
+            print("⚠️  Could not fetch fresh market data for re-evaluation")
     except Exception as e:
-        print(f"⚠️  Error fetching fresh data for today's re-evaluation: {e}")
+        print(f"⚠️  Error fetching fresh data for re-evaluation: {e}")
     
     # STEP 4: Add new entries with Alpha Vantage data
     # Find the last (most recent) date entry - NOW AT TOP after header
@@ -330,8 +338,9 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
     
     print(f"📅 Last verification entry: {first_date.strftime('%Y-%m-%d')}")
     
-    # Calculate dates to add (from day after first_date to today)
-    today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    # Calculate dates to add (from day after first_date to today) - using EST
+    est = timezone(timedelta(hours=-5))
+    today = datetime.now(est).replace(hour=0, minute=0, second=0, microsecond=0)
     
     if first_date.date() >= today.date():
         print("✅ Verification list is already up to date")
@@ -342,7 +351,7 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
     # Fetch market data - MUST use FULL HISTORY to match backtest (SINGLE SOURCE OF TRUTH)
     # Backtest uses ALL data from 2003, so we must too for consistency
     backtest_start_date = '2003-01-01'
-    end_date = datetime.now()  # Use current datetime to include today's data if available
+    end_date = datetime.now(est)  # Use current datetime in EST to include today's data if available
     
     print(f"📊 Fetching FULL market data from {backtest_start_date} to {end_date.strftime('%Y-%m-%d')}...")
     print(f"   (Using full history to match backtest - SINGLE SOURCE OF TRUTH)")
