@@ -82,7 +82,7 @@ def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy
     today = datetime.now().date()
     
     # Add TURBO indicator to subject
-    turbo_marker = "[🚀 TURBO v2.0] " if not is_simulation else "[TEST - TURBO v2.0] "
+    turbo_marker = "[🚀 TURBO] " if not is_simulation else "[TEST - TURBO] "
     
     # Calculate market regime and advanced recommendations
     market_regime = "UNKNOWN"
@@ -167,11 +167,11 @@ def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy
     
     # Email body
     if is_simulation:
-        header_suffix = " - TEST EMAIL (LOCAL RUN) - TURBO v2.0"
+        header_suffix = " - TEST EMAIL (LOCAL RUN) - TURBO"
         date_suffix = " 🧪 LOCAL TEST"
-        test_notice = "\n🧪 THIS IS A TEST EMAIL FROM LOCAL RUN - TURBO v2.0\nThis email was manually triggered for testing purposes.\nEnhanced with advanced analytics and visualizations.\n"
+        test_notice = "\n🧪 THIS IS A TEST EMAIL FROM LOCAL RUN - TURBO\nThis email was manually triggered for testing purposes.\nEnhanced with advanced analytics and visualizations.\n"
     else:
-        header_suffix = " - PAYDAY - TURBO v2.0 🚀"
+        header_suffix = " - PAYDAY - TURBO 🚀"
         date_suffix = " 🚀"
         test_notice = ""
     
@@ -477,7 +477,7 @@ DIFFERENCE: ${abs(advanced_total - (DCA_BASE_AMOUNT + (RAINY_AMOUNT if is_rainy 
 💡 STRATEGY: RSI SMA(7) smoothed indicator (7-day avg) reduces noise
 
 ════════════════════════════════════════════════════════════════
-🆕 TURBO v2.0 - WHAT'S NEW & IMPROVED
+🆕 TURBO - WHAT'S NEW & IMPROVED
 ════════════════════════════════════════════════════════════════
 
 🔬 ENHANCED RAINY DAY CRITERIA EXPLANATION:
@@ -523,7 +523,7 @@ Current Parameters (YOUR STRATEGY):
    → Cash pool: ${cash_pool:.2f} → ${new_cash_pool:.2f}
 
 ════════════════════════════════════════════════════════════════
-🏆 TURBO v2.0 ENHANCED PERFORMANCE ANALYTICS
+🏆 TURBO ENHANCED PERFORMANCE ANALYTICS
 ════════════════════════════════════════════════════════════════
 
 📊 22-YEAR BACKTEST SUMMARY (2003-2025)
@@ -549,10 +549,10 @@ Total Contributions: ${total_contributions:,.2f}
 Rainy Buys to Date: {len(rainy_buys)}{initial_note}
 
 ════════════════════════════════════════════════════════════════
-📊 ENHANCED VISUALIZATIONS (v2.0 TURBO)
+📊 ENHANCED VISUALIZATIONS (TURBO)
 ════════════════════════════════════════════════════════════════
 
-🚀 NEW IN TURBO v2.0 - Professional Analytics Suite:
+🚀 NEW IN TURBO - Professional Analytics Suite:
 
 1️⃣ Interactive Performance Dashboard
    Bloomberg Terminal-style multi-panel view
@@ -598,7 +598,7 @@ See attached professional-grade charts:
 📊 ENHANCED STATISTICS & METRICS
 ════════════════════════════════════════════════════════════════
 
-🔬 NEW METRICS TRACKED IN TURBO v2.0:
+🔬 NEW METRICS TRACKED IN TURBO:
 
 Drawdown Recovery Analysis:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

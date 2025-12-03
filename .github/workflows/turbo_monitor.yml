@@ -1,4 +1,4 @@
-name: 🚀 TURBO v2.0 Strategy Monitor
+name: 🚀 TURBO Strategy Monitor
 
 on:
   schedule:
@@ -25,7 +25,7 @@ jobs:
       run: |
         pip install yfinance pandas numpy matplotlib seaborn scipy
     
-    - name: Run TURBO v2.0 Strategy Monitor (Enhanced Visualizations)
+    - name: Run TURBO Strategy Monitor (Enhanced Visualizations)
       env:
         SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
         SMTP_PORT: ${{ secrets.SMTP_PORT }}

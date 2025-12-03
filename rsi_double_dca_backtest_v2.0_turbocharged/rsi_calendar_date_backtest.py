@@ -702,7 +702,7 @@ except Exception as e:
     print(f"⚠️  Failed to generate rainy-amount-over-time chart: {e}")
 
 print("\n" + "=" * 80)
-print("GENERATING ENHANCED VISUALIZATIONS (v2.0 TURBOCHARGED)")
+print("GENERATING ENHANCED VISUALIZATIONS (TURBOCHARGED)")
 print("=" * 80)
 
 # Import enhanced visualizations
@@ -762,7 +762,7 @@ except Exception as e:
     print("   Continuing with standard charts...")
 
 print("\n" + "=" * 80)
-print("BACKTEST COMPLETE - PROD vs TURBO (v2.0 TURBOCHARGED)")
+print("BACKTEST COMPLETE - PROD vs TURBO (TURBOCHARGED)")
 print("=" * 80)
 print(f"\n📊 Summary:")
 print(f"   Execution schedule: 3rd & 17th (payday: 1st & 15th)")

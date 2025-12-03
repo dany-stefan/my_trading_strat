@@ -194,7 +194,7 @@ STRATEGY_VARIANTS: Dict[str, StrategyConfig] = {
     ),
     
     'VARIANT_2': StrategyConfig(
-        name="Biweekly $150 RSI SMA(7) < 45",
+        name="TURBO - Biweekly $150 RSI SMA(7) < 45",
         variant_number=2,
         dca_base_amount=150.0,
         rainy_extra_amount=150.0,
