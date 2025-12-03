@@ -8,7 +8,9 @@ It uses RSI SMA(7) (7-day Simple Moving Average of RSI(14)) as the rainy day thr
 Shared by both simulation and production email scripts to ensure consistency.
 """
 
+
 from datetime import datetime, timedelta
+from market_metrics import calculate_market_metrics
 
 # =============================================================================
 # STRATEGY PARAMETERS
@@ -23,6 +25,40 @@ PAYDAY_DAY_OF_MONTH_2 = 15       # Second payday of each month (1st and 15th sch
 
 
 def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy_buys, is_simulation=False, spy_200ma=None, vix=None):
+    # Use centralized market metrics calculation (same as PROD)
+    metrics = calculate_market_metrics(
+        rsi_sma=rsi_sma,
+        price=price,
+        cash_pool=cash_pool,
+        total_contributions=total_contributions,
+        rainy_buys=rainy_buys,
+        rsi_threshold=RSI_THRESHOLD,
+        dca_base_amount=DCA_BASE_AMOUNT,
+        rainy_amount=RAINY_AMOUNT,
+        cash_accumulation=CASH_ACCUMULATION,
+        payday_day_of_month_2=PAYDAY_DAY_OF_MONTH_2
+    )
+    all_metrics = metrics.get_all_metrics()
+    # Extract values for email content
+    is_rainy = all_metrics["is_rainy"]
+    can_deploy = all_metrics["can_deploy"]
+    total_investment_today = all_metrics["total_investment_today"]
+    new_cash_pool = all_metrics["new_cash_pool"]
+    next_payday_text = all_metrics["next_payday_text"]
+    rainy_buys_count = all_metrics["rainy_buys_count"]
+    price_display = all_metrics["price_display"]
+    rsi_sma_display = all_metrics["rsi_sma_display"]
+    cash_pool_display = all_metrics["cash_pool_display"]
+    total_contributions_display = all_metrics["total_contributions_display"]
+    new_cash_pool_display = all_metrics["new_cash_pool_display"]
+    recommendation = all_metrics["recommendation"]
+    action_text = all_metrics["action_text"]
+    cash_after_text = all_metrics["cash_after_text"]
+    rainy_status = all_metrics["rainy_status"]
+    decision_result = all_metrics["decision_result"]
+    initial_note = all_metrics["initial_note"]
+    cash_available_line = all_metrics["cash_available_line"]
+    # Use rsi_sma_display everywhere in the email body for consistency
     """
     Generate email subject and body for payday notifications.
     
@@ -84,8 +120,7 @@ def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy
     # RAINY DAY LOGIC - Core decision making
     # =============================================================================
     # Check if RSI SMA(7) is below threshold (rainy day condition)
-    is_rainy = rsi_sma < RSI_THRESHOLD
-    can_deploy = cash_pool >= RAINY_AMOUNT
+    # (now handled by calculate_market_metrics)
     
     # =============================================================================
     # RECOMMENDATION LOGIC - What action to take today
@@ -116,12 +151,10 @@ def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy
         cash_after_text = f"Cash pool after saving: ${new_cash_pool:.2f}"
     
     # Display rainy status clearly (using RSI SMA(7) terminology)
-    rainy_status = "✅ RAINY DAY - RSI SMA(7) < 45!" if is_rainy else "⛅ NOT RAINY - RSI SMA(7) ≥ 45"
+    rainy_status = rainy_status
     
     # Note about initial cash pool (only shown on first email)
-    initial_note = ""
-    if total_contributions == 0:
-        initial_note = f"\n   📌 NOTE: Starting with ${cash_pool:.2f} initial cash pool (enough for 2 rainy buys)"
+    # (now handled by calculate_market_metrics)
     
     # =============================================================================
     # EMAIL FORMATTING - Subject and header based on context
@@ -142,55 +175,62 @@ def generate_email_content(rsi_sma, price, cash_pool, total_contributions, rainy
         date_suffix = " 🚀"
         test_notice = ""
     
-    # Enhanced action display for TURBO
-    if is_rainy and can_deploy:
-        action_box = f"""
-╔══════════════════════════════════════════════════════════════╗
-║  🔥 RAINY DAY ALERT - DEPLOY EXTRA CAPITAL                  ║
-╚══════════════════════════════════════════════════════════════╝
-
-TODAY'S ACTION PLAN:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ STEP 1: Base DCA → Invest $150 CAD (always)
-🔥 STEP 2: RAINY BUY → Deploy ${RAINY_AMOUNT:.0f} CAD from cash pool
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⭐⭐⭐ ACTION REQUIRED: RAINY BUY ${RAINY_AMOUNT:.0f} CAD ⭐⭐⭐
-
-WHY RAINY? RSI SMA(7) = {rsi_sma:.2f} < {RSI_THRESHOLD} (bearish)
-CASH STATUS: ${cash_pool:.2f} → ${new_cash_pool:.2f} (after buy & save)
+    # Enhanced action display for TURBO (copied from PROD for consistency)
+    metrics_markdown = f"""
+📌 METRICS SNAPSHOT (Markdown)
+| Metric | Value |
+|---|---|
+| SPY Price | {price_display} |
+| RSI SMA(7) | {rsi_sma_display} |
+| Cash Pool | {cash_pool_display} |
+| Threshold | {RSI_THRESHOLD:.0f} |
+| Rainy Today? | {('Yes' if is_rainy else 'No')} |
 """
-    elif is_rainy and not can_deploy:
-        action_box = f"""
-╔══════════════════════════════════════════════════════════════╗
-║  ⚠️  RAINY DAY BUT INSUFFICIENT CASH                        ║
-╚══════════════════════════════════════════════════════════════╝
 
-TODAY'S ACTION PLAN:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ STEP 1: Base DCA → Invest $150 CAD (always)
-❌ STEP 2: NO RAINY BUY (need ${RAINY_AMOUNT:.0f}, have ${cash_pool:.2f})
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⭐⭐⭐ ACTION REQUIRED: BUY ${total_investment_today:.0f} CAD TOTAL ⭐⭐⭐
+    action_box = f"""
+🎯 TURBO STRATEGY MONITOR{header_suffix}
+{test_notice}
+════════════════════════════════════════════════════════════════
+📅 DATE: {today.strftime('%B %d, %Y')}{date_suffix}
+📈 SPY PRICE: {price_display} USD
+📊 RSI SMA(7): {rsi_sma_display}
 
-WHY RAINY? RSI SMA(7) = {rsi_sma:.2f} < {RSI_THRESHOLD} (bearish)
-CASH STATUS: ${cash_pool:.2f} → ${new_cash_pool:.2f} (after save)
-NOTE: Missed rainy opportunity - keep building cash pool!
-"""
-    else:
-        action_box = f"""
-╔══════════════════════════════════════════════════════════════╗
-║  💰 STANDARD PAYDAY - SAVE FOR RAINY DAYS                   ║
-╚══════════════════════════════════════════════════════════════╝
+📌 EVALUATION TIMING: This email is sent on the 3rd and 17th of each month
+   (2 days after payday on 1st/15th) when RSI is evaluated for rainy day.
+════════════════════════════════════════════════════════════════
 
-TODAY'S ACTION PLAN:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ STEP 1: Base DCA → Invest $150 CAD (always)
-💾 STEP 2: SAVE → Add $30 to cash pool for next rainy day
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⭐⭐⭐ ACTION REQUIRED: BUY ${total_investment_today:.0f} CAD TOTAL ⭐⭐⭐
+═══════════════════════════════════════════════════════════════
+📋 DECISION FROM STRATEGY RULES
+═══════════════════════════════════════════════════════════════
 
-MARKET STATUS: RSI SMA(7) = {rsi_sma:.2f} ≥ {RSI_THRESHOLD} (healthy)
-CASH STATUS: ${cash_pool:.2f} → ${new_cash_pool:.2f} (after save)
+DECISION PATH:
+• RSI SMA(7) = {rsi_sma_display}
+• Threshold = {RSI_THRESHOLD}
+• Result: {decision_result}
+{cash_available_line}
+
+{action_text}
+
+═══════════════════════════════════════════════════════════════
+
+📊 TODAY'S PAYDAY ACTIONS
+
+1️⃣ BASE INVESTMENT (always):
+   Invest: ${DCA_BASE_AMOUNT:.0f} CAD into SPY
+   
+2️⃣ RAINY DAY CHECK:
+   RSI SMA(7): {rsi_sma_display}
+   Rainy threshold: RSI SMA(7) < {RSI_THRESHOLD}
+   
+   {rainy_status}
+   
+   {recommendation}
+   
+   {cash_after_text}
+
+Next payday: {next_payday_text}
+
+{metrics_markdown}
 """
     
     # Advanced strategy comparison
