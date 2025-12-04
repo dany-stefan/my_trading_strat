@@ -124,9 +124,9 @@ if not hits_df.empty:
 # Red markers for misses (rainy days with no deployment)
 if not misses_df.empty:
     ax1.scatter(misses_df['date'], misses_df['cash'], 
-                color='#D62828', s=80, marker='x', 
+                color='#D00000', s=120, marker='x', 
                 label=f'✗ Missed (n={len(misses_df)})', 
-                zorder=4, linewidths=2)
+                zorder=4, linewidths=2.5)
 
 # Gray markers for non-rainy days (optional, can be overwhelming)
 # if not not_rainy_df.empty:
