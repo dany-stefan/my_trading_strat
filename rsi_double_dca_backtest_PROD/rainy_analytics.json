@@ -1,16 +1,16 @@
 {
-  "generated_at": "2025-11-25 23:35:27",
-  "current_spy_price": 668.73,
+  "generated_at": "2025-12-04 08:56:36",
+  "current_spy_price": 683.89,
   "data_source": "rainy_buys_calendar_dates.csv",
   "summary": {
     "total_contributions": 12450.0,
     "num_buys": 83,
     "avg_buy_price": 264.21,
     "total_shares": 81.08,
-    "current_value": 54219.29,
-    "profit": 41769.29,
-    "roi_percent": 335.5,
-    "price_appreciation_multiple": 2.53,
+    "current_value": 55448.44,
+    "profit": 42998.44,
+    "roi_percent": 345.37,
+    "price_appreciation_multiple": 2.59,
     "first_buy_date": "2004-03-17",
     "last_buy_date": "2025-04-17",
     "years_active": 21
@@ -22,9 +22,9 @@
       "total_contributions": 300.0,
       "avg_price": 69.81,
       "total_shares": 4.31,
-      "current_value": 2879.8,
-      "profit": 2579.8,
-      "roi_percent": 859.93,
+      "current_value": 2945.09,
+      "profit": 2645.09,
+      "roi_percent": 881.7,
       "start_date": "2009-03-03",
       "end_date": "2009-03-17",
       "duration_days": 14
@@ -35,9 +35,9 @@
       "total_contributions": 600.0,
       "avg_price": 87.63,
       "total_shares": 6.85,
-      "current_value": 4579.33,
-      "profit": 3979.33,
-      "roi_percent": 663.22,
+      "current_value": 4683.14,
+      "profit": 4083.14,
+      "roi_percent": 680.52,
       "start_date": "2010-02-03",
       "end_date": "2010-06-03",
       "duration_days": 120
@@ -48,9 +48,9 @@
       "total_contributions": 1350.0,
       "avg_price": 92.26,
       "total_shares": 14.69,
-      "current_value": 9826.22,
-      "profit": 8476.22,
-      "roi_percent": 627.87,
+      "current_value": 10048.98,
+      "profit": 8698.98,
+      "roi_percent": 644.37,
       "start_date": "2008-01-17",
       "end_date": "2008-10-17",
       "duration_days": 274
@@ -61,9 +61,9 @@
       "total_contributions": 750.0,
       "avg_price": 93.76,
       "total_shares": 8.01,
-      "current_value": 5354.75,
-      "profit": 4604.75,
-      "roi_percent": 613.97,
+      "current_value": 5476.14,
+      "profit": 4726.14,
+      "roi_percent": 630.15,
       "start_date": "2011-03-17",
       "end_date": "2011-10-03",
       "duration_days": 200
@@ -74,9 +74,9 @@
       "total_contributions": 150.0,
       "avg_price": 96.74,
       "total_shares": 1.55,
-      "current_value": 1036.9,
-      "profit": 886.9,
-      "roi_percent": 591.26,
+      "current_value": 1060.4,
+      "profit": 910.4,
+      "roi_percent": 606.93,
       "start_date": "2006-06-19",
       "end_date": "2006-06-19",
       "duration_days": 0
@@ -87,9 +87,9 @@
       "total_contributions": 450.0,
       "avg_price": 97.49,
       "total_shares": 4.62,
-      "current_value": 3087.03,
-      "profit": 2637.03,
-      "roi_percent": 586.01,
+      "current_value": 3157.01,
+      "profit": 2707.01,
+      "roi_percent": 601.56,
       "start_date": "2005-04-04",
       "end_date": "2005-10-17",
       "duration_days": 196
@@ -100,9 +100,9 @@
       "total_contributions": 750.0,
       "avg_price": 98.65,
       "total_shares": 7.61,
-      "current_value": 5087.17,
-      "profit": 4337.17,
-      "roi_percent": 578.29,
+      "current_value": 5202.49,
+      "profit": 4452.49,
+      "roi_percent": 593.67,
       "start_date": "2004-03-17",
       "end_date": "2004-08-17",
       "duration_days": 153
@@ -113,9 +113,9 @@
       "total_contributions": 600.0,
       "avg_price": 108.07,
       "total_shares": 5.56,
-      "current_value": 3716.5,
-      "profit": 3116.5,
-      "roi_percent": 519.42,
+      "current_value": 3800.75,
+      "profit": 3200.75,
+      "roi_percent": 533.46,
       "start_date": "2012-05-17",
       "end_date": "2012-11-19",
       "duration_days": 186
@@ -126,9 +126,9 @@
       "total_contributions": 900.0,
       "avg_price": 109.06,
       "total_shares": 8.27,
-      "current_value": 5531.6,
-      "profit": 4631.6,
-      "roi_percent": 514.62,
+      "current_value": 5657.0,
+      "profit": 4757.0,
+      "roi_percent": 528.56,
       "start_date": "2007-03-05",
       "end_date": "2007-12-03",
       "duration_days": 273
@@ -139,9 +139,9 @@
       "total_contributions": 150.0,
       "avg_price": 140.24,
       "total_shares": 1.07,
-      "current_value": 715.25,
-      "profit": 565.25,
-      "roi_percent": 376.83,
+      "current_value": 731.46,
+      "profit": 581.46,
+      "roi_percent": 387.64,
       "start_date": "2013-09-03",
       "end_date": "2013-09-03",
       "duration_days": 0
@@ -152,9 +152,9 @@
       "total_contributions": 600.0,
       "avg_price": 177.51,
       "total_shares": 3.4,
-      "current_value": 2272.84,
-      "profit": 1672.84,
-      "roi_percent": 278.81,
+      "current_value": 2324.36,
+      "profit": 1724.36,
+      "roi_percent": 287.39,
       "start_date": "2014-02-03",
       "end_date": "2014-12-17",
       "duration_days": 317
@@ -165,9 +165,9 @@
       "total_contributions": 300.0,
       "avg_price": 219.44,
       "total_shares": 1.37,
-      "current_value": 914.26,
-      "profit": 614.26,
-      "roi_percent": 204.75,
+      "current_value": 934.99,
+      "profit": 634.99,
+      "roi_percent": 211.66,
       "start_date": "2015-09-03",
       "end_date": "2015-10-05",
       "duration_days": 32
@@ -178,9 +178,9 @@
       "total_contributions": 600.0,
       "avg_price": 235.12,
       "total_shares": 2.55,
-      "current_value": 1708.09,
-      "profit": 1108.09,
-      "roi_percent": 184.68,
+      "current_value": 1746.82,
+      "profit": 1146.82,
+      "roi_percent": 191.14,
       "start_date": "2016-02-03",
       "end_date": "2016-11-03",
       "duration_days": 274
@@ -191,9 +191,9 @@
       "total_contributions": 750.0,
       "avg_price": 314.29,
       "total_shares": 2.39,
-      "current_value": 1597.36,
-      "profit": 847.36,
-      "roi_percent": 112.98,
+      "current_value": 1633.57,
+      "profit": 883.57,
+      "roi_percent": 117.81,
       "start_date": "2018-04-03",
       "end_date": "2018-12-17",
       "duration_days": 258
@@ -204,9 +204,9 @@
       "total_contributions": 600.0,
       "avg_price": 334.57,
       "total_shares": 1.8,
-      "current_value": 1204.18,
-      "profit": 604.18,
-      "roi_percent": 100.7,
+      "current_value": 1231.48,
+      "profit": 631.48,
+      "roi_percent": 105.25,
       "start_date": "2019-01-03",
       "end_date": "2019-08-19",
       "duration_days": 228
@@ -217,9 +217,9 @@
       "total_contributions": 600.0,
       "avg_price": 357.89,
       "total_shares": 1.69,
-      "current_value": 1132.57,
-      "profit": 532.57,
-      "roi_percent": 88.76,
+      "current_value": 1158.25,
+      "profit": 558.25,
+      "roi_percent": 93.04,
       "start_date": "2020-03-03",
       "end_date": "2020-11-03",
       "duration_days": 245
@@ -230,9 +230,9 @@
       "total_contributions": 1200.0,
       "avg_price": 498.74,
       "total_shares": 2.41,
-      "current_value": 1612.82,
-      "profit": 412.82,
-      "roi_percent": 34.4,
+      "current_value": 1649.38,
+      "profit": 449.38,
+      "roi_percent": 37.45,
       "start_date": "2022-02-03",
       "end_date": "2022-10-17",
       "duration_days": 256
@@ -243,9 +243,9 @@
       "total_contributions": 150.0,
       "avg_price": 511.61,
       "total_shares": 0.29,
-      "current_value": 196.07,
-      "profit": 46.07,
-      "roi_percent": 30.71,
+      "current_value": 200.51,
+      "profit": 50.51,
+      "roi_percent": 33.67,
       "start_date": "2021-10-04",
       "end_date": "2021-10-04",
       "duration_days": 0
@@ -256,9 +256,9 @@
       "total_contributions": 900.0,
       "avg_price": 543.94,
       "total_shares": 1.66,
-      "current_value": 1110.09,
-      "profit": 210.09,
-      "roi_percent": 23.34,
+      "current_value": 1135.26,
+      "profit": 235.26,
+      "roi_percent": 26.14,
       "start_date": "2023-01-03",
       "end_date": "2023-11-03",
       "duration_days": 304
@@ -269,9 +269,9 @@
       "total_contributions": 150.0,
       "avg_price": 707.49,
       "total_shares": 0.21,
-      "current_value": 141.78,
-      "profit": -8.22,
-      "roi_percent": -5.48,
+      "current_value": 145.0,
+      "profit": -5.0,
+      "roi_percent": -3.34,
       "start_date": "2024-08-05",
       "end_date": "2024-08-05",
       "duration_days": 0
@@ -282,9 +282,9 @@
       "total_contributions": 600.0,
       "avg_price": 781.91,
       "total_shares": 0.77,
-      "current_value": 514.69,
-      "profit": -85.31,
-      "roi_percent": -14.22,
+      "current_value": 526.36,
+      "profit": -73.64,
+      "roi_percent": -12.27,
       "start_date": "2025-03-03",
       "end_date": "2025-04-17",
       "duration_days": 45
@@ -297,9 +297,9 @@
       "total_contributions": 300.0,
       "avg_price": 69.81,
       "total_shares": 4.31,
-      "current_value": 2879.8,
-      "profit": 2579.8,
-      "roi_percent": 859.93,
+      "current_value": 2945.09,
+      "profit": 2645.09,
+      "roi_percent": 881.7,
       "start_date": "2009-03-03",
       "end_date": "2009-03-17",
       "duration_days": 14
@@ -310,9 +310,9 @@
       "total_contributions": 600.0,
       "avg_price": 87.63,
       "total_shares": 6.85,
-      "current_value": 4579.33,
-      "profit": 3979.33,
-      "roi_percent": 663.22,
+      "current_value": 4683.14,
+      "profit": 4083.14,
+      "roi_percent": 680.52,
       "start_date": "2010-02-03",
       "end_date": "2010-06-03",
       "duration_days": 120
@@ -323,9 +323,9 @@
       "total_contributions": 1350.0,
       "avg_price": 92.26,
       "total_shares": 14.69,
-      "current_value": 9826.22,
-      "profit": 8476.22,
-      "roi_percent": 627.87,
+      "current_value": 10048.98,
+      "profit": 8698.98,
+      "roi_percent": 644.37,
       "start_date": "2008-01-17",
       "end_date": "2008-10-17",
       "duration_days": 274
@@ -336,9 +336,9 @@
       "total_contributions": 750.0,
       "avg_price": 93.76,
       "total_shares": 8.01,
-      "current_value": 5354.75,
-      "profit": 4604.75,
-      "roi_percent": 613.97,
+      "current_value": 5476.14,
+      "profit": 4726.14,
+      "roi_percent": 630.15,
       "start_date": "2011-03-17",
       "end_date": "2011-10-03",
       "duration_days": 200
@@ -349,9 +349,9 @@
       "total_contributions": 150.0,
       "avg_price": 96.74,
       "total_shares": 1.55,
-      "current_value": 1036.9,
-      "profit": 886.9,
-      "roi_percent": 591.26,
+      "current_value": 1060.4,
+      "profit": 910.4,
+      "roi_percent": 606.93,
       "start_date": "2006-06-19",
       "end_date": "2006-06-19",
       "duration_days": 0
@@ -364,9 +364,9 @@
       "total_contributions": 600.0,
       "avg_price": 357.89,
       "total_shares": 1.69,
-      "current_value": 1132.57,
-      "profit": 532.57,
-      "roi_percent": 88.76,
+      "current_value": 1158.25,
+      "profit": 558.25,
+      "roi_percent": 93.04,
       "start_date": "2020-03-03",
       "end_date": "2020-11-03",
       "duration_days": 245
@@ -377,9 +377,9 @@
       "total_contributions": 1200.0,
       "avg_price": 498.74,
       "total_shares": 2.41,
-      "current_value": 1612.82,
-      "profit": 412.82,
-      "roi_percent": 34.4,
+      "current_value": 1649.38,
+      "profit": 449.38,
+      "roi_percent": 37.45,
       "start_date": "2022-02-03",
       "end_date": "2022-10-17",
       "duration_days": 256
@@ -390,9 +390,9 @@
       "total_contributions": 150.0,
       "avg_price": 511.61,
       "total_shares": 0.29,
-      "current_value": 196.07,
-      "profit": 46.07,
-      "roi_percent": 30.71,
+      "current_value": 200.51,
+      "profit": 50.51,
+      "roi_percent": 33.67,
       "start_date": "2021-10-04",
       "end_date": "2021-10-04",
       "duration_days": 0
@@ -403,9 +403,9 @@
       "total_contributions": 900.0,
       "avg_price": 543.94,
       "total_shares": 1.66,
-      "current_value": 1110.09,
-      "profit": 210.09,
-      "roi_percent": 23.34,
+      "current_value": 1135.26,
+      "profit": 235.26,
+      "roi_percent": 26.14,
       "start_date": "2023-01-03",
       "end_date": "2023-11-03",
       "duration_days": 304
@@ -416,9 +416,9 @@
       "total_contributions": 150.0,
       "avg_price": 707.49,
       "total_shares": 0.21,
-      "current_value": 141.78,
-      "profit": -8.22,
-      "roi_percent": -5.48,
+      "current_value": 145.0,
+      "profit": -5.0,
+      "roi_percent": -3.34,
       "start_date": "2024-08-05",
       "end_date": "2024-08-05",
       "duration_days": 0
@@ -429,9 +429,9 @@
       "total_contributions": 600.0,
       "avg_price": 781.91,
       "total_shares": 0.77,
-      "current_value": 514.69,
-      "profit": -85.31,
-      "roi_percent": -14.22,
+      "current_value": 526.36,
+      "profit": -73.64,
+      "roi_percent": -12.27,
       "start_date": "2025-03-03",
       "end_date": "2025-04-17",
       "duration_days": 45
@@ -444,9 +444,9 @@
       "price": 101.06,
       "amount": 150.0,
       "shares": 1.4843,
-      "current_value": 992.58,
-      "profit": 842.58,
-      "roi_percent": 561.72
+      "current_value": 1015.08,
+      "profit": 865.08,
+      "roi_percent": 576.72
     },
     {
       "date": "2004-05-17",
@@ -454,9 +454,9 @@
       "price": 102.02,
       "amount": 150.0,
       "shares": 1.4704,
-      "current_value": 983.27,
-      "profit": 833.27,
-      "roi_percent": 555.52
+      "current_value": 1005.56,
+      "profit": 855.56,
+      "roi_percent": 570.38
     },
     {
       "date": "2004-07-19",
@@ -464,9 +464,9 @@
       "price": 96.89,
       "amount": 150.0,
       "shares": 1.5481,
-      "current_value": 1035.28,
-      "profit": 885.28,
-      "roi_percent": 590.19
+      "current_value": 1058.75,
+      "profit": 908.75,
+      "roi_percent": 605.83
     },
     {
       "date": "2004-08-03",
@@ -474,9 +474,9 @@
       "price": 97.61,
       "amount": 150.0,
       "shares": 1.5367,
-      "current_value": 1027.62,
-      "profit": 877.62,
-      "roi_percent": 585.08
+      "current_value": 1050.92,
+      "profit": 900.92,
+      "roi_percent": 600.61
     },
     {
       "date": "2004-08-17",
@@ -484,9 +484,9 @@
       "price": 95.68,
       "amount": 150.0,
       "shares": 1.5678,
-      "current_value": 1048.41,
-      "profit": 898.41,
-      "roi_percent": 598.94
+      "current_value": 1072.17,
+      "profit": 922.17,
+      "roi_percent": 614.78
     },
     {
       "date": "2005-04-04",
@@ -494,9 +494,9 @@
       "price": 98.21,
       "amount": 150.0,
       "shares": 1.5273,
-      "current_value": 1021.34,
-      "profit": 871.34,
-      "roi_percent": 580.89
+      "current_value": 1044.49,
+      "profit": 894.49,
+      "roi_percent": 596.33
     },
     {
       "date": "2005-04-18",
@@ -504,9 +504,9 @@
       "price": 97.48,
       "amount": 150.0,
       "shares": 1.5388,
-      "current_value": 1029.06,
-      "profit": 879.06,
-      "roi_percent": 586.04
+      "current_value": 1052.38,
+      "profit": 902.38,
+      "roi_percent": 601.59
     },
     {
       "date": "2005-10-17",
@@ -514,9 +514,9 @@
       "price": 96.76,
       "amount": 150.0,
       "shares": 1.5502,
-      "current_value": 1036.63,
-      "profit": 886.63,
-      "roi_percent": 591.09
+      "current_value": 1060.13,
+      "profit": 910.13,
+      "roi_percent": 606.76
     },
     {
       "date": "2006-06-19",
@@ -524,9 +524,9 @@
       "price": 96.74,
       "amount": 150.0,
       "shares": 1.5505,
-      "current_value": 1036.9,
-      "profit": 886.9,
-      "roi_percent": 591.26
+      "current_value": 1060.4,
+      "profit": 910.4,
+      "roi_percent": 606.93
     },
     {
       "date": "2007-03-05",
@@ -534,9 +534,9 @@
       "price": 114.32,
       "amount": 150.0,
       "shares": 1.3121,
-      "current_value": 877.47,
-      "profit": 727.47,
-      "roi_percent": 484.98
+      "current_value": 897.36,
+      "profit": 747.36,
+      "roi_percent": 498.24
     },
     {
       "date": "2007-03-19",
@@ -544,9 +544,9 @@
       "price": 116.79,
       "amount": 150.0,
       "shares": 1.2843,
-      "current_value": 858.86,
-      "profit": 708.86,
-      "roi_percent": 472.57
+      "current_value": 878.33,
+      "profit": 728.33,
+      "roi_percent": 485.55
     },
     {
       "date": "2007-08-03",
@@ -554,9 +554,9 @@
       "price": 107.57,
       "amount": 150.0,
       "shares": 1.3944,
-      "current_value": 932.5,
-      "profit": 782.5,
-      "roi_percent": 521.67
+      "current_value": 953.64,
+      "profit": 803.64,
+      "roi_percent": 535.76
     },
     {
       "date": "2007-08-17",
@@ -564,9 +564,9 @@
       "price": 109.17,
       "amount": 150.0,
       "shares": 1.374,
-      "current_value": 918.87,
-      "profit": 768.87,
-      "roi_percent": 512.58
+      "current_value": 939.7,
+      "profit": 789.7,
+      "roi_percent": 526.47
     },
     {
       "date": "2007-11-19",
@@ -574,9 +574,9 @@
       "price": 101.04,
       "amount": 150.0,
       "shares": 1.4846,
-      "current_value": 992.81,
-      "profit": 842.81,
-      "roi_percent": 561.87
+      "current_value": 1015.32,
+      "profit": 865.32,
+      "roi_percent": 576.88
     },
     {
       "date": "2007-12-03",
@@ -584,9 +584,9 @@
       "price": 105.47,
       "amount": 150.0,
       "shares": 1.4222,
-      "current_value": 951.09,
-      "profit": 801.09,
-      "roi_percent": 534.06
+      "current_value": 972.65,
+      "profit": 822.65,
+      "roi_percent": 548.43
     },
     {
       "date": "2008-01-17",
@@ -594,9 +594,9 @@
       "price": 98.67,
       "amount": 150.0,
       "shares": 1.5202,
-      "current_value": 1016.6,
-      "profit": 866.6,
-      "roi_percent": 577.73
+      "current_value": 1039.64,
+      "profit": 889.64,
+      "roi_percent": 593.09
     },
     {
       "date": "2008-02-04",
@@ -604,9 +604,9 @@
       "price": 98.37,
       "amount": 150.0,
       "shares": 1.5248,
-      "current_value": 1019.67,
-      "profit": 869.67,
-      "roi_percent": 579.78
+      "current_value": 1042.78,
+      "profit": 892.78,
+      "roi_percent": 595.19
     },
     {
       "date": "2008-03-17",
@@ -614,9 +614,9 @@
       "price": 91.64,
       "amount": 150.0,
       "shares": 1.6368,
-      "current_value": 1094.55,
-      "profit": 944.55,
-      "roi_percent": 629.7
+      "current_value": 1119.37,
+      "profit": 969.37,
+      "roi_percent": 646.25
     },
     {
       "date": "2008-06-17",
@@ -624,9 +624,9 @@
       "price": 99.54,
       "amount": 150.0,
       "shares": 1.507,
-      "current_value": 1007.76,
-      "profit": 857.76,
-      "roi_percent": 571.84
+      "current_value": 1030.6,
+      "profit": 880.6,
+      "roi_percent": 587.07
     },
     {
       "date": "2008-07-03",
@@ -634,9 +634,9 @@
       "price": 93.24,
       "amount": 150.0,
       "shares": 1.6088,
-      "current_value": 1075.83,
-      "profit": 925.83,
-      "roi_percent": 617.22
+      "current_value": 1100.22,
+      "profit": 950.22,
+      "roi_percent": 633.48
     },
     {
       "date": "2008-07-17",
@@ -644,9 +644,9 @@
       "price": 91.27,
       "amount": 150.0,
       "shares": 1.6435,
-      "current_value": 1099.08,
-      "profit": 949.08,
-      "roi_percent": 632.72
+      "current_value": 1124.0,
+      "profit": 974.0,
+      "roi_percent": 649.33
     },
     {
       "date": "2008-09-17",
@@ -654,9 +654,9 @@
       "price": 90.49,
       "amount": 150.0,
       "shares": 1.6577,
-      "current_value": 1108.57,
-      "profit": 958.57,
-      "roi_percent": 639.05
+      "current_value": 1133.7,
+      "profit": 983.7,
+      "roi_percent": 655.8
     },
     {
       "date": "2008-10-03",
@@ -664,9 +664,9 @@
       "price": 86.78,
       "amount": 150.0,
       "shares": 1.7284,
-      "current_value": 1155.85,
-      "profit": 1005.85,
-      "roi_percent": 670.57
+      "current_value": 1182.06,
+      "profit": 1032.06,
+      "roi_percent": 688.04
     },
     {
       "date": "2008-10-17",
@@ -674,9 +674,9 @@
       "price": 80.36,
       "amount": 150.0,
       "shares": 1.8667,
-      "current_value": 1248.32,
-      "profit": 1098.32,
-      "roi_percent": 732.21
+      "current_value": 1276.62,
+      "profit": 1126.62,
+      "roi_percent": 751.08
     },
     {
       "date": "2009-03-03",
@@ -684,9 +684,9 @@
       "price": 66.65,
       "amount": 150.0,
       "shares": 2.2504,
-      "current_value": 1504.94,
-      "profit": 1354.94,
-      "roi_percent": 903.29
+      "current_value": 1539.05,
+      "profit": 1389.05,
+      "roi_percent": 926.04
     },
     {
       "date": "2009-03-17",
@@ -694,9 +694,9 @@
       "price": 72.96,
       "amount": 150.0,
       "shares": 2.0559,
-      "current_value": 1374.86,
-      "profit": 1224.86,
-      "roi_percent": 816.58
+      "current_value": 1406.03,
+      "profit": 1256.03,
+      "roi_percent": 837.36
     },
     {
       "date": "2010-02-03",
@@ -704,9 +704,9 @@
       "price": 87.75,
       "amount": 150.0,
       "shares": 1.7093,
-      "current_value": 1143.09,
-      "profit": 993.09,
-      "roi_percent": 662.06
+      "current_value": 1169.0,
+      "profit": 1019.0,
+      "roi_percent": 679.33
     },
     {
       "date": "2010-02-17",
@@ -714,9 +714,9 @@
       "price": 86.8,
       "amount": 150.0,
       "shares": 1.7281,
-      "current_value": 1155.61,
-      "profit": 1005.61,
-      "roi_percent": 670.41
+      "current_value": 1181.81,
+      "profit": 1031.81,
+      "roi_percent": 687.87
     },
     {
       "date": "2010-05-17",
@@ -724,9 +724,9 @@
       "price": 88.93,
       "amount": 150.0,
       "shares": 1.6867,
-      "current_value": 1127.94,
-      "profit": 977.94,
-      "roi_percent": 651.96
+      "current_value": 1153.51,
+      "profit": 1003.51,
+      "roi_percent": 669.01
     },
     {
       "date": "2010-06-03",
@@ -734,9 +734,9 @@
       "price": 87.02,
       "amount": 150.0,
       "shares": 1.7237,
-      "current_value": 1152.69,
-      "profit": 1002.69,
-      "roi_percent": 668.46
+      "current_value": 1178.82,
+      "profit": 1028.82,
+      "roi_percent": 685.88
     },
     {
       "date": "2011-03-17",
@@ -744,9 +744,9 @@
       "price": 97.35,
       "amount": 150.0,
       "shares": 1.5409,
-      "current_value": 1030.42,
-      "profit": 880.42,
-      "roi_percent": 586.95
+      "current_value": 1053.78,
+      "profit": 903.78,
+      "roi_percent": 602.52
     },
     {
       "date": "2011-06-17",
@@ -754,9 +754,9 @@
       "price": 96.56,
       "amount": 150.0,
       "shares": 1.5535,
-      "current_value": 1038.84,
-      "profit": 888.84,
-      "roi_percent": 592.56
+      "current_value": 1062.39,
+      "profit": 912.39,
+      "roi_percent": 608.26
     },
     {
       "date": "2011-08-03",
@@ -764,9 +764,9 @@
       "price": 93.95,
       "amount": 150.0,
       "shares": 1.5967,
-      "current_value": 1067.74,
-      "profit": 917.74,
-      "roi_percent": 611.83
+      "current_value": 1091.94,
+      "profit": 941.94,
+      "roi_percent": 627.96
     },
     {
       "date": "2011-08-17",
@@ -774,9 +774,9 @@
       "price": 91.08,
       "amount": 150.0,
       "shares": 1.6469,
-      "current_value": 1101.34,
-      "profit": 951.34,
-      "roi_percent": 634.22
+      "current_value": 1126.3,
+      "profit": 976.3,
+      "roi_percent": 650.87
     },
     {
       "date": "2011-10-03",
@@ -784,9 +784,9 @@
       "price": 89.85,
       "amount": 150.0,
       "shares": 1.6694,
-      "current_value": 1116.41,
-      "profit": 966.41,
-      "roi_percent": 644.27
+      "current_value": 1141.72,
+      "profit": 991.72,
+      "roi_percent": 661.15
     },
     {
       "date": "2012-05-17",
@@ -794,9 +794,9 @@
       "price": 104.16,
       "amount": 150.0,
       "shares": 1.44,
-      "current_value": 963.0,
-      "profit": 813.0,
-      "roi_percent": 542.0
+      "current_value": 984.83,
+      "profit": 834.83,
+      "roi_percent": 556.55
     },
     {
       "date": "2012-06-04",
@@ -804,9 +804,9 @@
       "price": 105.19,
       "amount": 150.0,
       "shares": 1.426,
-      "current_value": 953.59,
-      "profit": 803.59,
-      "roi_percent": 535.73
+      "current_value": 975.21,
+      "profit": 825.21,
+      "roi_percent": 550.14
     },
     {
       "date": "2012-11-05",
@@ -814,9 +814,9 @@
       "price": 112.29,
       "amount": 150.0,
       "shares": 1.3359,
-      "current_value": 893.33,
-      "profit": 743.33,
-      "roi_percent": 495.56
+      "current_value": 913.59,
+      "profit": 763.59,
+      "roi_percent": 509.06
     },
     {
       "date": "2012-11-19",
@@ -824,9 +824,9 @@
       "price": 110.65,
       "amount": 150.0,
       "shares": 1.3557,
-      "current_value": 906.57,
-      "profit": 756.57,
-      "roi_percent": 504.38
+      "current_value": 927.13,
+      "profit": 777.13,
+      "roi_percent": 518.08
     },
     {
       "date": "2013-09-03",
@@ -834,9 +834,9 @@
       "price": 140.24,
       "amount": 150.0,
       "shares": 1.0696,
-      "current_value": 715.25,
-      "profit": 565.25,
-      "roi_percent": 376.83
+      "current_value": 731.46,
+      "profit": 581.46,
+      "roi_percent": 387.64
     },
     {
       "date": "2014-02-03",
@@ -844,9 +844,9 @@
       "price": 158.25,
       "amount": 150.0,
       "shares": 0.9479,
-      "current_value": 633.88,
-      "profit": 483.88,
-      "roi_percent": 322.59
+      "current_value": 648.25,
+      "profit": 498.25,
+      "roi_percent": 332.17
     },
     {
       "date": "2014-10-03",
@@ -854,9 +854,9 @@
       "price": 181.59,
       "amount": 150.0,
       "shares": 0.826,
-      "current_value": 552.39,
-      "profit": 402.39,
-      "roi_percent": 268.26
+      "current_value": 564.91,
+      "profit": 414.91,
+      "roi_percent": 276.61
     },
     {
       "date": "2014-10-17",
@@ -864,9 +864,9 @@
       "price": 175.79,
       "amount": 150.0,
       "shares": 0.8533,
-      "current_value": 570.61,
-      "profit": 420.61,
-      "roi_percent": 280.41
+      "current_value": 583.55,
+      "profit": 433.55,
+      "roi_percent": 289.03
     },
     {
       "date": "2014-12-17",
@@ -874,9 +874,9 @@
       "price": 194.42,
       "amount": 150.0,
       "shares": 0.7715,
-      "current_value": 515.95,
-      "profit": 365.95,
-      "roi_percent": 243.97
+      "current_value": 527.65,
+      "profit": 377.65,
+      "roi_percent": 251.76
     },
     {
       "date": "2015-09-03",
@@ -884,9 +884,9 @@
       "price": 218.06,
       "amount": 150.0,
       "shares": 0.6879,
-      "current_value": 460.01,
-      "profit": 310.01,
-      "roi_percent": 206.67
+      "current_value": 470.44,
+      "profit": 320.44,
+      "roi_percent": 213.62
     },
     {
       "date": "2015-10-05",
@@ -894,9 +894,9 @@
       "price": 220.82,
       "amount": 150.0,
       "shares": 0.6793,
-      "current_value": 454.25,
-      "profit": 304.25,
-      "roi_percent": 202.83
+      "current_value": 464.55,
+      "profit": 314.55,
+      "roi_percent": 209.7
     },
     {
       "date": "2016-02-03",
@@ -904,9 +904,9 @@
       "price": 228.63,
       "amount": 150.0,
       "shares": 0.6561,
-      "current_value": 438.73,
-      "profit": 288.73,
-      "roi_percent": 192.49
+      "current_value": 448.68,
+      "profit": 298.68,
+      "roi_percent": 199.12
     },
     {
       "date": "2016-02-17",
@@ -914,9 +914,9 @@
       "price": 227.33,
       "amount": 150.0,
       "shares": 0.6598,
-      "current_value": 441.25,
-      "profit": 291.25,
-      "roi_percent": 194.17
+      "current_value": 451.26,
+      "profit": 301.26,
+      "roi_percent": 200.84
     },
     {
       "date": "2016-09-19",
@@ -924,9 +924,9 @@
       "price": 243.14,
       "amount": 150.0,
       "shares": 0.6169,
-      "current_value": 412.55,
-      "profit": 262.55,
-      "roi_percent": 175.04
+      "current_value": 421.91,
+      "profit": 271.91,
+      "roi_percent": 181.27
     },
     {
       "date": "2016-11-03",
@@ -934,9 +934,9 @@
       "price": 241.39,
       "amount": 150.0,
       "shares": 0.6214,
-      "current_value": 415.55,
-      "profit": 265.55,
-      "roi_percent": 177.04
+      "current_value": 424.97,
+      "profit": 274.97,
+      "roi_percent": 183.32
     },
     {
       "date": "2018-04-03",
@@ -944,9 +944,9 @@
       "price": 299.45,
       "amount": 150.0,
       "shares": 0.5009,
-      "current_value": 334.98,
-      "profit": 184.98,
-      "roi_percent": 123.32
+      "current_value": 342.58,
+      "profit": 192.58,
+      "roi_percent": 128.38
     },
     {
       "date": "2018-07-03",
@@ -954,9 +954,9 @@
       "price": 318.92,
       "amount": 150.0,
       "shares": 0.4703,
-      "current_value": 314.53,
-      "profit": 164.53,
-      "roi_percent": 109.69
+      "current_value": 321.66,
+      "profit": 171.66,
+      "roi_percent": 114.44
     },
     {
       "date": "2018-10-17",
@@ -964,9 +964,9 @@
       "price": 325.32,
       "amount": 150.0,
       "shares": 0.4611,
-      "current_value": 308.34,
-      "profit": 158.34,
-      "roi_percent": 105.56
+      "current_value": 315.33,
+      "profit": 165.33,
+      "roi_percent": 110.22
     },
     {
       "date": "2018-11-05",
@@ -974,9 +974,9 @@
       "price": 321.18,
       "amount": 150.0,
       "shares": 0.467,
-      "current_value": 312.31,
-      "profit": 162.31,
-      "roi_percent": 108.21
+      "current_value": 319.39,
+      "profit": 169.39,
+      "roi_percent": 112.93
     },
     {
       "date": "2018-12-17",
@@ -984,9 +984,9 @@
       "price": 306.58,
       "amount": 150.0,
       "shares": 0.4893,
-      "current_value": 327.19,
-      "profit": 177.19,
-      "roi_percent": 118.13
+      "current_value": 334.61,
+      "profit": 184.61,
+      "roi_percent": 123.07
     },
     {
       "date": "2019-01-03",
@@ -994,9 +994,9 @@
       "price": 300.26,
       "amount": 150.0,
       "shares": 0.4996,
-      "current_value": 334.07,
-      "profit": 184.07,
-      "roi_percent": 122.72
+      "current_value": 341.65,
+      "profit": 191.65,
+      "roi_percent": 127.76
     },
     {
       "date": "2019-05-17",
@@ -1004,9 +1004,9 @@
       "price": 348.61,
       "amount": 150.0,
       "shares": 0.4303,
-      "current_value": 287.74,
-      "profit": 137.74,
-      "roi_percent": 91.83
+      "current_value": 294.26,
+      "profit": 144.26,
+      "roi_percent": 96.17
     },
     {
       "date": "2019-06-03",
@@ -1014,9 +1014,9 @@
       "price": 336.32,
       "amount": 150.0,
       "shares": 0.446,
-      "current_value": 298.26,
-      "profit": 148.26,
-      "roi_percent": 98.84
+      "current_value": 305.02,
+      "profit": 155.02,
+      "roi_percent": 103.35
     },
     {
       "date": "2019-08-19",
@@ -1024,9 +1024,9 @@
       "price": 353.07,
       "amount": 150.0,
       "shares": 0.4248,
-      "current_value": 284.11,
-      "profit": 134.11,
-      "roi_percent": 89.4
+      "current_value": 290.55,
+      "profit": 140.55,
+      "roi_percent": 93.7
     },
     {
       "date": "2020-03-03",
@@ -1034,9 +1034,9 @@
       "price": 367.7,
       "amount": 150.0,
       "shares": 0.4079,
-      "current_value": 272.81,
-      "profit": 122.81,
-      "roi_percent": 81.87
+      "current_value": 278.99,
+      "profit": 128.99,
+      "roi_percent": 85.99
     },
     {
       "date": "2020-03-17",
@@ -1044,9 +1044,9 @@
       "price": 325.52,
       "amount": 150.0,
       "shares": 0.4608,
-      "current_value": 308.15,
-      "profit": 158.15,
-      "roi_percent": 105.43
+      "current_value": 315.13,
+      "profit": 165.13,
+      "roi_percent": 110.09
     },
     {
       "date": "2020-04-03",
@@ -1054,9 +1054,9 @@
       "price": 324.19,
       "amount": 150.0,
       "shares": 0.4627,
-      "current_value": 309.42,
-      "profit": 159.42,
-      "roi_percent": 106.28
+      "current_value": 316.43,
+      "profit": 166.43,
+      "roi_percent": 110.95
     },
     {
       "date": "2020-11-03",
@@ -1064,9 +1064,9 @@
       "price": 414.16,
       "amount": 150.0,
       "shares": 0.3622,
-      "current_value": 242.2,
-      "profit": 92.2,
-      "roi_percent": 61.47
+      "current_value": 247.69,
+      "profit": 97.69,
+      "roi_percent": 65.13
     },
     {
       "date": "2021-10-04",
@@ -1074,9 +1074,9 @@
       "price": 511.61,
       "amount": 150.0,
       "shares": 0.2932,
-      "current_value": 196.07,
-      "profit": 46.07,
-      "roi_percent": 30.71
+      "current_value": 200.51,
+      "profit": 50.51,
+      "roi_percent": 33.67
     },
     {
       "date": "2022-02-03",
@@ -1084,9 +1084,9 @@
       "price": 537.52,
       "amount": 150.0,
       "shares": 0.2791,
-      "current_value": 186.62,
-      "profit": 36.62,
-      "roi_percent": 24.41
+      "current_value": 190.85,
+      "profit": 40.85,
+      "roi_percent": 27.23
     },
     {
       "date": "2022-03-03",
@@ -1094,9 +1094,9 @@
       "price": 522.74,
       "amount": 150.0,
       "shares": 0.2869,
-      "current_value": 191.89,
-      "profit": 41.89,
-      "roi_percent": 27.93
+      "current_value": 196.24,
+      "profit": 46.24,
+      "roi_percent": 30.83
     },
     {
       "date": "2022-05-03",
@@ -1104,9 +1104,9 @@
       "price": 510.14,
       "amount": 150.0,
       "shares": 0.294,
-      "current_value": 196.63,
-      "profit": 46.63,
-      "roi_percent": 31.09
+      "current_value": 201.09,
+      "profit": 51.09,
+      "roi_percent": 34.06
     },
     {
       "date": "2022-05-17",
@@ -1114,9 +1114,9 @@
       "price": 499.33,
       "amount": 150.0,
       "shares": 0.3004,
-      "current_value": 200.89,
-      "profit": 50.89,
-      "roi_percent": 33.93
+      "current_value": 205.44,
+      "profit": 55.44,
+      "roi_percent": 36.96
     },
     {
       "date": "2022-06-17",
@@ -1124,9 +1124,9 @@
       "price": 452.97,
       "amount": 150.0,
       "shares": 0.3311,
-      "current_value": 221.45,
-      "profit": 71.45,
-      "roi_percent": 47.63
+      "current_value": 226.47,
+      "profit": 76.47,
+      "roi_percent": 50.98
     },
     {
       "date": "2022-09-19",
@@ -1134,9 +1134,9 @@
       "price": 494.39,
       "amount": 150.0,
       "shares": 0.3034,
-      "current_value": 202.9,
-      "profit": 52.9,
-      "roi_percent": 35.26
+      "current_value": 207.5,
+      "profit": 57.5,
+      "roi_percent": 38.33
     },
     {
       "date": "2022-10-03",
@@ -1144,9 +1144,9 @@
       "price": 485.09,
       "amount": 150.0,
       "shares": 0.3092,
-      "current_value": 206.79,
-      "profit": 56.79,
-      "roi_percent": 37.86
+      "current_value": 211.47,
+      "profit": 61.47,
+      "roi_percent": 40.98
     },
     {
       "date": "2022-10-17",
@@ -1154,9 +1154,9 @@
       "price": 487.75,
       "amount": 150.0,
       "shares": 0.3075,
-      "current_value": 205.66,
-      "profit": 55.66,
-      "roi_percent": 37.11
+      "current_value": 210.32,
+      "profit": 60.32,
+      "roi_percent": 40.21
     },
     {
       "date": "2023-01-03",
@@ -1164,9 +1164,9 @@
       "price": 497.82,
       "amount": 150.0,
       "shares": 0.3013,
-      "current_value": 201.5,
-      "profit": 51.5,
-      "roi_percent": 34.33
+      "current_value": 206.07,
+      "profit": 56.07,
+      "roi_percent": 37.38
     },
     {
       "date": "2023-03-03",
@@ -1174,9 +1174,9 @@
       "price": 529.76,
       "amount": 150.0,
       "shares": 0.2831,
-      "current_value": 189.35,
-      "profit": 39.35,
-      "roi_percent": 26.23
+      "current_value": 193.64,
+      "profit": 43.64,
+      "roi_percent": 29.09
     },
     {
       "date": "2023-03-17",
@@ -1184,9 +1184,9 @@
       "price": 517.8,
       "amount": 150.0,
       "shares": 0.2897,
-      "current_value": 193.72,
-      "profit": 43.72,
-      "roi_percent": 29.15
+      "current_value": 198.12,
+      "profit": 48.12,
+      "roi_percent": 32.08
     },
     {
       "date": "2023-08-17",
@@ -1194,9 +1194,9 @@
       "price": 573.69,
       "amount": 150.0,
       "shares": 0.2615,
-      "current_value": 174.85,
-      "profit": 24.85,
-      "roi_percent": 16.57
+      "current_value": 178.81,
+      "profit": 28.81,
+      "roi_percent": 19.21
     },
     {
       "date": "2023-10-03",
@@ -1204,9 +1204,9 @@
       "price": 562.05,
       "amount": 150.0,
       "shares": 0.2669,
-      "current_value": 178.47,
-      "profit": 28.47,
-      "roi_percent": 18.98
+      "current_value": 182.52,
+      "profit": 32.52,
+      "roi_percent": 21.68
     },
     {
       "date": "2023-11-03",
@@ -1214,9 +1214,9 @@
       "price": 582.51,
       "amount": 150.0,
       "shares": 0.2575,
-      "current_value": 172.2,
-      "profit": 22.2,
-      "roi_percent": 14.8
+      "current_value": 176.1,
+      "profit": 26.1,
+      "roi_percent": 17.4
     },
     {
       "date": "2024-08-05",
@@ -1224,9 +1224,9 @@
       "price": 707.49,
       "amount": 150.0,
       "shares": 0.212,
-      "current_value": 141.78,
-      "profit": -8.22,
-      "roi_percent": -5.48
+      "current_value": 145.0,
+      "profit": -5.0,
+      "roi_percent": -3.34
     },
     {
       "date": "2025-03-03",
@@ -1234,9 +1234,9 @@
       "price": 835.7,
       "amount": 150.0,
       "shares": 0.1795,
-      "current_value": 120.03,
-      "profit": -29.97,
-      "roi_percent": -19.98
+      "current_value": 122.75,
+      "profit": -27.25,
+      "roi_percent": -18.17
     },
     {
       "date": "2025-03-17",
@@ -1244,9 +1244,9 @@
       "price": 807.87,
       "amount": 150.0,
       "shares": 0.1857,
-      "current_value": 124.17,
-      "profit": -25.83,
-      "roi_percent": -17.22
+      "current_value": 126.98,
+      "profit": -23.02,
+      "roi_percent": -15.35
     },
     {
       "date": "2025-04-03",
@@ -1254,9 +1254,9 @@
       "price": 758.65,
       "amount": 150.0,
       "shares": 0.1977,
-      "current_value": 132.22,
-      "profit": -17.78,
-      "roi_percent": -11.85
+      "current_value": 135.22,
+      "profit": -14.78,
+      "roi_percent": -9.85
     },
     {
       "date": "2025-04-17",
@@ -1264,9 +1264,9 @@
       "price": 725.43,
       "amount": 150.0,
       "shares": 0.2068,
-      "current_value": 138.28,
-      "profit": -11.72,
-      "roi_percent": -7.82
+      "current_value": 141.41,
+      "profit": -8.59,
+      "roi_percent": -5.73
     }
   ]
 }

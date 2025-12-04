@@ -1,34 +1,37 @@
 """
-Compare RSI(14) vs RSI SMA(7) rainy day signals on payday schedule
-Analyzes overlap and differences on 1st and 15th of each month
+Compare RSI(14) vs RSI SMA(7) rainy day signals on execution schedule
+Analyzes overlap and differences on 3rd and 17th of each month (execution days)
 """
 
 import yfinance as yf
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
+from rsi_indicators import compute_rsi_with_sma
+from trading_calendar import get_calendar
 
-def get_payday_schedule(start_date, end_date):
-    """Generate payday schedule (1st and 15th of each month, adjusted for weekends)."""
-    paydays = []
+def get_execution_schedule(start_date, end_date):
+    """Generate execution schedule (3rd and 17th of each month, rolled to next TSX trading day if needed)."""
+    execution_days = []
     current = start_date
+    tsx_calendar = get_calendar('TSX')
     
     while current <= end_date:
-        # First payday of month (1st)
-        payday1 = current.replace(day=1)
-        # Adjust if weekend
-        while payday1.weekday() >= 5:  # 5=Saturday, 6=Sunday
-            payday1 += timedelta(days=1)
-        if payday1 >= start_date and payday1 <= end_date:
-            paydays.append(payday1)
+        # First execution day of month (3rd)
+        exec1 = current.replace(day=3)
+        # Roll forward to next TSX trading day if needed
+        while not tsx_calendar.is_trading_day(exec1):
+            exec1 += timedelta(days=1)
+        if exec1 >= start_date and exec1 <= end_date:
+            execution_days.append(exec1)
         
-        # Second payday of month (15th)
-        payday2 = current.replace(day=15)
-        # Adjust if weekend
-        while payday2.weekday() >= 5:
-            payday2 += timedelta(days=1)
-        if payday2 >= start_date and payday2 <= end_date:
-            paydays.append(payday2)
+        # Second execution day of month (17th)
+        exec2 = current.replace(day=17)
+        # Roll forward to next TSX trading day if needed
+        while not tsx_calendar.is_trading_day(exec2):
+            exec2 += timedelta(days=1)
+        if exec2 >= start_date and exec2 <= end_date:
+            execution_days.append(exec2)
         
         # Move to next month
         next_month = current.month + 1
@@ -38,15 +41,15 @@ def get_payday_schedule(start_date, end_date):
             next_year += 1
         current = current.replace(year=next_year, month=next_month, day=1)
     
-    return sorted(set(paydays))
+    return sorted(set(execution_days))
 
 
 def analyze_rsi_overlap(ticker="SPY", start_date="2003-01-01", end_date="2025-11-21", 
                         rsi_period=14, sma_period=7, threshold=45):
-    """Analyze overlap between RSI and RSI SMA rainy day signals on payday schedule."""
+    """Analyze overlap between RSI and RSI SMA rainy day signals on execution schedule."""
     
     print("=" * 80)
-    print(f"RSI(14) vs RSI SMA(7) Analysis - Payday Schedule (1st & 15th)")
+    print(f"RSI(14) vs RSI SMA(7) Analysis - Execution Schedule (3rd & 17th)")
     print("=" * 80)
     print(f"Period: {start_date} to {end_date}")
     print(f"Threshold: < {threshold}")
@@ -65,17 +68,9 @@ def analyze_rsi_overlap(ticker="SPY", start_date="2003-01-01", end_date="2025-11
     
     close = df["Close"] if "Close" in df.columns else df["Adj Close"]
     
-    # Calculate RSI
-    delta = close.diff()
-    gain = delta.clip(lower=0)
-    loss = -delta.clip(upper=0)
-    avg_gain = gain.rolling(rsi_period).mean()
-    avg_loss = loss.rolling(rsi_period).mean()
-    rs = avg_gain / avg_loss
-    rsi = 100 - (100 / (1 + rs))
-    
-    # Calculate SMA of RSI
-    rsi_sma = rsi.rolling(window=sma_period).mean()
+    # Calculate RSI using Wilder's smoothing (SINGLE SOURCE OF TRUTH)
+    print("Computing RSI(14) and RSI SMA(7) using Wilder's smoothing...")
+    rsi, rsi_sma = compute_rsi_with_sma(close, rsi_period=rsi_period, sma_period=sma_period)
     
     # Create DataFrame with both indicators
     df_signals = pd.DataFrame({
@@ -86,20 +81,20 @@ def analyze_rsi_overlap(ticker="SPY", start_date="2003-01-01", end_date="2025-11
         'sma_rainy': rsi_sma < threshold
     })
     
-    # Get payday schedule
+    # Get execution schedule (3rd & 17th, rolled to TSX trading days)
     start = datetime.strptime(start_date, "%Y-%m-%d")
     end = datetime.strptime(end_date, "%Y-%m-%d")
-    paydays = get_payday_schedule(start, end)
+    execution_days = get_execution_schedule(start, end)
     
-    # Filter for payday dates
-    payday_data = []
-    for payday in paydays:
-        payday_str = payday.strftime("%Y-%m-%d")
-        if payday_str in df_signals.index:
-            row = df_signals.loc[payday_str]
-            payday_data.append({
-                'date': payday_str,
-                'weekday': payday.strftime('%A'),
+    # Filter for execution dates
+    execution_data = []
+    for exec_day in execution_days:
+        exec_day_str = exec_day.strftime("%Y-%m-%d")
+        if exec_day_str in df_signals.index:
+            row = df_signals.loc[exec_day_str]
+            execution_data.append({
+                'date': exec_day_str,
+                'weekday': exec_day.strftime('%A'),
                 'close': row['close'],
                 'rsi': row['rsi'],
                 'rsi_sma': row['rsi_sma'],
@@ -111,27 +106,27 @@ def analyze_rsi_overlap(ticker="SPY", start_date="2003-01-01", end_date="2025-11
                 'neither': not row['rsi_rainy'] and not row['sma_rainy']
             })
     
-    payday_df = pd.DataFrame(payday_data)
+    execution_df = pd.DataFrame(execution_data)
     
     # Calculate statistics
-    total_paydays = len(payday_df)
-    rsi_rainy_count = payday_df['rsi_rainy'].sum()
-    sma_rainy_count = payday_df['sma_rainy'].sum()
-    both_rainy_count = payday_df['both_rainy'].sum()
-    only_rsi_count = payday_df['only_rsi'].sum()
-    only_sma_count = payday_df['only_sma'].sum()
-    neither_count = payday_df['neither'].sum()
+    total_executions = len(execution_df)
+    rsi_rainy_count = execution_df['rsi_rainy'].sum()
+    sma_rainy_count = execution_df['sma_rainy'].sum()
+    both_rainy_count = execution_df['both_rainy'].sum()
+    only_rsi_count = execution_df['only_rsi'].sum()
+    only_sma_count = execution_df['only_sma'].sum()
+    neither_count = execution_df['neither'].sum()
     
     # Calculate hit rates
-    rsi_hit_rate = (rsi_rainy_count / total_paydays) * 100
-    sma_hit_rate = (sma_rainy_count / total_paydays) * 100
-    overlap_rate = (both_rainy_count / total_paydays) * 100
+    rsi_hit_rate = (rsi_rainy_count / total_executions) * 100
+    sma_hit_rate = (sma_rainy_count / total_executions) * 100
+    overlap_rate = (both_rainy_count / total_executions) * 100
     
     # Print summary
     print("=" * 80)
     print("SUMMARY STATISTICS")
     print("=" * 80)
-    print(f"Total Paydays Analyzed: {total_paydays}")
+    print(f"Total Execution Days Analyzed: {total_executions}")
     print()
     
     print(f"RSI(14) < {threshold}:")
@@ -154,29 +149,29 @@ def analyze_rsi_overlap(ticker="SPY", start_date="2003-01-01", end_date="2025-11
     
     print(f"Only RSI Rainy (RSI < {threshold} but SMA >= {threshold}):")
     print(f"  Count: {only_rsi_count}")
-    print(f"  Percentage: {(only_rsi_count / total_paydays) * 100:.2f}%")
+    print(f"  Percentage: {(only_rsi_count / total_executions) * 100:.2f}%")
     print()
     
     print(f"Only SMA Rainy (SMA < {threshold} but RSI >= {threshold}):")
     print(f"  Count: {only_sma_count}")
-    print(f"  Percentage: {(only_sma_count / total_paydays) * 100:.2f}%")
+    print(f"  Percentage: {(only_sma_count / total_executions) * 100:.2f}%")
     print()
     
     print(f"Neither Rainy:")
     print(f"  Count: {neither_count}")
-    print(f"  Percentage: {(neither_count / total_paydays) * 100:.2f}%")
+    print(f"  Percentage: {(neither_count / total_executions) * 100:.2f}%")
     print()
     
     # Agreement analysis
     agreement = both_rainy_count + neither_count
     disagreement = only_rsi_count + only_sma_count
-    agreement_rate = (agreement / total_paydays) * 100
+    agreement_rate = (agreement / total_executions) * 100
     
     print("=" * 80)
     print("AGREEMENT ANALYSIS")
     print("=" * 80)
     print(f"Agreement (both agree on rainy or not rainy): {agreement} ({agreement_rate:.2f}%)")
-    print(f"Disagreement (one says rainy, other doesn't): {disagreement} ({(disagreement / total_paydays) * 100:.2f}%)")
+    print(f"Disagreement (one says rainy, other doesn't): {disagreement} ({(disagreement / total_executions) * 100:.2f}%)")
     print()
     
     # If using SMA instead of RSI
@@ -200,7 +195,7 @@ def analyze_rsi_overlap(ticker="SPY", start_date="2003-01-01", end_date="2025-11
     print("=" * 80)
     print("EXAMPLE DISAGREEMENTS (First 10)")
     print("=" * 80)
-    disagreements = payday_df[(payday_df['only_rsi']) | (payday_df['only_sma'])].head(10)
+    disagreements = execution_df[(execution_df['only_rsi']) | (execution_df['only_sma'])].head(10)
     
     if len(disagreements) > 0:
         print(f"{'Date':<12} {'Day':<10} {'RSI':<8} {'SMA':<8} {'RSI?':<10} {'SMA?':<10} {'Type'}")
@@ -231,11 +226,11 @@ def analyze_rsi_overlap(ticker="SPY", start_date="2003-01-01", end_date="2025-11
     else:
         print("→ Hit rate would be LOWER if you used SMA (less frequent buying)")
     
-    return payday_df
+    return execution_df
 
 
 if __name__ == "__main__":
-    # Run analysis for 22-year backtest period
+    # Run analysis for 22-year backtest period using execution schedule (3rd & 17th)
     df = analyze_rsi_overlap(
         ticker="SPY",
         start_date="2003-01-01",
@@ -247,6 +242,7 @@ if __name__ == "__main__":
     
     # Save detailed results
     if df is not None:
-        output_file = "rsi_vs_sma_payday_analysis.csv"
+        output_file = "rsi_vs_sma_execution_analysis.csv"
         df.to_csv(output_file, index=False)
         print(f"\n📊 Detailed results saved to: {output_file}")
+

@@ -203,20 +203,13 @@ def send_email(subject, body):
         msg_alternative.attach(part2)
         msg.attach(msg_alternative)
         
-        # Attach PNG charts
-        chart_files = [
-            'strategy_comparison_prod_vs_turbo.png',
-            'dashboard_interactive_turbo.png',
-            'regime_performance_turbo.png',
-            'monte_carlo_cash_pool_turbo.png',
-            'consecutive_rainy_heatmap_turbo.png',
-            'yearly_prod_vs_turbo.png',
-            'rainy_amount_over_time_prod_vs_turbo.png'
-        ]
+        # Attach ALL PNG charts from TURBO folder
+        import glob
+        chart_files = sorted(glob.glob(str(Path(__file__).parent / '*.png')))
         
-        for chart_file in chart_files:
-            chart_path = Path(__file__).parent / chart_file
-            if chart_path.exists():
+        for chart_path in chart_files:
+            chart_file = Path(chart_path).name
+            if Path(chart_path).exists():
                 with open(chart_path, 'rb') as f:
                     img = MIMEImage(f.read())
                     img.add_header('Content-Disposition', 'attachment', filename=chart_file)
