@@ -26,6 +26,7 @@ from email_formatter import convert_to_html
 from email_generator_turbo import generate_email_content  # Use TURBO generator (keeps PROD separate)
 from payday_scheduler import get_scheduler
 from strategy_config import get_strategy_config
+from rsi_indicators import compute_rsi_with_sma
 
 # =============================================================================
 # CONFIGURATION - CHANGE STRATEGY HERE
@@ -100,17 +101,8 @@ def get_rsi(ticker="SPY", period=None, lookback_days=400):
         
         close = df["Close"] if "Close" in df.columns else df["Adj Close"]
         
-        # Calculate RSI
-        delta = close.diff()
-        gain = delta.clip(lower=0)
-        loss = -delta.clip(upper=0)
-        avg_gain = gain.rolling(period).mean()
-        avg_loss = loss.rolling(period).mean()
-        rs = avg_gain / avg_loss
-        rsi = 100 - (100 / (1 + rs))
-        
-        # Calculate SMA of RSI (uses strategy config for period)
-        rsi_sma = rsi.rolling(window=strategy_config.rsi_sma_period).mean()
+        # Calculate RSI using Wilder's smoothing (same as PROD backtest)
+        rsi, rsi_sma = compute_rsi_with_sma(close, rsi_period=period, sma_period=strategy_config.rsi_sma_period)
         
         # Calculate 200-day moving average
         ma_200 = close.rolling(window=200).mean()

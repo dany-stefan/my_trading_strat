@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from trading_calendar import get_calendar
 from strategy_config import get_strategy_config
+from rsi_indicators import compute_rsi_with_sma
 
 # =============================================================================
 # PARAMETERS
@@ -81,21 +82,14 @@ print(f"✅ Fetched {len(prices)} trading days of data")
 # =============================================================================
 # COMPUTE RSI AND RSI SMA
 # =============================================================================
-print("\nComputing RSI(14) and RSI SMA(7)...")
+print("\nComputing RSI(14) and RSI SMA(7) using Wilder's smoothing...")
 
-def compute_rsi(series: pd.Series, period: int = 14) -> pd.Series:
-    """Calculate RSI indicator."""
-    delta = series.diff()
-    gain = delta.clip(lower=0)
-    loss = -delta.clip(upper=0)
-    avg_gain = gain.rolling(period).mean()
-    avg_loss = loss.rolling(period).mean()
-    rs = avg_gain / avg_loss
-    rsi = 100 - (100 / (1 + rs))
-    return rsi
-
-prices["RSI"] = compute_rsi(prices[INDEX_TICKER], RSI_PERIOD)
-prices["RSI_SMA"] = prices["RSI"].rolling(RSI_SMA_PERIOD).mean()
+# Use shared RSI calculation module (SINGLE SOURCE OF TRUTH)
+prices["RSI"], prices["RSI_SMA"] = compute_rsi_with_sma(
+    prices[INDEX_TICKER], 
+    rsi_period=RSI_PERIOD, 
+    sma_period=RSI_SMA_PERIOD
+)
 prices = prices.dropna(subset=["RSI", "RSI_SMA"])
 
 start_date = prices.index[0]
