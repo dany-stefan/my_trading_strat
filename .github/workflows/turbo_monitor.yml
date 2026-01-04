@@ -2,10 +2,11 @@ name: 🚀 TURBO Strategy Monitor
 
 on:
   schedule:
-    # Runs at 2:00 PM EST (19:00 UTC) on 3rd and 17th (execution days)
+    # Runs daily at 2:00 PM EST (19:00 UTC)
+    # Script logic checks if today is 3rd/17th or next business day if those fell on weekend
     # Note: Payday is 1st and 15th, but execution occurs 2 days later to sync with Wealthsimple recurring buys
-    # Runs 1 hour after PROD to avoid conflicts
-    - cron: '0 19 3,17 * *'
+    # Runs 3 hours after PROD to avoid conflicts
+    - cron: '0 19 * * *'
   workflow_dispatch:  # Allows manual trigger from GitHub UI (sends TEST email)
 
 jobs:
