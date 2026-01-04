@@ -13,10 +13,12 @@ import os
 import re
 import yfinance as yf
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from rsi_indicators import compute_rsi_with_sma
 from fetch_alphavantage_rsi import fetch_alphavantage_rsi, calculate_rsi_sma
+from payday_scheduler import get_scheduler
+from strategy_config import get_strategy_config
 
 
 def update_verification_list(verification_file_path=None, trigger_source=None):
@@ -38,6 +40,13 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
     Returns:
         int: Number of new entries added
     """
+    # Initialize payday scheduler for marking execution days
+    strategy_config = get_strategy_config('VARIANT_2')
+    payday_scheduler = get_scheduler(
+        scheduler_type='BIWEEKLY_TSX',
+        days=list(strategy_config.payday_days),
+        exchange=strategy_config.trading_exchange
+    )
     # Determine file path
     if verification_file_path is None:
         script_dir = Path(__file__).parent
@@ -434,20 +443,33 @@ def update_verification_list(verification_file_path=None, trigger_source=None):
             is_rainy = rsi_sma < 45.0
             rainy_status = "YES" if is_rainy else "NO"
             
-            # Check day markers
-            day_of_month = date.day
+            # Check day markers using payday scheduler logic
+            # The scheduler handles weekend/holiday rollover automatically
             markers = []
             
+            # Create datetime object for the current date (at midnight EST)
+            date_datetime = datetime.combine(date.date(), datetime.min.time()).replace(tzinfo=timezone(timedelta(hours=-5)))
+            
+            # Helper function to check if a target date rolled to the current date
+            def rolled_to_current(target_day):
+                """Check if target_day (e.g., 1, 3, 15, 17) rolled to current date due to weekend/holiday."""
+                try:
+                    target_date = date_datetime.replace(day=target_day)
+                    actual_date = payday_scheduler._get_actual_payday(target_date)
+                    return date_datetime.date() == actual_date.date()
+                except ValueError:
+                    return False
+            
             # Payday markers (1st and 15th)
-            if day_of_month == 1:
+            if rolled_to_current(1):
                 markers.append("Payday 1st")
-            elif day_of_month == 15:
+            if rolled_to_current(15):
                 markers.append("Payday 15th")
             
             # Deployment day markers (3rd and 17th)
-            if day_of_month == 3:
+            if rolled_to_current(3):
                 markers.append("Deploy 3rd")
-            elif day_of_month == 17:
+            if rolled_to_current(17):
                 markers.append("Deploy 17th")
             
             # Combine markers
