@@ -44,9 +44,9 @@ Your email credentials need to be stored securely:
    |-------------|-------|
    | `SMTP_SERVER` | `smtp.gmail.com` |
    | `SMTP_PORT` | `587` |
-   | `SENDER_EMAIL` | `d4388707373@gmail.com` |
-   | `SENDER_PASSWORD` | `kzuf dozw badx wwro` |
-   | `RECIPIENT_EMAIL` | `d4388707373@gmail.com` |
+   | `SENDER_EMAIL` | *(delete – set in GitHub Secrets)* |
+   | `SENDER_PASSWORD` | *(delete – set in GitHub Secrets)* |
+   | `RECIPIENT_EMAIL` | *(delete – set in GitHub Secrets)* |
 
 ---
 
@@ -164,7 +164,6 @@ Within 1-2 minutes, you'll receive an email with:
 - **Reminder:** Actual execution occurs on 3rd and 17th (2 days after payday on 1st and 15th)
 
 ### Perfect For:
-
 - ✅ Verifying email configuration works
 - ✅ Seeing what execution day emails look like
 - ✅ Checking current market conditions remotely
