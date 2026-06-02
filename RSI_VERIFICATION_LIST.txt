@@ -14,7 +14,7 @@ SOURCE 2 (TradingView via Alpha Vantage API):
 • SMA(7): Calculated locally from API RSI values
 
 VERIFICATION STATUS: Comparing local calculations vs Alpha Vantage API
-Last Updated: 2026-06-01 12:58:45 PM EST | Trigger: Bi-weekly Email Workflow (Auto)
+Last Updated: 2026-06-01 07:39:00 PM EST | Trigger: Daily RSI Workflow (Auto)
 Period: 2025 only (future dates will be auto-added by workflow)
 
 ═══════════════════════════════════════════════════════════════════════════
@@ -25,7 +25,7 @@ NOV 2025:
 
 Date            Local-RSI  Local-SMA  TV-RSI   TV-SMA   Match    Rainy?   Note
 ───────────────────────────────────────────────────────────────────────────────────────────────
-2026-06-01        75.64      71.69    TBD      TBD      ⏳       NO       Payday 1st
+2026-06-01        75.18      71.62    75.18    71.62   ✅       NO       Payday 1st
 2026-05-29        74.19      70.38    74.19    70.38   ✅       NO      
 2026-05-28        73.28      68.67    73.28    68.67   ✅       NO      
 2026-05-27        71.20      67.84    71.20    67.84   ✅       NO      
