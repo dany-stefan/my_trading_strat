@@ -5,13 +5,13 @@
 
 | Metric | Value |
 |---|---|
-| SPY Price | $773.48 |
-| RSI SMA(7) | 54.77 |
+| SPY Price | $762.80 |
+| RSI SMA(7) | 46.61 |
 | Cash Pool | $330.00 |
 | Threshold | 45 |
 | Rainy Today? | No |
 
-*Last Updated: 2026-09-03 13:57:08 EST*
+*Last Updated: 2026-09-17 14:21:41 EST*
 
 ---
 
